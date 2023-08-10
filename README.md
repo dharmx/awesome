@@ -1,2 +1,0 @@
-# awesome
-My AewsomeWM confuguration.
