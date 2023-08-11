@@ -51,7 +51,7 @@ function M.pacman(radius, pattern, mouth, background)
   local width = DPI(30)
   local height = DPI(30)
   return Gears.surface.load_from_shape(width, height, function(context)
-    Gears.shape.pie(context, width, height, DEG(225) + mouth, DEG(128) - mouth, radius)
+    Gears.shape.pie(context, width, height, DEG(225) + mouth, DEG(130) - mouth, radius)
   end, pattern and pattern:to_hex(true), background and background:to_hex(true))
 end
 

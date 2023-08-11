@@ -51,8 +51,8 @@ function M.initialize(node)
     {
       {
         Awful.titlebar.widget.minimizebutton(node),
-        margins = { top = DPI(14), bottom = DPI(14), left = DPI(5), right = DPI(2) },
         widget = Wibox.container.margin,
+        margins = { top = DPI(14), bottom = DPI(14), left = DPI(5), right = DPI(2) },
       },
       {
         Awful.titlebar.widget.maximizedbutton(node),
