@@ -1,4 +1,5 @@
 local config = require("core.config").get()
+local shapes = require("core.util.shapes")
 local colors = require("colors." .. config.colors).background[config.background]
 local DPI = require("beautiful.xresources").apply_dpi
 
@@ -35,7 +36,17 @@ theme.taglist_squares_unsel = Assets.taglist_squares_unsel(DPI(4), theme.fg_norm
 
 theme.menu_height = DPI(15)
 theme.menu_width = DPI(100)
-require("core.presets.titlebars")[config.modules.titlebars.style](theme, colors)
+
+theme.titlebar_close_button_normal = shapes.tears(10, colors.bred)
+theme.titlebar_close_button_focus = shapes.tears(10, colors.red)
+
+theme.titlebar_maximized_button_normal_inactive = shapes.tears(10, colors.magenta:darken(5))
+theme.titlebar_maximized_button_focus_inactive = shapes.tears(10, colors.magenta)
+theme.titlebar_maximized_button_normal_active = shapes.tears(10, colors.bmagenta:darken(5))
+theme.titlebar_maximized_button_focus_active = shapes.tears(10, colors.bmagenta)
+
+theme.titlebar_minimize_button_normal = shapes.tears(10, colors.cyan)
+theme.titlebar_minimize_button_focus = shapes.tears(10, colors.bcyan)
 
 theme.flash_focus_start_opacity = 0.6
 theme.flash_focus_step = 0.01

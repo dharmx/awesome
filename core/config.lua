@@ -2,23 +2,21 @@ local M = {}
 
 local Gears = require("gears")
 local Beautiful = require("beautiful")
-local Bling = require("bling")
 
 local functional = require("core.functional")
 local std = require("core.std")
-local util = require("core.util")
+local factory = require("core.util.factory")
 local environ = require("core.enum").environ
 
 environ.AWESOME_THEMES_PATH = environ.XDG_CONFIG_HOME .. "/awesome/themes"
 M._defaults = {
   theme = "tears",
-  colors = "radium",
+  colors = "shore",
   background = "dark",
   wallpapers = {
     position = "maximized",
     offset = { x = -130, y = 0 },
-    set_function = Bling.module.wallpaper.setters.simple,
-    wallpaper = { environ.XDG_PICTURES_DIR .. "/concepts/radium.jpg" },
+    wallpaper = environ.XDG_PICTURES_DIR .. "/concepts/radium.jpg",
     image_formats = { "jpg", "jpeg", "png", "bmp", "webp", "jiff" },
     recursive = true,
     background = Beautiful.bg_normal,
@@ -26,14 +24,13 @@ M._defaults = {
   },
   modules = {
     variables = {
-      icon_theme = util.get_current_icon_theme_name(),
+      icon_theme = factory.get_current_icon_theme_name(),
       terminal = functional.if_nil(environ.TERMINAL, "xterm"),
       editor = functional.if_nil(environ.EDITOR, "nano"),
       modkey = "Mod4",
     },
     titlebars = {
       theme = "tears",
-      style = "tears",
     },
     wibars = {
       style = "tears",

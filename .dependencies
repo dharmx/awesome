@@ -1,9 +1,19 @@
-bling
-inspect
-ldoc
-lua-path
-luafilesystem
-luaposix
-markdown
-penlight
-rubato
+#!/usr/bin/env sh
+
+packages="bling inspect ldoc lua-path luafilesystem luaposix markdown penlight rubato"
+
+case "$1" in
+  --install) 
+    for package in $packages; do
+      luarocks --local --server=https://luarocks.org/dev install "$package"
+    done
+    ;;
+  --help)
+    echo './.dependencies.sh --[_|install]'
+    ;;
+  *)
+    for package in $packages; do
+      echo "$package"
+    done
+    ;;
+esac

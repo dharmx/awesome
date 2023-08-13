@@ -1,12 +1,7 @@
--- Standard awesome library
 local Awful = require("awful")
--- Declarative object management
 local Ruled = require("ruled")
 
--- Rules
--- Rules to apply to new clients.
 Ruled.client.connect_signal("request::rules", function()
-  -- All clients will match this rule.
   Ruled.client.append_rule({
     id = "global",
     rule = {},
@@ -18,7 +13,6 @@ Ruled.client.connect_signal("request::rules", function()
     },
   })
 
-  -- Floating clients.
   Ruled.client.append_rule({
     id = "floating",
     rule_any = {
@@ -34,30 +28,21 @@ Ruled.client.connect_signal("request::rules", function()
         "veromix",
         "xtightvncviewer",
       },
-      -- Note that the name property shown in xprop might be set slightly after creation of the client
-      -- and the name shown there might not match defined rules here.
       name = {
-        "Event Tester", -- xev.
+        "Event Tester",
       },
       role = {
-        "AlarmWindow", -- Thunderbird's calendar.
-        "ConfigManager", -- Thunderbird's about:config.
-        "pop-up", -- e.g. Google Chrome's (detached) Developer Tools.
+        "AlarmWindow",
+        "ConfigManager",
+        "pop-up",
       },
     },
     properties = { floating = true },
   })
 
-  -- Add titlebars to normal clients and dialogs
   Ruled.client.append_rule({
     id = "titlebars",
     rule_any = { type = { "normal", "dialog" } },
     properties = { titlebars_enabled = true },
   })
-
-  -- Set Firefox to always map on the tag named "2" on screen 1.
-  -- ruled.client.append_rule {
-  --     rule       = { class = "Firefox"     },
-  --     properties = { screen = 1, tag = "2" }
-  -- }
 end)
