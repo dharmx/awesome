@@ -1,6 +1,6 @@
 local Awful = require("awful")
 
-local functional = require("core.functional")
+local mute = require("lib.functional").mute
 local enum = require("core.enum")
 local environ = enum.environ
 
@@ -139,24 +139,24 @@ return {
     modifiers = EMPTY,
     key = "XF86Mail",
     description = "Open mail client.",
-    on_press = functional.mute,
+    on_press = mute,
   },
   {
     modifiers = EMPTY,
     key = "Menu",
     description = "Menu.",
-    on_press = functional.mute,
+    on_press = mute,
   },
   {
     modifiers = EMPTY,
     key = "XF86PowerOff",
     description = "Powermenu.",
-    on_press = functional.mute,
+    on_press = mute,
   },
   {
     modifiers = EMPTY,
     key = "XF86Search",
     description = "Search.",
-    on_press = functional.mute,
+    on_press = mute,
   },
 }

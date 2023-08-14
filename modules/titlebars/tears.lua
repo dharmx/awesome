@@ -3,13 +3,14 @@ local M = {}
 local Awful = require("awful")
 local Wibox = require("wibox")
 local Beautiful = require("beautiful")
-local DPI = Beautiful.xresources.apply_dpi
 
-local std = require("core.std")
+local DPI = Beautiful.xresources.apply_dpi
+local U = require("lib.std")
+
 local enum = require("core.enum")
 local EMPTY = enum.modifiers.EMPTY
 
-M.buttons = std.table.map(Awful.button, {
+M.buttons = U.table.map(Awful.button, {
   {
     modifiers = EMPTY,
     button = 1,
@@ -28,7 +29,7 @@ M.buttons = std.table.map(Awful.button, {
   },
 })
 
-function M.initialize(node)
+function M.top(node)
   return {
     {
       {
@@ -67,6 +68,43 @@ function M.initialize(node)
       layout = Wibox.layout.fixed.horizontal,
     },
     layout = Wibox.layout.align.horizontal,
+  }
+end
+
+function M.left(node)
+  return {
+    {
+      {
+        Awful.titlebar.widget.iconwidget(node),
+        margins = { top = DPI(13), right = DPI(13), left = DPI(13), bottom = DPI(1) },
+        widget = Wibox.container.margin,
+      },
+      buttons = M.buttons,
+      layout = Wibox.layout.fixed.vertical,
+    },
+    {
+      buttons = M.buttons,
+      layout = Wibox.layout.flex.vertical,
+    },
+    {
+      {
+        Awful.titlebar.widget.minimizebutton(node),
+        widget = Wibox.container.margin,
+        margins = { top = DPI(5), right = DPI(13), left = DPI(13), bottom = DPI(3) },
+      },
+      {
+        Awful.titlebar.widget.maximizedbutton(node),
+        margins = { top = DPI(5), right = DPI(13), left = DPI(13), bottom = DPI(3) },
+        widget = Wibox.container.margin,
+      },
+      {
+        Awful.titlebar.widget.closebutton(node),
+        margins = { top = DPI(5), right = DPI(13), left = DPI(13), bottom = DPI(13) },
+        widget = Wibox.container.margin,
+      },
+      layout = Wibox.layout.fixed.vertical,
+    },
+    layout = Wibox.layout.align.vertical,
   }
 end
 

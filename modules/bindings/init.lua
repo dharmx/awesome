@@ -1,16 +1,16 @@
 local Awful = require("awful")
 local Gears = require("gears")
 local Filesystem = require("lfs")
+local U = require("lib.std")
 
 local factory = require("core.util.factory")
-local std = require("core.std")
 local excludes = { ".", "..", "init.lua", "mouse.lua" }
 
 for file in Filesystem.dir(Gears.filesystem.get_configuration_dir() .. "/modules/bindings") do
   if not Gears.table.hasitem(excludes, file) then
     local stem = factory.stem(file)
     local bindings = require("modules.bindings." .. stem)
-    if std.table.is_list(bindings) then bindings = { [stem] = bindings } end
+    if U.table.is_list(bindings) then bindings = { [stem] = bindings } end
     factory.apply_bindings(bindings, false, Awful.keyboard.append_global_keybinding)
   end
 end

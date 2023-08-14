@@ -2,9 +2,10 @@ local M = {}
 
 local Awful = require("awful")
 local Wibox = require("wibox")
-local DPI = require("beautiful.xresources").apply_dpi
 
-local std = require("core.std")
+local DPI = require("beautiful.xresources").apply_dpi
+local U = require("lib.std")
+
 local enum = require("core.enum")
 local EMPTY = enum.modifiers.EMPTY
 local SUPER = enum.modifiers.SUPER
@@ -16,7 +17,7 @@ M.promptbox = Awful.widget.prompt()
 function M.layoutbox(local_screen)
   return {
     screen = local_screen,
-    buttons = std.table.map(Awful.button, {
+    buttons = U.table.map(Awful.button, {
       {
         modifiers = EMPTY,
         button = 1,
@@ -45,7 +46,7 @@ function M.taglist(local_screen)
   return {
     screen = local_screen,
     filter = Awful.widget.taglist.filter.all,
-    buttons = std.table.map(Awful.button, {
+    buttons = U.table.map(Awful.button, {
       {
         modifiers = EMPTY,
         button = 1,
@@ -84,7 +85,7 @@ function M.tasklist(local_screen)
   return {
     screen = local_screen,
     filter = Awful.widget.tasklist.filter.currenttags,
-    buttons = std.table.map(Awful.button, {
+    buttons = U.table.map(Awful.button, {
       {
         modifiers = EMPTY,
         button = 1,
@@ -116,14 +117,14 @@ function M.wibox(local_screen)
     screen = local_screen,
     widget = {
       layout = Wibox.layout.align.horizontal,
-      { -- Left widgets
+      {
         layout = Wibox.layout.fixed.horizontal,
         mylauncher,
         local_screen.mytaglist,
         local_screen.mypromptbox,
       },
-      local_screen.mytasklist, -- Middle widget
-      { -- Right widgets
+      local_screen.mytasklist,
+      {
         layout = Wibox.layout.fixed.horizontal,
         mykeyboardlayout,
         Wibox.widget.systray(),

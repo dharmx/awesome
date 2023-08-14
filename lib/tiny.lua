@@ -1,6 +1,9 @@
 local Tiny = {}
 Tiny.__index = Tiny
 
+local Gears = require("gears")
+local U = require("lib.std")
+
 setmetatable(Tiny, {
   __call = function (class, ...)
     local self = setmetatable({}, class)
@@ -10,11 +13,6 @@ setmetatable(Tiny, {
 })
 
 -- Named colors and utils. {{{
-local Gears = require("gears")
-
-local std = require("core.std")
-local functional = require("core.functional")
-
 local named_colors = {
   aliceblue = "F0F8FF",
   antiquewhite = "FAEBD7",
@@ -636,9 +634,9 @@ Tiny.__tostring = function(self, _) return self:to_hex(true) end
 
 Tiny.__eq = function(self, o) return self.r == o.r and self.g == o.g and self.b == o.b end
 
-Tiny.__lt = function(self, o) return std.table.sum(self:to_rgb()) > std.table.sum(o:to_rgb()) end
+Tiny.__lt = function(self, o) return U.table.sum(self:to_rgb()) > U.table.sum(o:to_rgb()) end
 
-Tiny.__gt = function(self, o) return std.table.sum(self:to_rgb()) < std.table.sum(o:to_rgb()) end
+Tiny.__gt = function(self, o) return U.table.sum(self:to_rgb()) < U.table.sum(o:to_rgb()) end
 
 Tiny.__add = function(self, o)
   self.r = self.r + o.r

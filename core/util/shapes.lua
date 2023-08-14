@@ -1,6 +1,6 @@
 local M = {}
 
-local functional = require("core.functional")
+local if_nil = require("lib.functional").if_nil
 local Gears = require("gears")
 local DPI = require("beautiful.xresources").apply_dpi
 
@@ -47,7 +47,7 @@ function M.tears(radius, pattern, background)
 end
 
 function M.pacman(radius, pattern, mouth, background)
-  mouth = functional.if_nil(mouth, 0)
+  mouth = if_nil(mouth, 0)
   local width = DPI(30)
   local height = DPI(30)
   return Gears.surface.load_from_shape(width, height, function(context)

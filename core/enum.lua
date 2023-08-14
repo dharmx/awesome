@@ -2,8 +2,7 @@ local M = {}
 
 local Gears = require("gears")
 local PosixStdlib = require("posix.stdlib")
-
-local functional = require("core.functional")
+local if_nil = require("lib.functional").if_nil
 
 M.modifiers = {
   ALT = { "Mod1" },
@@ -25,7 +24,7 @@ end
 
 M.environ = setmetatable({}, {
   __index = function(self, key)
-    local value = functional.if_nil(rawget(self, key), os.getenv(key))
+    local value = if_nil(rawget(self, key), os.getenv(key))
     rawset(self, key, value)
     return value
   end,

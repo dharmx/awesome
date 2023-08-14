@@ -1,17 +1,17 @@
 local M = {}
 
-local Gears = require("gears")
 local Beautiful = require("beautiful")
+local Gears = require("gears")
+local U = require("lib.std")
 
-local functional = require("core.functional")
-local std = require("core.std")
+local if_nil = require("lib.functional").if_nil
 local factory = require("core.util.factory")
 local environ = require("core.enum").environ
 
 environ.AWESOME_THEMES_PATH = environ.XDG_CONFIG_HOME .. "/awesome/themes"
 M._defaults = {
   theme = "tears",
-  colors = "shore",
+  colors = "radium",
   background = "dark",
   wallpapers = {
     position = "maximized",
@@ -25,12 +25,14 @@ M._defaults = {
   modules = {
     variables = {
       icon_theme = factory.get_current_icon_theme_name(),
-      terminal = functional.if_nil(environ.TERMINAL, "xterm"),
-      editor = functional.if_nil(environ.EDITOR, "nano"),
+      terminal = if_nil(environ.TERMINAL, "xterm"),
+      editor = if_nil(environ.EDITOR, "nano"),
       modkey = "Mod4",
     },
     titlebars = {
+      enabled = true,
       theme = "tears",
+      resize = true,
     },
     wibars = {
       style = "tears",
@@ -43,11 +45,11 @@ M._defaults.modules.variables.editor_cmd = M._defaults.modules.variables.termina
 M._current = Gears.table.clone(M._defaults, true)
 
 function M.merge(options)
-  M._current = std.table.deep_extend("keep", functional.if_nil(options, {}), M._current)
+  M._current = U.table.deep_extend("keep", if_nil(options, {}), M._current)
   return M._current
 end
 
-function M.extend(options) return std.table.deep_extend("keep", functional.if_nil(options, {}), M._current) end
+function M.extend(options) return U.table.deep_extend("keep", if_nil(options, {}), M._current) end
 
 function M.get() return M._current end
 

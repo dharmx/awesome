@@ -8,6 +8,7 @@ myawesomemenu = {
   { "Restart", awesome.restart },
   { "Quit", function() awesome.quit(0) end },
   { "Terminal", function() Awful.spawn(terminal) end },
+  { "Menu", function() Menu.show() end },
 }
 
 mymainmenu = Awful.menu({
@@ -16,5 +17,9 @@ mymainmenu = Awful.menu({
   },
 })
 
-mylauncher = Awful.widget.launcher({ image = Beautiful.awesome_icon, menu = mymainmenu })
+mylauncher = Awful.widget.launcher({
+  image = Beautiful.awesome_icon,
+  menu = mymainmenu
+})
+
 Menu.utils.terminal = terminal

@@ -7,7 +7,7 @@ local Bling = require("bling")
 
 local config = require("core.config")
 local factory = require("core.util.factory")
-local functional = require("core.functional")
+local if_nil = require("lib.functional").if_nil
 
 function M.setup(options)
   require("awful.hotkeys_popup.keys")
@@ -21,7 +21,7 @@ function M.setup(options)
   end
   Bling.module.flash_focus.enable()
   local wallpapers = Gears.table.clone(config.get().wallpapers, true)
-  wallpapers.wallpaper = functional.if_nil(wallpapers.wallpaper, Beautiful.wallpaper)
+  wallpapers.wallpaper = if_nil(wallpapers.wallpaper, Beautiful.wallpaper)
   Bling.module.wallpaper.setup(wallpapers)
 end
 
