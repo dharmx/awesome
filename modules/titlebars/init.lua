@@ -12,16 +12,19 @@ local function title(node, position)
 end
 
 client.connect_signal("request::titlebars", function(node)
-  title(node, "left"):setup(theme.left(node, colors))
-  if config.modules.titlebars.resize then
+  if config.modules.titlebars.snap then
+    title(node, "left"):setup(theme.left(node, colors))
     title(node, "top"):setup(theme.top(node, colors))
     Awful.titlebar.hide(node, "top")
+  else
+    -- prefers sloppy-toppy
+    title(node, "top"):setup(theme.top(node, colors))
   end
 end)
 
-if config.modules.titlebars.resize then
+if config.modules.titlebars.snap then
   client.connect_signal("request::geometry", function(node, _, geometry)
-    if geometry.width < 900 then
+    if geometry.width < config.modules.titlebars.snap_width then
       Awful.titlebar.hide(node, "left")
       Awful.titlebar.show(node, "top")
     else

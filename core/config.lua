@@ -13,6 +13,7 @@ M._defaults = {
   theme = "tears",
   colors = "radium",
   background = "dark",
+  flash = false,
   wallpapers = {
     position = "maximized",
     offset = { x = -130, y = 0 },
@@ -31,8 +32,9 @@ M._defaults = {
     },
     titlebars = {
       enabled = true,
-      theme = "tears",
-      resize = true,
+      theme = "pacman",
+      snap = false,
+      snap_width = 900,
     },
     wibars = {
       style = "tears",

@@ -1,32 +1,61 @@
 local M = {}
 
 local shapes = require("core.util.shapes")
-local if_nil = require("lib.functional").if_nil
 
 local Rubato = require("rubato")
 local Awful = require("awful")
-local U = require("lib.std")
+local GearsTime = require("gears.timer")
 
-function M.pacman(radius, pattern, buttons, options)
-  assert(radius and pattern)
-  buttons = if_nil(buttons, {})
-  options = if_nil(options, {})
-  options = U.table.deep_extend("keep", options, { resize = true, visible = true })
-  options.image = shapes.pacman(radius, pattern)
-  options.buttons = U.table.is_list(buttons) and U.table.map(function(button)
-    return Awful.button(button)
-  end, buttons) or { Awful.button(buttons) }
+local F = require("lib.functional")
+local T = require("lib.tiny")
 
-  local button = Awful.widget.button(options)
-  local timed = Rubato.timed({
-    duration = 0.3,
-    subscribed = function(position)
-      button:set_image(shapes.pacman(radius, pattern, -position))
-    end,
-  })
+M.pacman = setmetatable({}, {
+  __call = function(_, radius, pattern)
+    assert(radius, "pacman needs a radius")
+    pattern = F.if_nil(pattern, T("yellow"))
+    local button = Awful.widget.button({
+      resize = true,
+      visible = true,
+      image = shapes.pacman(radius, pattern),
+    })
 
-  button:connect_signal("mouse::enter", function() timed.target = 0.5 end)
-  button:connect_signal("mouse::leave", function() timed.target = 0 end)
+    button.timed = Rubato.timed({
+      duration = 0.3,
+      subscribed = function(position)
+        button:set_image(shapes.pacman(radius, pattern, -position))
+      end,
+    })
+
+    button:connect_signal("mouse::enter", function() button.timed.target = 0.5 end)
+    button:connect_signal("mouse::leave", function() button.timed.target = 0 end)
+    return button
+  end,
+})
+
+function M.pacman.minimize(node, radius, pattern)
+  local button = M.pacman(radius, pattern)
+  button:connect_signal("button::press", function()
+    ---@see https://github.com/awesomeWM/awesome/issues/3716
+    GearsTime.delayed_call(function()
+      node.minimized = true
+    end, 0.05)
+  end)
+  return button
+end
+
+function M.pacman.maximize(node, radius, pattern)
+  local button = M.pacman(radius, pattern)
+  button:connect_signal("button::press", function()
+    node.maximized = not node.maximized
+  end)
+  return button
+end
+
+function M.pacman.close(node, radius, pattern)
+  local button = M.pacman(radius, pattern)
+  button:connect_signal("button::press", function()
+    node:kill()
+  end)
   return button
 end
 
