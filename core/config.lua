@@ -30,15 +30,9 @@ M._defaults = {
       editor = if_nil(environ.EDITOR, "nano"),
       modkey = "Mod4",
     },
-    titlebars = {
-      enabled = true,
-      theme = "pacman",
-      snap = false,
-      snap_width = 900,
-    },
+    titlebars_theme = "tears",
     wibars = {
       style = "tears",
-      tag = { "1", "2", "3", "4", "5", "6", "7", "8", "9" },
     },
   },
 }

@@ -1,9 +1,9 @@
 local T = require("lib.tiny")
 
 return {
-  auth = "shaunsingh",
+  auth = "shaunsingh/IBM",
   name = "oxocarbon",
-  source = "https://github.com/shaunsingh/oxocarbon.nvim",
+  source = "https://github.com/nyoom-engineering/base16-oxocarbon",
   background = {
     dark = {
       black = T("#161616"),
@@ -14,7 +14,7 @@ return {
       magenta = T("#BE95FF"),
       cyan = T("#08BDBA"),
       white = T("#DDE1E6"),
-      bblack = T("#393939"),
+      bblack = T("#262626"),
       bred = T("#EE5396"),
       bgreen = T("#42BE65"),
       byellow = T("#FF6F00"),

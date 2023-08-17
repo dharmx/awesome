@@ -41,4 +41,12 @@ return {
     description = "Show the BTOP.",
     on_press = { terminal, "-e", "btop" },
   },
+  {
+    modifiers = SUPER + SHIFT,
+    key = "d",
+    description = "Open screenshot popup.",
+    on_press = function()
+      require("core.util.helpers").screenshot()
+    end,
+  },
 }

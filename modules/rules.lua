@@ -1,8 +1,10 @@
+local U = require("lib.std")
+
 local Awful = require("awful")
 local Ruled = require("ruled")
 
-Ruled.client.connect_signal("request::rules", function()
-  Ruled.client.append_rule({
+local rules = {
+  {
     id = "global",
     rule = {},
     properties = {
@@ -11,9 +13,8 @@ Ruled.client.connect_signal("request::rules", function()
       screen = Awful.screen.preferred,
       placement = Awful.placement.no_overlap + Awful.placement.no_offscreen,
     },
-  })
-
-  Ruled.client.append_rule({
+  },
+  {
     id = "floating",
     rule_any = {
       instance = { "copyq", "pinentry" },
@@ -38,11 +39,16 @@ Ruled.client.connect_signal("request::rules", function()
       },
     },
     properties = { floating = true },
-  })
-
-  Ruled.client.append_rule({
+  },
+  {
     id = "titlebars",
     rule_any = { type = { "normal", "dialog" } },
     properties = { titlebars_enabled = true },
-  })
+  },
+}
+
+Ruled.client.connect_signal("request::rules", function()
+  U.table.foreachi(rules, function(_, rule)
+    Ruled.client.append_rule(rule)
+  end)
 end)

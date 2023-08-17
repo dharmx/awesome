@@ -10,7 +10,7 @@ local theme = {}
 local theme_path = Gears.filesystem.get_themes_dir() .. "tears"
 
 theme.icon_theme = config.icon_theme
-theme.font = "Nunito 10"
+theme.font = "Dosis 11"
 theme.titlebar_height = DPI(50)
 theme.wallpaper = theme_path .. "/background.png"
 
@@ -50,5 +50,26 @@ theme.titlebar_minimize_button_focus = shapes.tears(10, colors.bcyan)
 
 theme.flash_focus_start_opacity = 0.6
 theme.flash_focus_step = 0.01
+
+theme.tabbed_spawn_in_tab = false
+theme.tabbar_ontop = false
+theme.tabbar_radius = 0
+theme.tabbar_style = "modern"
+theme.tabbar_font = "Dosis 11"
+theme.tabbar_size = 45
+theme.tabbar_position = "bottom"
+theme.tabbar_bg_normal = colors.black:lighten(2):to_hex(true)
+theme.tabbar_fg_normal = colors.white:to_hex(true)
+theme.tabbar_bg_focus = colors.black:to_hex(true)
+theme.tabbar_fg_focus = colors.white:to_hex(true)
+theme.tabbar_bg_focus_inactive = colors.bblack:lighten(2):brighten(2):to_hex(true)
+theme.tabbar_fg_focus_inactive = colors.white:darken(2):to_hex(true)
+theme.tabbar_bg_normal_inactive = colors.black:lighten(2):brighten(2):to_hex(true)
+theme.tabbar_fg_normal_inactive = colors.white:darken(2):to_hex(true)
+theme.tabbar_disable = false
+
+theme.tabbar_color_close = colors.red:to_hex(true)
+theme.tabbar_color_min = colors.cyan:to_hex(true)
+theme.tabbar_color_float = colors.magenta:to_hex(true)
 
 return theme

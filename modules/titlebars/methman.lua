@@ -38,6 +38,7 @@ function M.top(node, colors)
         top = DPI(14),
         bottom = DPI(14),
         left = DPI(13),
+        right = DPI(5),
         widget = Wibox.container.margin,
       },
       {
@@ -55,7 +56,7 @@ function M.top(node, colors)
     },
     {
       {
-        buttons.pacman.minimize(node, 15, colors.cyan),
+        buttons.methman.minimize(node, 15, colors.cyan),
         widget = Wibox.container.margin,
         top = DPI(14),
         bottom = DPI(14),
@@ -63,7 +64,7 @@ function M.top(node, colors)
         right = DPI(2),
       },
       {
-        buttons.pacman.maximize(node, 15, colors.magenta),
+        buttons.methman.maximize(node, 15, colors.magenta),
         top = DPI(14),
         bottom = DPI(14),
         left = DPI(5),
@@ -71,7 +72,7 @@ function M.top(node, colors)
         widget = Wibox.container.margin,
       },
       {
-        buttons.pacman.close(node, 15, colors.red),
+        buttons.methman.close(node, 15, colors.red),
         top = DPI(14),
         bottom = DPI(14),
         left = DPI(5),
