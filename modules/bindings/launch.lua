@@ -3,6 +3,7 @@ local enum = require("core.enum")
 local SUPER = enum.modifiers.SUPER
 local CTRL  = enum.modifiers.CTRL
 local SHIFT  = enum.modifiers.SHIFT
+local scratch = require("core.util.scratch")
 
 return {
   {
@@ -15,7 +16,9 @@ return {
     modifiers = SUPER + CTRL,
     key = "Return",
     description = "Open a playground tmux session.",
-    on_press = { terminal, "-e", "tmux", "new-session", "-A", "-s", "playground" },
+    on_press = function()
+      scratch.new(terminal .. " --class=scratch-tmux -e tmux new-session -A -s playground", "scratch-tmux"):toggle()
+    end,
   },
   {
     modifiers = SUPER,

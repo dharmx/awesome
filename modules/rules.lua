@@ -17,7 +17,7 @@ local rules = {
   {
     id = "floating",
     rule_any = {
-      instance = { "copyq", "pinentry" },
+      instance = { "pinentry" },
       class = {
         "Arandr",
         "Blueman-manager",
