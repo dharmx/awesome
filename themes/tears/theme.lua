@@ -1,5 +1,5 @@
 local config = require("core.config").get()
-local shapes = require("core.util.shapes")
+local shapes = require("core.components.shapes")
 local colors = require("colors." .. config.colors).background[config.background]
 local DPI = require("beautiful.xresources").apply_dpi
 

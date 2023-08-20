@@ -14,9 +14,15 @@ function M.circle(radius, pattern, background)
   end, pattern and pattern:to_hex(true), background and background:to_hex(true))
 end
 
-function M.partial_squircle(width, height, rate, pattern, delta, background)
+function M.partial_squircle_left(width, height, rate, pattern, delta, background)
   return Gears.surface.load_from_shape(width, height, function(context)
-    Gears.shape.partial_squircle(context, width, height, false, true, false, false, rate, delta)
+    Gears.shape.partial_squircle(context, width, height, true, false, true, false, rate, delta)
+  end, pattern and pattern:to_hex(true), background and background:to_hex(true))
+end
+
+function M.partial_squircle_right(width, height, rate, pattern, delta, background)
+  return Gears.surface.load_from_shape(width, height, function(context)
+    Gears.shape.partial_squircle(context, width, height, false, true, false, true, rate, delta)
   end, pattern and pattern:to_hex(true), background and background:to_hex(true))
 end
 

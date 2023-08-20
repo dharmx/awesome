@@ -1,12 +1,11 @@
 local M = {}
 
-local shapes = require("core.util.shapes")
-local factory = require("core.util.factory")
+local shapes = require("core.components.shapes")
+local factory = require("core.utils.factory")
 
 local Rubato = require("rubato")
 local Awful = require("awful")
 local GearsTime = require("gears.timer")
-local Naughty = require("naughty")
 
 local F = require("lib.functional")
 local T = require("lib.tiny")

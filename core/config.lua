@@ -5,7 +5,7 @@ local Gears = require("gears")
 local U = require("lib.std")
 
 local if_nil = require("lib.functional").if_nil
-local factory = require("core.util.factory")
+local factory = require("core.utils.factory")
 local environ = require("core.enum").environ
 
 environ.AWESOME_THEMES_PATH = environ.XDG_CONFIG_HOME .. "/awesome/themes"
@@ -17,9 +17,9 @@ M._defaults = {
   wallpapers = {
     position = "maximized",
     offset = { x = -130, y = 0 },
-    wallpaper = environ.XDG_PICTURES_DIR .. "/concepts/radium.jpg",
     image_formats = { "jpg", "jpeg", "png", "bmp", "webp", "jiff" },
     recursive = true,
+    wallpaper = Gears.filesystem.get_themes_dir() .. "tears/background.png",
     background = Beautiful.bg_normal,
     ignore_aspect = false,
   },
@@ -31,9 +31,7 @@ M._defaults = {
       modkey = "Mod4",
     },
     titlebars_theme = "tears",
-    wibars = {
-      style = "tears",
-    },
+    bars_theme =  "tears",
   },
 }
 

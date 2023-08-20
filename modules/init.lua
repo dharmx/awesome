@@ -6,7 +6,7 @@ local Filesystem = require("lfs")
 local Bling = require("bling")
 
 local config = require("core.config")
-local factory = require("core.util.factory")
+local factory = require("core.utils.factory")
 local if_nil = require("lib.functional").if_nil
 
 function M.setup(options)

@@ -3,7 +3,7 @@ local enum = require("core.enum")
 local SUPER = enum.modifiers.SUPER
 local CTRL  = enum.modifiers.CTRL
 local SHIFT  = enum.modifiers.SHIFT
-local scratch = require("core.util.scratch")
+local scratch = require("core.components.scratch")
 
 return {
   {
@@ -49,7 +49,7 @@ return {
     key = "d",
     description = "Open screenshot popup.",
     on_press = function()
-      require("core.util.helpers").screenshot()
+      require("core.utils.helpers").screenshot()
     end,
   },
 }

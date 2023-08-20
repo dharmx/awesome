@@ -7,7 +7,7 @@ local Naughty = require("naughty")
 local DPI = require("beautiful.xresources").apply_dpi
 local Gears = require("gears")
 
-local buttons = require("core.util.buttons")
+local buttons = require("core.components.buttons")
 local enum = require("core.enum")
 local SUPER = enum.modifiers.SUPER
 

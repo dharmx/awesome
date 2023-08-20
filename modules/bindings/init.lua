@@ -3,7 +3,7 @@ local Gears = require("gears")
 local Filesystem = require("lfs")
 local U = require("lib.std")
 
-local factory = require("core.util.factory")
+local factory = require("core.utils.factory")
 local excludes = { ".", "..", "init.lua", "mouse.lua" }
 
 for file in Filesystem.dir(Gears.filesystem.get_configuration_dir() .. "/modules/bindings") do

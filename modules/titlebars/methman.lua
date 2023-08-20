@@ -7,7 +7,7 @@ local Beautiful = require("beautiful")
 local DPI = Beautiful.xresources.apply_dpi
 local U = require("lib.std")
 
-local buttons = require("core.util.buttons")
+local buttons = require("core.components.buttons")
 local enum = require("core.enum")
 local EMPTY = enum.modifiers.EMPTY
 

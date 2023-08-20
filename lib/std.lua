@@ -3,6 +3,13 @@ local M = {}
 M.string = {}
 M.table = {}
 
+function M.table.any(f, t)
+  for _, i in ipairs(t) do
+    if f(i) then return true, i end
+  end
+  return false, nil
+end
+
 function M.table.map(f, t)
   local a = {}
   for _, v in ipairs(t) do table.insert(a, f(v)) end
