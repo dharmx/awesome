@@ -40,11 +40,23 @@ theme.menu_width = DPI(100)
 theme.titlebar_close_button_normal = shapes.tears(10, colors.bred)
 theme.titlebar_close_button_focus = shapes.tears(10, colors.red)
 
-theme.titlebar_maximized_button_normal_inactive = shapes.tears(10, colors.magenta:darken(5))
-theme.titlebar_maximized_button_focus_inactive = shapes.tears(10, colors.magenta)
-theme.titlebar_maximized_button_normal_active = shapes.tears(10, colors.bmagenta:darken(5))
-theme.titlebar_maximized_button_focus_active = shapes.tears(10, colors.bmagenta)
+theme.titlebar_maximized_button_normal = shapes.tears(10, colors.magenta)
+theme.titlebar_maximized_button_normal_active = shapes.tears(10, colors.magenta:darken(10))
+theme.titlebar_maximized_button_normal_active_hover = shapes.tears(10, colors.magenta)
+theme.titlebar_maximized_button_normal_active_press = shapes.tears(10, colors.bblue)
+theme.titlebar_maximized_button_normal_inactive = shapes.tears(10, colors.magenta:darken(10))
+theme.titlebar_maximized_button_normal_inactive_hover = shapes.tears(10, colors.magenta)
+theme.titlebar_maximized_button_normal_inactive_press = shapes.tears(10, colors.bblue)
 
+theme.titlebar_maximized_button_focus = shapes.tears(10, colors.magenta)
+theme.titlebar_maximized_button_focus_active = shapes.tears(10, colors.magenta:darken(10))
+theme.titlebar_maximized_button_focus_active_hover = shapes.tears(10, colors.magenta)
+theme.titlebar_maximized_button_focus_active_press = shapes.tears(10, colors.bblue)
+theme.titlebar_maximized_button_focus_inactive = shapes.tears(10, colors.magenta)
+theme.titlebar_maximized_button_focus_inactive_hover = shapes.tears(10, colors.magenta:darken(10))
+theme.titlebar_maximized_button_focus_inactive_press = shapes.tears(10, colors.magenta.bblue)
+
+theme.titlebar_minimize_button_normal_hover = shapes.tears(10, colors.cyan:darken(10))
 theme.titlebar_minimize_button_normal = shapes.tears(10, colors.cyan)
 theme.titlebar_minimize_button_focus = shapes.tears(10, colors.bcyan)
 
@@ -71,5 +83,9 @@ theme.tabbar_disable = false
 theme.tabbar_color_close = colors.red:to_hex(true)
 theme.tabbar_color_min = colors.cyan:to_hex(true)
 theme.tabbar_color_float = colors.magenta:to_hex(true)
+
+theme.bg_systray = "#0F1014"
+theme.systray_max_rows = 1
+theme.systray_icon_spacing = DPI(2)
 
 return theme

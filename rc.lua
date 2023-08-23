@@ -1,4 +1,3 @@
 pcall(require, "luarocks.loader")
-local Inspect = require("inspect")
-_G.Probe = function(...) print(Inspect.inspect(...)) end
+P = function(...) print(require("inspect").inspect(...)) end
 require("modules").setup()

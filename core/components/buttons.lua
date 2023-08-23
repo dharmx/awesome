@@ -10,7 +10,7 @@ local GearsTime = require("gears.timer")
 local F = require("lib.functional")
 local T = require("lib.tiny")
 
-M.smooth_button = function(icon_label, callback)
+function M.smooth_button(icon_label, callback)
   local IconFactory = factory.icon_factory(factory.get_current_icon_theme_name())
   local icon = IconFactory(icon_label, 512)
   local button = Awful.widget.button({

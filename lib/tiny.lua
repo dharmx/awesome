@@ -1,13 +1,12 @@
+---@diagnostic disable: param-type-mismatch
 local Tiny = {}
 Tiny.__index = Tiny
 
-local Gears = require("gears")
 local U = require("lib.std")
-
 setmetatable(Tiny, {
   __call = function (class, ...)
     local self = setmetatable({}, class)
-    self:_new(...)
+    self:new(...)
     return self
   end,
 })
@@ -172,25 +171,25 @@ local function limit(c, a, op)
   error("operation should be either i or, d", 5)
 end
 
-local function in_range(number, finish)
-  assert(number, "number should not be nil")
-  local temp = number
+local function in_range(n, max)
+  assert(n, "number should not be nil")
 
-  if type(number) == "string" and number:find("%.") and tonumber(number) == 1 then
-    number = tonumber(number) * 100 .. "%"
+  if type(n) == "string" and n:find("%.") and tonumber(n) == 1 then
+    n = tonumber(n) * 100 .. "%"
   end
 
-  if type(number) == "string" and number:find("%%") then
-    temp = (tonumber(number:sub(1, #number - 1)) * finish) / 100
+  if type(n) == "string" and n:find("%%") then
+    n = (tonumber(n:sub(1, #n - 1)) * max) / 100
   end
 
-  assert(temp >= 0 and temp <= finish, "number should be between 0-255/0-1/0-100")
-  return temp
+  if math.abs(n - max) < 0.000001 then return 1 end
+  assert(n >= 0 and n <= max, "number should be between 0-255/0-1/0-100")
+  return n
 end
 -- }}}
 
-function Tiny:_new(new)
-  assert(new, "new param cannot be nil.")
+function Tiny:new(new)
+  assert(new, "new param cannot be nil")
   if type(new) == "string" then new = new:sub(1, 1) == "#" and { hex = new } or { name = new } end
   local rgb = new
   if rgb.name then
@@ -238,7 +237,7 @@ function Tiny:to_float()
   local floating = {}
   for key, value in pairs(self:to_perc()) do
     local float_done = tonumber(value:sub(1, #value - 1)) / 100
-    floating[key] = float_done == 1 and "1.0" or string.format("%.2f", float_done)
+    floating[key] = float_done
   end
   return floating
 end
@@ -246,7 +245,7 @@ end
 function Tiny:to_hex(prefix)
   local prefix_sym = prefix and "#" or ""
   local function callback(item) return item:len() == 1 and item:rep(2) or item end
-  local hex_tbl = Gears.table.map(callback, {
+  local hex_tbl = U.table.map(callback, {
     string.format("%02X", self.r),
     string.format("%02X", self.g),
     string.format("%02X", self.b),
@@ -265,22 +264,23 @@ function Tiny:to_hsl(unit)
 
   local max = math.max(r, g, b)
   local min = math.min(r, g, b)
-  local h = (max + min) / 2
-  local l = h
-  local s = h
+
+  local h
+  local s
+  local l = (max + min) / 2
 
   if max == min then
     h = 0
     s = 0
   else
-    local diff = max - min
-    s = l > 0.5 and diff / (2 - max - min) or diff / (max + min)
+    local d = max - min
+    s = l > 0.5 and d / (2 - max - min) or d / (max + min)
     if max == r then
-      h = (g - b) / diff + (g < b and 6 or 0)
-    elseif max == self.g then
-      h = (b - r) / diff + 2
+      h = (g - b) / d + (g < b and 6 or 0)
+    elseif max == g then
+      h = (b - r) / d + 2
     elseif max == b then
-      h = (r - g) / diff + 4
+      h = (r - g) / d + 4
     end
     h = h / 6
   end
@@ -373,7 +373,7 @@ function Tiny:lighten(a)
 end
 
 function Tiny:darken(a)
-  a = a == 0 and 0 or (a or 10)
+  a = a == 0 and 0 or a or 10
   local hsl = self:to_hsl()
   hsl.l = hsl.l - a / 100
   hsl.l = clamp(hsl.l)
@@ -603,17 +603,17 @@ function Tiny.rand_color()
   })
 end
 
+function Tiny.hue2rgb(p, q, t)
+  if t < 0 then t = t + 1 end
+  if t > 1 then t = t - 1 end
+  if t < 1 / 6 then return p + (q - p) * 6 * t end
+  if t < 1 / 2 then return q end
+  if t < 2 / 3 then return p + (q - p) * (2 / 3 - t) * 6 end
+  return p
+end
+
 function Tiny.hsl2rgb(h, s, l)
   local rgb = {}
-
-  local function hue2rgb(p, q, t)
-    if t < 0 then t = t + 1 end
-    if t > 1 then t = t - 1 end
-    if t < 1 / 6 then return p + (q - p) * 6 * t end
-    if t < 1 / 2 then return q end
-    if t < 2 / 3 then return p + (q - p) * (2 / 3 - t) * 6 end
-    return p
-  end
 
   if s == 0 then
     rgb.r = l
@@ -622,9 +622,9 @@ function Tiny.hsl2rgb(h, s, l)
   else
     local q = l < 0.5 and l * (1 + s) or l + s - l * s
     local p = 2 * l - q
-    rgb.r = hue2rgb(p, q, h + 1 / 3)
-    rgb.g = hue2rgb(p, q, h)
-    rgb.b = hue2rgb(p, q, h - 1 / 3)
+    rgb.r = Tiny.hue2rgb(p, q, h + 1 / 3)
+    rgb.g = Tiny.hue2rgb(p, q, h)
+    rgb.b = Tiny.hue2rgb(p, q, h - 1 / 3)
   end
 
   return { r = math.ceil(rgb.r * 255), g = math.ceil(rgb.g * 255), b = math.ceil(rgb.b * 255) }

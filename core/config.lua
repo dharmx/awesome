@@ -16,7 +16,6 @@ M._defaults = {
   flash = false,
   wallpapers = {
     position = "maximized",
-    offset = { x = -130, y = 0 },
     image_formats = { "jpg", "jpeg", "png", "bmp", "webp", "jiff" },
     recursive = true,
     wallpaper = Gears.filesystem.get_themes_dir() .. "tears/background.png",
