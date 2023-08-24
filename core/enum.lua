@@ -2,7 +2,6 @@ local M = {}
 
 local Gears = require("gears")
 local PosixStdlib = require("posix.stdlib")
-local if_nil = require("lib.functional").if_nil
 
 M.modifiers = {
   ALT = { "Mod1" },

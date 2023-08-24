@@ -14,7 +14,17 @@
         "mylauncher",
         "mykeyboardlayout",
         "mytextclock",
-        "tag"
+        "tag",
+        "trim",
+        "map",
+        "filter",
+        "split",
+        "any",
+        "all",
+        "slice",
+        "zip",
+        "if_nil",
+        "sum"
       ],
       "Lua.workspace.library": [
         "/usr/share/awesome/lib",

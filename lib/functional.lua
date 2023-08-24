@@ -1,3 +1,4 @@
+---Supercharged by Neovim.
 local M = {}
 
 function M.mute() end

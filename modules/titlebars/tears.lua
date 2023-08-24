@@ -3,14 +3,12 @@ local M = {}
 local Awful = require("awful")
 local Wibox = require("wibox")
 local Beautiful = require("beautiful")
-
 local DPI = Beautiful.xresources.apply_dpi
-local U = require("lib.std")
 
 local enum = require("core.enum")
 local EMPTY = enum.modifiers.EMPTY
 
-M.buttons = U.table.map(Awful.button, {
+M.buttons = map(Awful.button, {
   {
     modifiers = EMPTY,
     button = 1,

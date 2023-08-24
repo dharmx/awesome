@@ -1,17 +1,15 @@
 ---@diagnostic disable: undefined-field
 local M = {}
 
-local F = require("lib.functional")
 local Gio = require("lgi").Gio
-
 local Wibox = require("wibox")
 local Timer = require("gears.timer")
 
 function M.poll_file(filepath, interval, callback, base_widget)
   assert(filepath, "filepath cannot be empty.")
-  interval = F.if_nil(interval, 5)
-  base_widget = F.if_nil(base_widget, Wibox.widget.textbox())
-  callback = F.if_nil(callback, function(widget, data) widget:set_text(data) end)
+  interval = if_nil(interval, 5)
+  base_widget = if_nil(base_widget, Wibox.widget.textbox())
+  callback = if_nil(callback, function(widget, data) widget:set_text(data) end)
 
   local file = Gio.File.new_for_path(filepath)
   assert(file:query_exists(), "filepath must exist.")

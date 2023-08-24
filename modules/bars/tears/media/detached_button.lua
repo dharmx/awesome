@@ -2,7 +2,6 @@ local M = {}
 local Wibox = require("wibox")
 local Gears = require("gears")
 local DPI = require("beautiful.xresources").apply_dpi
-local F = require("lib.functional")
 
 function M.new(options)
   options = F.if_nil(options, {})

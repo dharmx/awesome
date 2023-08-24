@@ -1,7 +1,15 @@
+---Better utility functions. Supercharged by Neovim.
 local M = {}
 
 M.string = {}
 M.table = {}
+
+function M.table.all(f, t)
+  for _, i in ipairs(t) do
+    if f(i) then return false, i end
+  end
+  return true, nil
+end
 
 function M.table.any(f, t)
   for _, i in ipairs(t) do

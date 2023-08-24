@@ -1,9 +1,8 @@
 local M = {}
 local Wibox = require("wibox")
-local F = require("lib.functional")
 
 function M.slash(options)
-  options = F.if_nil(options, {})
+  options = if_nil(options, {})
   options.symbol = "/"
   return {
     {

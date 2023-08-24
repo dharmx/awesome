@@ -1,5 +1,3 @@
-local U = require("lib.std")
-
 local Awful = require("awful")
 local Ruled = require("ruled")
 

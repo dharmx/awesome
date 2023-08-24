@@ -4,21 +4,18 @@ local Path = require("path")
 
 local IconTheme = require("menubar.icon_theme")
 local Gio = require("lgi").Gio
-local U = require("lib.std")
 
-local if_nil = require("lib.functional").if_nil
-
-function M.stem(path) return U.string.split(Path.basename(path), ".", { plain = true })[1] end
+function M.stem(path) return split(Path.basename(path), ".", { plain = true })[1] end
 
 function M.apply_bindings(grouped_bindings, mouse, callback)
   local Awful = require("awful")
   local GT = require("gears.table")
 
   local function spawn_wrap(cmd) return function() Awful.spawn(cmd) end end
-  mouse = if_nil(mouse, false)
+  mouse = F.if_nil(mouse, false)
   local wrapped_types = { "string", "table" }
 
-  U.table.foreach(if_nil(grouped_bindings, {}), function(group, bindings)
+  U.table.foreach(F.if_nil(grouped_bindings, {}), function(group, bindings)
     U.table.foreachi(bindings, function(_, binding)
       binding.group = group
       if GT.hasitem(wrapped_types, type(binding.on_press)) then
@@ -60,7 +57,7 @@ function M.resource_factory()
   local resource_path = GFS.get_configuration_dir() .. "resources"
   local function get_file(filename)
     local path = string.format("%s/%s.", resource_path, filename)
-    local _, value = U.table.any(function(extension)
+    local _, value = any(function(extension)
       return Path.isfile(path .. extension)
     end, { "svg", "png", "jpeg", "jpg" })
     return path .. value

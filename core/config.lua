@@ -2,9 +2,7 @@ local M = {}
 
 local Beautiful = require("beautiful")
 local Gears = require("gears")
-local U = require("lib.std")
 
-local if_nil = require("lib.functional").if_nil
 local factory = require("core.utils.factory")
 local environ = require("core.enum").environ
 

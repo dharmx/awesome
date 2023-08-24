@@ -1,15 +1,15 @@
 local M = {}
+
 local Wibox = require("wibox")
 local Gears = require("gears")
-local F = require("lib.functional")
 local DPI = require("beautiful.xresources").apply_dpi
 
 function M.new(options)
-  options = F.if_nil(options, {})
-  options.icon = F.if_nil(options.icon, {})
-  options.label = F.if_nil(options.label, {})
-  options.collapse = F.if_nil(options.collapse, {})
-  options.signal = F.if_nil(options.signal, {})
+  options = if_nil(options, {})
+  options.icon = if_nil(options.icon, {})
+  options.label = if_nil(options.label, {})
+  options.collapse = if_nil(options.collapse, {})
+  options.signal = if_nil(options.signal, {})
 
   local dropdown = Wibox.container.background(nil, nil, function(context, width, height)
     Gears.shape.rounded_rect(context, width, height, DPI(20))

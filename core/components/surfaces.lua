@@ -1,6 +1,5 @@
 local M = {}
 
-local if_nil = require("lib.functional").if_nil
 local Gears = require("gears")
 local DPI = require("beautiful.xresources").apply_dpi
 

@@ -2,12 +2,11 @@ local M = {}
 local Wibox = require("wibox")
 local Awful = require("awful")
 
-local U = require("lib.std")
 local enum = require("core.enum")
 local EMPTY = enum.modifiers.EMPTY
 local SUPER = enum.modifiers.SUPER
 
-M.buttons = U.table.map(Awful.button, {
+M.buttons = map(Awful.button, {
   {
     modifiers = EMPTY,
     button = 1,

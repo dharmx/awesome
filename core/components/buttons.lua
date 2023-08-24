@@ -1,14 +1,11 @@
 local M = {}
 
-local shapes = require("core.components.shapes")
+local surfaces = require("core.components.surfaces")
 local factory = require("core.utils.factory")
 
 local Rubato = require("rubato")
 local Awful = require("awful")
 local GearsTime = require("gears.timer")
-
-local F = require("lib.functional")
-local T = require("lib.tiny")
 
 function M.smooth_button(icon_label, callback)
   local IconFactory = factory.icon_factory(factory.get_current_icon_theme_name())
@@ -29,13 +26,13 @@ M.pacman = setmetatable({}, {
     local button = Awful.widget.button({
       resize = true,
       visible = true,
-      image = shapes.pacman(radius, pattern),
+      image = surfaces.pacman(radius, pattern),
     })
 
     button.timed = Rubato.timed({
       duration = 0.3,
       subscribed = function(position)
-        button:set_image(shapes.pacman(radius, pattern, -position))
+        button:set_image(surfaces.pacman(radius, pattern, -position))
       end,
     })
 
@@ -75,12 +72,12 @@ M.methman = setmetatable({}, {
     local button = Awful.widget.button({
       resize = true,
       visible = true,
-      image = shapes.pacman(radius, pattern),
+      image = surfaces.pacman(radius, pattern),
     })
 
     local timed = Rubato.timed({ awestore_compat = true, duration = 0.3 })
     timed:subscribe(function(position)
-      button:set_image(shapes.pacman(radius, pattern, -position))
+      button:set_image(surfaces.pacman(radius, pattern, -position))
     end)
     timed.ended:subscribe(function(position)
       if position == 0.5 then

@@ -1,8 +1,8 @@
+---Ported from https://github.com/bgrins/TinyColor.
 ---@diagnostic disable: param-type-mismatch
 local Tiny = {}
 Tiny.__index = Tiny
 
-local U = require("lib.std")
 setmetatable(Tiny, {
   __call = function (class, ...)
     local self = setmetatable({}, class)
@@ -245,7 +245,7 @@ end
 function Tiny:to_hex(prefix)
   local prefix_sym = prefix and "#" or ""
   local function callback(item) return item:len() == 1 and item:rep(2) or item end
-  local hex_tbl = U.table.map(callback, {
+  local hex_tbl = map(callback, {
     string.format("%02X", self.r),
     string.format("%02X", self.g),
     string.format("%02X", self.b),
@@ -634,9 +634,9 @@ Tiny.__tostring = function(self, _) return self:to_hex(true) end
 
 Tiny.__eq = function(self, o) return self.r == o.r and self.g == o.g and self.b == o.b end
 
-Tiny.__lt = function(self, o) return U.table.sum(self:to_rgb()) > U.table.sum(o:to_rgb()) end
+Tiny.__lt = function(self, o) return sum(self:to_rgb()) > sum(o:to_rgb()) end
 
-Tiny.__gt = function(self, o) return U.table.sum(self:to_rgb()) < U.table.sum(o:to_rgb()) end
+Tiny.__gt = function(self, o) return sum(self:to_rgb()) < sum(o:to_rgb()) end
 
 Tiny.__add = function(self, o)
   self.r = self.r + o.r
