@@ -28,7 +28,7 @@ M.buttons = map(Awful.button, {
   },
 })
 
-function M.top(node, colors)
+function M.top(node)
   return {
     {
       {
@@ -53,7 +53,7 @@ function M.top(node, colors)
     },
     {
       {
-        buttons.pacman.minimize(node, 15, colors.cyan),
+        buttons.methman.minimize(node, 15, Beautiful.titlebar_pacman_minimize),
         widget = Wibox.container.margin,
         top = DPI(14),
         bottom = DPI(14),
@@ -61,7 +61,7 @@ function M.top(node, colors)
         right = DPI(2),
       },
       {
-        buttons.pacman.maximize(node, 15, colors.magenta),
+        buttons.methman.maximize(node, 15, Beautiful.titlebar_pacman_maximize),
         top = DPI(14),
         bottom = DPI(14),
         left = DPI(5),
@@ -69,7 +69,7 @@ function M.top(node, colors)
         widget = Wibox.container.margin,
       },
       {
-        buttons.pacman.close(node, 15, colors.red),
+        buttons.methman.close(node, 15, Beautiful.titlebar_pacman_close),
         top = DPI(14),
         bottom = DPI(14),
         left = DPI(5),

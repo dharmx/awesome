@@ -1,6 +1,10 @@
 local M = {}
+
 local Wibox = require("wibox")
 local Awful = require("awful")
+local Beautiful = require("beautiful")
+local DPI = Beautiful.xresources.apply_dpi
+local Resource = require("core.utils.factory").resource_factory()
 
 local enum = require("core.enum")
 local EMPTY = enum.modifiers.EMPTY
@@ -43,71 +47,57 @@ M.buttons = map(Awful.button, {
   },
 })
 
-function M.new(options)
+local function update_state(imagebox, tag)
+  local clients = #tag:clients()
+  if clients > 0 then
+    if Awful.screen.focused().selected_tag.index == tag.index then
+      imagebox.image = Resource.circle
+      imagebox.stylesheet = string.format("*{fill:%s;}", Beautiful.taglist_bg_focus)
+      return
+    end
+    imagebox.image = Resource.circle_dashed
+    imagebox.stylesheet = string.format("*{fill:%s;}", Beautiful.taglist_bg_occupied)
+  elseif clients == 0 then
+    if Awful.screen.focused().selected_tag.index == tag.index then
+      imagebox.image = Resource.circle
+      imagebox.stylesheet = string.format("*{fill:%s;}", Beautiful.taglist_bg_focus)
+      return
+    end
+    imagebox.image = Resource.circle
+    imagebox.stylesheet = string.format("*{fill:%s;}", Beautiful.taglist_bg_empty)
+  else
+    imagebox.image = Resource.warning_circle
+    imagebox.stylesheet = string.format("*{fill:%s;}", Beautiful.taglist_bg_urgent)
+  end
+end
+
+function M.new(local_screen)
   return {
-    screen = options.screen,
+    screen = local_screen,
     filter = Awful.widget.taglist.filter.all,
-    style = {
-    },
-    layout = {
-      layout = Wibox.layout.fixed.horizontal,
-    },
+    layout = Wibox.layout.fixed.horizontal,
     widget_template = {
       {
         {
-          {
-            {
-              {
-                id = "index_role",
-                widget = Wibox.widget.textbox,
-              },
-              margins = 4,
-              widget = Wibox.container.margin,
-            },
-            widget = Wibox.container.background,
-          },
-          {
-            {
-              id = "icon_role",
-              widget = Wibox.widget.imagebox,
-            },
-            margins = 2,
-            widget = Wibox.container.margin,
-          },
-          {
-            id = "text_role",
-            widget = Wibox.widget.textbox,
-          },
-          layout = Wibox.layout.fixed.horizontal,
+          id = "image_role",
+          widget = Wibox.widget.imagebox,
         },
-        left = 18,
-        right = 18,
+        margins = DPI(3),
         widget = Wibox.container.margin,
       },
-      id = "background_role",
+      bg = Beautiful.taglist_bg,
+      shape = Beautiful.taglist_shape,
       widget = Wibox.container.background,
-      create_callback = function(self, c3, _, _)
-        self:get_children_by_id("index_role")[1].markup = "<b> " .. c3.index .. " </b>"
-        self:connect_signal("mouse::enter", function()
-          if self.bg ~= "#FF0000" then
-            self.backup = self.bg
-            self.has_backup = true
-          end
-          self.bg = "#FF0000"
-        end)
-        self:connect_signal("mouse::leave", function()
-          if self.has_backup then self.bg = self.backup end
-        end)
+      create_callback = function(self, tag)
+        update_state(self:get_children_by_id("image_role")[1], tag)
       end,
-      update_callback = function(self, c3, _, _)
-        self:get_children_by_id("index_role")[1].markup = "<b> " .. c3.index .. " </b>"
+      update_callback = function(self, tag)
+        update_state(self:get_children_by_id("image_role")[1], tag)
       end,
     },
     buttons = M.buttons,
   }
 end
 
-setmetatable(M, {
-  __call = function(self, options) return self.new(options) end,
-})
+setmetatable(M, { __call = function(self, ...) return self.new(...) end })
 return M

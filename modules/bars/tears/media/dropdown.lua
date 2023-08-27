@@ -14,9 +14,9 @@ function M.new(options)
   local dropdown = Wibox.container.background(nil, nil, function(context, width, height)
     Gears.shape.rounded_rect(context, width, height, DPI(20))
   end)
-  if options.on_press then dropdown:connect_signal("button::press", options.signal.dropdown.on_press) end
-  dropdown:connect_signal("mouse::enter", options.signal.dropdown.on_enter)
-  dropdown:connect_signal("mouse::leave", options.signal.dropdown.on_leave)
+  if options.on_press then dropdown:connect_signal("button::press", options.signal.on_press) end
+  dropdown:connect_signal("mouse::enter", options.signal.on_enter)
+  dropdown:connect_signal("mouse::leave", options.signal.on_leave)
   return {
     {
       {
@@ -73,6 +73,7 @@ function M.new(options)
             valign = "center",
             widget = Wibox.widget.imagebox,
           },
+          top = DPI(3),
           right = DPI(6),
           widget = Wibox.container.margin,
         },

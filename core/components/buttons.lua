@@ -22,7 +22,7 @@ end
 M.pacman = setmetatable({}, {
   __call = function(_, radius, pattern)
     assert(radius, "pacman needs a radius")
-    pattern = F.if_nil(pattern, T("yellow"))
+    pattern = if_nil(pattern, T("yellow"))
     local button = Awful.widget.button({
       resize = true,
       visible = true,
@@ -68,7 +68,7 @@ end
 M.methman = setmetatable({}, {
   __call = function(_, radius, pattern)
     assert(radius, "pacman needs a radius")
-    pattern = F.if_nil(pattern, T("yellow"))
+    pattern = if_nil(pattern, T("yellow"))
     local button = Awful.widget.button({
       resize = true,
       visible = true,

@@ -1,5 +1,4 @@
 local config = require("core.config").get()
-local colors = require("colors." .. config.colors).background[config.background]
 local theme = require("modules.titlebars." .. config.modules.titlebars_theme)
 
 local Awful = require("awful")
@@ -12,13 +11,13 @@ end
 
 client.connect_signal("request::titlebars", function(node)
   -- Smart titlebars.
-  -- title(node, "left"):setup(theme.left(node, colors))
-  -- title(node, "top"):setup(theme.top(node, colors))
+  -- title(node, "left"):setup(theme.left(node))
+  -- title(node, "top"):setup(theme.top(node))
   -- Awful.titlebar.hide(node, "top")
 
   -- Normal titlebars.
   -- prefers sloppy-toppy
-  title(node, "top"):setup(theme.top(node, colors))
+  title(node, "top"):setup(theme.top(node))
 end)
 
 -- Smart titlebars.
@@ -39,6 +38,7 @@ awesome.connect_signal("bling::tabbed::client_added", function(tabbed)
     Awful.titlebar.hide(node, "top")
   end
 end)
+
 awesome.connect_signal("bling::tabbed::client_removed", function(_, removed_node)
   Awful.titlebar.show(removed_node, "top")
 end)

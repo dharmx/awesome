@@ -3,7 +3,7 @@ local Wibox = require("wibox")
 
 function M.slash(options)
   options = if_nil(options, {})
-  options.symbol = "/"
+  options.symbol = if_nil(options.symbol, "/")
   return {
     {
       font = assert(options.font, "please supply a font"),
