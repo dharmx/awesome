@@ -34,9 +34,10 @@ function M.time(options)
   options.format = if_nil(options.format, "%X")
 
   local datebox = Wibox.widget.textbox()
-  datebox.font = "Modum Bold 15"
+  datebox.font = if_nil(options.font, "Dosis 15")
+  datebox.valign = "center"
   return widgets.polls.callback(function(widget)
-    widget:set_text(os.date(options.format))
+    widget:set_markup(os.date(options.format))
   end, options.interval, datebox)
 end
 

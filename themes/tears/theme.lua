@@ -2,8 +2,6 @@ local config = require("core.config").get()
 local surfaces = require("core.components.surfaces")
 local colors = require("colors." .. config.colors).background[config.background]
 local DPI = require("beautiful.xresources").apply_dpi
-
-local Assets = require("beautiful.theme_assets")
 local Gears = require("gears")
 
 local theme = {}
@@ -34,6 +32,10 @@ theme.border_color_active = colors.magenta:to_hex(true)
 theme.border_color_marked = colors.red:brighten(5):to_hex(true)
 
 theme.wibar_bg = colors.black:to_hex(true)
+theme.wibar_left_separator_fg = colors.black:brighten(20):to_hex(true)
+theme.wibar_left_time_hour_fg = colors.red:to_hex(true)
+theme.wibar_left_time_minute_fg = colors.black:brighten(20):to_hex(true)
+
 theme.wibar_right_bg = colors.black:lighten(2):to_hex(true)
 theme.wibar_profile_separator_fg = colors.black:brighten(10):to_hex(true)
 theme.wibar_right_separator_fg = colors.black:brighten(20):to_hex(true)
@@ -43,23 +45,27 @@ theme.wibar_right_dropdown_icon_fg = colors.bblack:lighten(10):to_hex(true)
 theme.wibar_right_dropdown_icon_outline = colors.bblack:lighten(20):to_hex(true)
 theme.wibar_right_dropdown_label_fg = colors.white:to_hex(true)
 theme.wibar_right_dropdown_collapse_stroke = colors.bblack:lighten(40):to_hex(true)
+theme.wibar_right_dropdown_bg = colors.black:lighten(3):brighten(3):to_hex(true)
 theme.wibar_right_dropdown_on_enter_bg = colors.black:lighten(2):brighten(6):to_hex(true)
-theme.wibar_right_dropdown_on_leave_bg = colors.black:lighten(2):to_hex(true)
+theme.wibar_right_dropdown_on_leave_bg = theme.wibar_right_dropdown_bg
 theme.wibar_right_detached_button_icon_bg = colors.black:brighten(10):to_hex(true)
 theme.wibar_right_detached_button_icon_stroke = colors.white:darken(10):to_hex(true)
 theme.wibar_right_detached_button_signal_on_enter = colors.black:lighten(5):brighten(10):to_hex(true)
 theme.wibar_right_detached_button_signal_on_leave = colors.bblack:lighten(10):to_hex(true)
 
+theme.taglist_regulate_bg = colors.black:lighten(2):to_hex(true)
+theme.taglist_regulate_increase_bg = colors.bred:to_hex(true)
+theme.taglist_regulate_decrease_bg = colors.bblack:lighten(7):to_hex(true)
 theme.taglist_shape = Gears.shape.circle
-theme.taglist_shape_border_width = DPI(5)
-theme.taglist_shape_border_color = theme.bg_normal
+-- theme.taglist_shape_border_color = theme.bg_normal
+-- theme.taglist_shape_border_width = DPI(10)
 
-theme.taglist_bg = colors.black:lighten(2):to_hex(true)
+theme.taglist_bg = colors.black:brighten(2):to_hex(true)
 theme.taglist_bg_focus = colors.bblue:to_hex(true)
 theme.taglist_bg_urgent = colors.bred:to_hex(true)
-theme.taglist_bg_occupied = colors.byellow:to_hex(true)
-theme.taglist_bg_empty = colors.black:brighten(8):to_hex(true)
-theme.taglist_spacing = DPI(5)
+theme.taglist_bg_occupied = colors.bgreen:to_hex(true)
+theme.taglist_bg_empty = colors.bblack:brighten(5):lighten(5):to_hex(true)
+theme.taglist_spacing = DPI(10)
 
 theme.radial_cpu_bg = colors.bblack:lighten(7):to_hex(true)
 theme.radial_cpu_arc_bg = colors.bblack:lighten(12):to_hex(true)

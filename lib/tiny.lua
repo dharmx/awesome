@@ -203,9 +203,9 @@ function Tiny:new(new)
   elseif rgb.h and rgb.s and rgb.l then
     rgb = Tiny.hsl2rgb(rgb.h, rgb.s, rgb.l)
   else
-    rgb.r = math.floor(in_range(rgb.r, 255))
-    rgb.g = math.floor(in_range(rgb.g, 255))
-    rgb.b = math.floor(in_range(rgb.b, 255))
+    rgb.r = math.floor(in_range(rgb.r, 256))
+    rgb.g = math.floor(in_range(rgb.g, 256))
+    rgb.b = math.floor(in_range(rgb.b, 256))
   end
   self.r = rgb.r
   self.g = rgb.g
@@ -257,13 +257,10 @@ function Tiny:to_int() return self.r .. self.g .. self.b end
 
 function Tiny:to_hsl(unit)
   local c = self:to_float()
-  local r = tonumber(c.r)
-  local g = tonumber(c.g)
-  local b = tonumber(c.b)
-  assert(type(r) == "number" and type(g) == "number" and type(b) == "number")
+  assert(type(c.r) == "number" and type(c.g) == "number" and type(c.b) == "number")
 
-  local max = math.max(r, g, b)
-  local min = math.min(r, g, b)
+  local max = math.max(c.r, c.g, c.b)
+  local min = math.min(c.r, c.g, c.b)
 
   local h
   local s
@@ -274,23 +271,21 @@ function Tiny:to_hsl(unit)
     s = 0
   else
     local d = max - min
-    s = l > 0.5 and d / (2 - max - min) or d / (max + min)
-    if max == r then
-      h = (g - b) / d + (g < b and 6 or 0)
-    elseif max == g then
-      h = (b - r) / d + 2
-    elseif max == b then
-      h = (r - g) / d + 4
+    s = l > 0.5 and (d / (2 - max - min)) or (d / (max + min))
+    if max == c.r then
+      h = (c.g - c.b) / d + (c.g < c.b and 6 or 0)
+    elseif max == c.g then
+      h = (c.b - c.r) / d + 2
+    elseif max == c.b then
+      h = (c.r - c.g) / d + 4
     end
     h = h / 6
   end
-  return unit
-      and {
-        h = math.ceil(h * 360) .. "deg",
-        s = math.ceil(s * 100) .. "%",
-        l = math.ceil(l * 100) .. "%",
-      }
-    or { h = h, s = s, l = l }
+  return unit and {
+    h = math.ceil(h * 360) .. "deg",
+    s = math.ceil(s * 100) .. "%",
+    l = math.ceil(l * 100) .. "%",
+  } or { h = h, s = s, l = l }
 end
 
 function Tiny:inc_red(a)
@@ -413,7 +408,7 @@ end
 function Tiny:saturate(a)
   a = a == 0 and 0 or (a or 10)
   local hsl = self:to_hsl()
-  hsl.s = hsl.s + a / 100
+  hsl.s = hsl.s + (a / 100)
   hsl.s = clamp(hsl.s)
 
   local rgb = Tiny.hsl2rgb(hsl.h, hsl.s, hsl.l)

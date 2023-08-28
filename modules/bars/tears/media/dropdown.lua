@@ -14,6 +14,8 @@ function M.new(options)
   local dropdown = Wibox.container.background(nil, nil, function(context, width, height)
     Gears.shape.rounded_rect(context, width, height, DPI(20))
   end)
+  ---@diagnostic disable-next-line: undefined-field
+  dropdown:set_bg(options.background)
   if options.on_press then dropdown:connect_signal("button::press", options.signal.on_press) end
   dropdown:connect_signal("mouse::enter", options.signal.on_enter)
   dropdown:connect_signal("mouse::leave", options.signal.on_leave)
@@ -31,10 +33,7 @@ function M.new(options)
                 forced_height = options.icon.forced_height,
                 widget = Wibox.widget.imagebox,
               },
-              bottom = DPI(8),
-              top = DPI(8),
-              left = DPI(8),
-              right = DPI(8),
+              margins = DPI(8),
               widget = Wibox.container.margin,
             },
             shape = Gears.shape.circle,
@@ -44,7 +43,6 @@ function M.new(options)
             border_color = assert(options.icon.outline, "please supply a icon.outline"),
             widget = Wibox.container.background,
           },
-          right = DPI(5),
           left = DPI(3),
           widget = Wibox.container.margin,
         },
@@ -60,7 +58,8 @@ function M.new(options)
             fg = assert(options.label.foreground, "please supply a label.foreground"),
             widget = Wibox.container.background,
           },
-          right = DPI(3),
+          right = DPI(5),
+          left = DPI(5),
           bottom = DPI(2),
           widget = Wibox.container.margin,
         },
@@ -73,8 +72,8 @@ function M.new(options)
             valign = "center",
             widget = Wibox.widget.imagebox,
           },
+          right = DPI(10),
           top = DPI(3),
-          right = DPI(6),
           widget = Wibox.container.margin,
         },
         layout = Wibox.layout.align.horizontal,

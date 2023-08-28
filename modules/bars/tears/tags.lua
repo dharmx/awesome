@@ -49,24 +49,26 @@ M.buttons = map(Awful.button, {
 
 local function update_state(imagebox, tag)
   local clients = #tag:clients()
+  if tag.urgent then
+    imagebox.image = Resource.prohibit_inset_fill
+    imagebox.stylesheet = string.format("*{fill:%s;}", Beautiful.taglist_bg_urgent)
+    return
+  end
+
+  if Awful.screen.focused().selected_tag.index == tag.index then
+    imagebox.image = Resource.asterisk_fill
+    imagebox.stylesheet = string.format("*{fill:%s;}", Beautiful.taglist_bg_focus)
+    return
+  end
+
   if clients > 0 then
-    if Awful.screen.focused().selected_tag.index == tag.index then
-      imagebox.image = Resource.circle
-      imagebox.stylesheet = string.format("*{fill:%s;}", Beautiful.taglist_bg_focus)
-      return
-    end
-    imagebox.image = Resource.circle_dashed
+    imagebox.image = Resource.circle_dashed_fill
     imagebox.stylesheet = string.format("*{fill:%s;}", Beautiful.taglist_bg_occupied)
   elseif clients == 0 then
-    if Awful.screen.focused().selected_tag.index == tag.index then
-      imagebox.image = Resource.circle
-      imagebox.stylesheet = string.format("*{fill:%s;}", Beautiful.taglist_bg_focus)
-      return
-    end
-    imagebox.image = Resource.circle
+    imagebox.image = Resource.radio_button_fill
     imagebox.stylesheet = string.format("*{fill:%s;}", Beautiful.taglist_bg_empty)
   else
-    imagebox.image = Resource.warning_circle
+    imagebox.image = Resource.warning_circle_fill
     imagebox.stylesheet = string.format("*{fill:%s;}", Beautiful.taglist_bg_urgent)
   end
 end
@@ -80,9 +82,11 @@ function M.new(local_screen)
       {
         {
           id = "image_role",
+          forced_height = DPI(25),
+          forced_width = DPI(25),
+          valign = "center",
           widget = Wibox.widget.imagebox,
         },
-        margins = DPI(3),
         widget = Wibox.container.margin,
       },
       bg = Beautiful.taglist_bg,

@@ -1,9 +1,9 @@
+---@diagnostic disable: unused-local, undefined-field
 local M = {}
 
 local Beautiful = require("beautiful")
 local Resource = require("core.utils.factory").resource_factory()
 local DPI = require("beautiful.xresources").apply_dpi
-local Watch = require("awful.widget.watch")
 
 local widgets = require("core.components.widgets")
 local radial = require("modules.bars.tears.media.radial")
@@ -24,7 +24,7 @@ function M.cpu()
       forced_width = DPI(33),
     },
     icon = {
-      resource = Resource.cpu,
+      resource = Resource.cpu_duotone,
       stylesheet = string.format("*{fill:%s;}", Beautiful.radial_cpu_icon_stroke),
     },
     max_value = 100,
@@ -50,12 +50,17 @@ function M.ram()
       forced_width = DPI(33),
     },
     icon = {
-      resource = Resource.disc,
+      resource = Resource.disc_duotone,
       stylesheet = string.format("*{fill:%s;}", Beautiful.radial_ram_icon_stroke),
     },
     max_value = 16,
     min_value = 0,
   }))
+end
+
+function M.battery()
+  awesome.connect_signal("signal::battery", function(percentage, state)
+  end)
 end
 
 return M
