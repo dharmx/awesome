@@ -1,14 +1,11 @@
----@diagnostic disable: undefined-field, param-type-mismatch
+---@diagnostic disable: undefined-field, param-type-mismatch, redundant-return-value
 local M = {}
-setmetatable(M, {
-  __index = function(_, key) return require("modules.bars.tears." .. key) end,
-})
 
 local Wibox = require("wibox")
-local Gears = require("gears")
 local Awful = require("awful")
 local Beautiful = require("beautiful")
 local Resource = require("core.utils.factory").resource_factory()
+local Gears = require("gears")
 
 local DPI = require("beautiful.xresources").apply_dpi
 
@@ -42,16 +39,19 @@ function M.initialize(local_screen)
               background = Beautiful.taglist_regulate_bg,
               increase = {
                 image = Resource.plus_circle_fill,
-                stylesheet = string.format("*{fill:%s;}", Beautiful.taglist_regulate_increase_bg),
+                stylesheet = ("*{fill:%s;}"):format(Beautiful.taglist_regulate_increase_bg),
                 callback = function()
-                  Awful.tag.add(tostring(#root.tags() + 1), { screen = local_screen })
+                  local new_index = #root.tags() + 1
+                  if new_index > 9 then return end
+                  Awful.tag.add(tostring(new_index), { screen = local_screen })
                 end,
               },
               decrease = {
                 image = Resource.minus_circle_fill,
-                stylesheet = string.format("*{fill:%s;}", Beautiful.taglist_regulate_decrease_bg),
+                stylesheet = ("*{fill:%s;}"):format(Beautiful.taglist_regulate_decrease_bg),
                 callback = function()
                   local tags = root.tags()
+                  if #tags == 1 then return end
                   tags[#tags]:delete()
                 end,
               },
@@ -99,7 +99,7 @@ function M.initialize(local_screen)
                   background = Beautiful.wibar_right_dropdown_bg,
                   icon = {
                     resource = Resource.flag_banner_duotone,
-                    stylesheet = string.format("*{fill:%s;}", Beautiful.wibar_right_dropdown_icon_stroke),
+                    stylesheet = ("*{fill:%s;}"):format(Beautiful.wibar_right_dropdown_icon_stroke),
                     background = Beautiful.wibar_right_dropdown_icon_bg,
                     foreground = Beautiful.wibar_right_dropdown_icon_fg,
                     outline = Beautiful.wibar_right_dropdown_icon_outline,
@@ -112,7 +112,7 @@ function M.initialize(local_screen)
                   },
                   collapse = {
                     resource = Resource.caret_double_down_duotone,
-                    stylesheet = string.format("*{fill:%s;}", Beautiful.wibar_right_dropdown_collapse_stroke),
+                    stylesheet = ("*{fill:%s;}"):format(Beautiful.wibar_right_dropdown_collapse_stroke),
                     forced_width = DPI(20),
                   },
                   signal = {
@@ -132,7 +132,7 @@ function M.initialize(local_screen)
                   icon = {
                     resource = Resource.list_light,
                     background = Beautiful.wibar_right_detached_button_icon_bg,
-                    stylesheet = string.format("*{fill:%s;}", Beautiful.wibar_right_detached_button_icon_stroke),
+                    stylesheet = ("*{fill:%s;}"):format(Beautiful.wibar_right_detached_button_icon_stroke),
                   },
                   signal = {
                     on_enter = function(self, _) self:set_bg(Beautiful.wibar_right_detached_button_signal_on_enter) end,
@@ -144,14 +144,46 @@ function M.initialize(local_screen)
                   foreground = Beautiful.wibar_right_separator_fg,
                 }),
                 {
-                  M.profile.time({
-                    format = string.format(
-                      "<span font_desc=%q foreground=%q>%%H</span> <span font_desc=%q foreground=%q>%%M</span>",
-                      "Dosis Bold 15", Beautiful.wibar_left_time_hour_fg,
-                      "Dosis Bold 15", Beautiful.wibar_left_time_minute_fg
-                    ),
-                  }),
-                  layout = Wibox.container.margin,
+                  {
+                    M.profile.time({
+                      format = ("<span font_desc=%q foreground=%q>%%H</span> <span font_desc=%q foreground=%q>%%M</span>"):format(
+                        "Dosis Bold 15", Beautiful.wibar_left_time_hour_fg,
+                        "Dosis Bold 15", Beautiful.wibar_left_time_minute_fg
+                      ),
+                    }),
+                    right = DPI(2),
+                    widget = Wibox.container.margin,
+                  },
+                  {
+                    {
+                      {
+                        M.battery({
+                          safe_image = Resource.battery_charging,
+                          safe_style = ("*{fill:%s;}"):format(Beautiful.wibar_battery_safe),
+                          eighty_image = Resource.battery_full,
+                          eighty_style = ("*{fill:%s;}"):format(Beautiful.wibar_battery_eighty),
+                          sixty_image = Resource.battery_high,
+                          sixty_style = ("*{fill:%s;}"):format(Beautiful.wibar_battery_sixty),
+                          fourty_image = Resource.battery_medium,
+                          fourty_style = ("*{fill:%s;}"):format(Beautiful.wibar_battery_fourty),
+                          thirty_image = Resource.battery_low,
+                          thirty_style = ("*{fill:%s;}"):format(Beautiful.wibar_battery_thirty),
+                          twenty_image = Resource.battery_empty,
+                          twenty_style = ("*{fill:%s;}"):format(Beautiful.wibar_battery_twenty),
+                          critical_image = Resource.battery_warning,
+                          critical_style = ("*{fill:%s;}"):format(Beautiful.wibar_battery_critical),
+                        }),
+                        direction = "east",
+                        widget = Wibox.container.rotate,
+                      },
+                      valign = "center",
+                      widget = Wibox.container.place,
+                    },
+                    top = DPI(10),
+                    bottom = DPI(10),
+                    widget = Wibox.container.margin,
+                  },
+                  layout = Wibox.layout.fixed.horizontal,
                 },
                 homogeneous = false,
                 spacing = DPI(10),
@@ -200,4 +232,7 @@ function M.initialize(local_screen)
   }
 end
 
+setmetatable(M, {
+  __index = function(_, key) return require("modules.bars.tears." .. key) end,
+})
 return M

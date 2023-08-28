@@ -7,7 +7,8 @@ require("awful.autofocus")
 local config = require("core.config").get()
 local theme = require("modules.bars." .. config.modules.bars_theme)
 
-if not UPowerGlib.Client():get_devices() then
+-- let us all worship Javacafe.
+if UPowerGlib.Client():get_devices() then
   Battery({
     instant_update = true,
     device_path = "/org/freedesktop/UPower/devices/battery_BAT0",

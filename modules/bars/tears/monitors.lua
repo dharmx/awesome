@@ -2,6 +2,7 @@
 local M = {}
 
 local Beautiful = require("beautiful")
+local Wibox = require("wibox")
 local Resource = require("core.utils.factory").resource_factory()
 local DPI = require("beautiful.xresources").apply_dpi
 
@@ -56,11 +57,6 @@ function M.ram()
     max_value = 16,
     min_value = 0,
   }))
-end
-
-function M.battery()
-  awesome.connect_signal("signal::battery", function(percentage, state)
-  end)
 end
 
 return M
