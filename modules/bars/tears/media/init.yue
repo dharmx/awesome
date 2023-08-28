@@ -1,0 +1,18 @@
+import "wibox" as Wibox
+
+export slash = (options) ->
+  options = if_nil options, {}
+  return
+    *
+      font: if_nil options.font, "Dosis 15"
+      text: if_nil options.symbol, "/"
+      valign: "center"
+      widget: Wibox.widget.textbox
+    fg: assert options.foreground, "please supply a foreground"
+    widget: Wibox.container.background
+
+export.<> = {}
+export.<index> = (key) =>
+  widget = rawget @, key
+  if not widget then return require "modules.bars.tears.media.#{key}"
+  widget

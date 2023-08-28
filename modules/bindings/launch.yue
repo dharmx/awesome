@@ -1,0 +1,40 @@
+import "menubar" as Menu
+import "core.enum" as modifiers:{:SUPER, :SHIFT, :CTRL}, environ:{:BROWSER}
+import "core.components.scratch"
+
+return
+  *
+    modifiers: SUPER
+    key: "Return"
+    description: "Open #{terminal}."
+    on_press: terminal
+  *
+    modifiers: SUPER + CTRL
+    key: "Return"
+    description: "Open a playground tmux session."
+    on_press: -> scratch.new("#{terminal} --class=scratch-tmux -e tmux new-session -A -s playground", "scratch-tmux")::toggle!
+  *
+    modifiers: SUPER
+    key: "d"
+    description: "Show the menu."
+    on_press: -> Menu.show!
+  *
+    modifiers: SUPER + SHIFT
+    key: "f"
+    description: "Open #{BROWSER}."
+    on_press: BROWSER
+  *
+    modifiers: SUPER
+    key: "e"
+    description: "Open file browsing application."
+    on_press: "#{terminal} -e ranger"
+  *
+    modifiers: CTRL + SHIFT
+    key: "Escape"
+    description: "Show the BTOP."
+    on_press: "#{terminal} -e btop"
+  *
+    modifiers: SUPER + SHIFT
+    key: "d"
+    description: "Open screenshot popup."
+    on_press: ->

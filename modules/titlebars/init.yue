@@ -1,0 +1,37 @@
+import "core.config" as :current
+import "awful" as Awful
+import "beautiful" as Beautiful
+import "awful.autofocus"
+
+theme = require "modules.titlebars.#{current.modules.titlebars_theme}"
+title = (node, position) ->
+  Awful.titlebar node,
+    position: position
+    size: Beautiful.titlebar_height
+
+client.connect_signal "request::titlebars", (node) ->
+  -- Smart titlebars.
+  -- title(node, "left")::setup theme.left node
+  -- title(node, "top")::setup theme.top node
+  -- Awful.titlebar.hide node, "top"
+
+  -- Normal titlebars.
+  -- prefers sloppy-toppy
+  title(node, "top")::setup theme.top node
+
+-- Smart titlebars.
+-- client.connect_signal "request::geometry", (node, _, geometry) ->
+--   if not geometry then return
+--   if geometry.width < 900
+--     Awful.titlebar.hide node, "left"
+--     Awful.titlebar.show node, "top"
+--   else
+--     Awful.titlebar.hide node, "top"
+--     Awful.titlebar.show node, "left"
+
+-- Hides titlebars when tabbed layout is in effect.
+awesome.connect_signal "bling::tabbed::client_added", (tabbed) ->
+  for _, node in ipairs tabbed.clients do Awful.titlebar.hide node, "top"
+
+awesome.connect_signal "bling::tabbed::client_removed", (_, removed_node) ->
+  Awful.titlebar.show removed_node, "top"

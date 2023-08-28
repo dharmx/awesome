@@ -1,0 +1,89 @@
+import "core.components.surfaces"
+import "core.utils.factory"
+
+import "rubato" as Rubato
+import "awful" as Awful
+import "gears.timer" as GearsTime
+
+export smooth_button = (icon_label, callback) ->
+  IconFactory = factory.icon_factory factory.get_current_icon_theme_name!
+  icon = IconFactory icon_label, 512
+  button = Awful.widget.button
+    resize: true
+    visible: true
+    image: icon
+  button::connect_signal "button::press", callback
+  button
+
+export pacman =
+  <call>: (radius, pattern) =>
+    assert radius, "pacman needs a radius"
+    pattern = if_nil pattern, T"yellow"
+    button = Awful.widget.button
+      resize: true
+      visible: true
+      image: surfaces.pacman radius, pattern
+    button.timed = Rubato.timed
+      duration: 0.3
+      subscribed: (position) -> button::set_image surfaces.pacman radius, pattern, -position
+    button::connect_signal "mouse::enter", -> button.timed.target = 0.5
+    button::connect_signal "mouse::leave", -> button.timed.target = 0
+    button
+
+pacman.minimize = (node, radius, pattern) ->
+  button = pacman radius, pattern
+  button::connect_signal "button::press", ->
+    ---@see https://github.com/awesomeWM/awesome/issues/3716
+    GearsTime.delayed_call -> node.minimized = true,
+      0.05
+  button
+
+pacman.maximize = (node, radius, pattern) ->
+  button = pacman radius, pattern
+  button::connect_signal "button::press", -> node.maximized = not node.maximized
+  button
+
+pacman.close = (node, radius, pattern) ->
+  button = pacman radius, pattern
+  button::connect_signal "button::press", -> node::kill!
+  button
+
+methman =
+  <call>: (radius, pattern) =>
+    assert radius, "pacman needs a radius"
+    pattern = if_nil pattern, T"yellow"
+    button = Awful.widget.button
+      resize: true
+      visible: true
+      image: surfaces.pacman radius, pattern
+    timed = Rubato.timed
+      awestore_compat: true
+      duration: 0.3
+    timed::subscribe (position) -> button::set_image surfaces.pacman radius, pattern, -position
+    timed.ended::subscribe (position) ->
+      if position == 0.5
+        timed.target = 0.1
+      elseif position == 0.1
+        timed.target = 0.5
+    button::connect_signal "mouse::enter", -> timed.target = 0.5
+    button::connect_signal "mouse::leave", -> timed.target = 0.0
+    button.timed = timed
+    button
+
+methman.minimize = (node, radius, pattern) ->
+  button = methman radius, pattern
+  button::connect_signal "button::press", ->
+    ---@see https://github.com/awesomeWM/awesome/issues/3716
+    GearsTime.delayed_call -> node.minimized = true,
+      0.05
+  button
+
+methman.maximize = (node, radius, pattern) ->
+  button = methman radius, pattern
+  button::connect_signal "button::press", -> node.maximized = not node.maximized
+  button
+
+methman.close = (node, radius, pattern) ->
+  button = methman radius, pattern
+  button::connect_signal "button::press", -> node::kill!
+  button

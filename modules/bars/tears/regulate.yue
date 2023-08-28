@@ -1,0 +1,34 @@
+import "wibox" as Wibox
+import "beautiful" as Beautiful
+import "lib.tiny" as T
+import "gears" as Gears
+DPI = Beautiful.xresources.apply_dpi
+
+M =
+  <call>: (...) => @.new ...
+  new: (options) ->
+    options = if_nil options, {}
+    options.increase = if_nil options.increase, {}
+    options.decrease = if_nil options.decrease, {}
+
+    increase = Wibox.widget.imagebox options.increase.image
+    increase.stylesheet = options.increase.stylesheet
+    if options.increase.callback then increase::connect_signal "button::press", options.increase.callback
+
+    decrease = Wibox.widget.imagebox options.decrease.image
+    decrease.stylesheet = options.decrease.stylesheet
+    if options.decrease.callback then decrease::connect_signal "button::press", options.decrease.callback
+
+    return
+      *
+        *
+          * decrease
+          * increase
+          layout: Wibox.layout.fixed.horizontal
+        margins: DPI 5
+        widget: Wibox.container.margin
+      shape: (context, width, height) -> Gears.shape.rounded_rect context, width, height, DPI 25
+      bg: options.background
+      widget: Wibox.container.background
+
+M

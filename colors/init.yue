@@ -1,0 +1,16 @@
+---@overload fun(): table
+---@overload fun(background: string): table
+---@overload fun(colors: string, background: string): table
+export get(colors, background) ->
+  if not colors and not background
+    config = require("core.config").get!
+    background = config.background
+    colors = config.colors
+  elseif colors and not background
+    config = require("core.config").get!
+    background = colors
+    colors = config.colors
+  require("colors." .. colors).background[background]
+
+export.<call> = (...) => @get ...
+export.<index> = (...) => @::__call ...

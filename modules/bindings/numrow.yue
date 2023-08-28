@@ -1,0 +1,48 @@
+import "awful" as Awful
+import "core.enum" as modifiers:{:SHIFT, :CTRL, :SUPER}
+import NUMROW, NUMPAD from Awful.key.keygroup
+
+return
+  tag:
+    *
+      modifiers: SUPER
+      keygroup: NUMROW
+      description: "Only view tag."
+      on_press: (index) ->
+        focused_screen = Awful.screen.focused!
+        if not focused_screen then return
+        local tag = focused_screen.tags[index]
+        if tag then tag::view_only!
+    *
+      modifiers: SUPER + CTRL
+      keygroup: NUMROW
+      description: "Toggle tag."
+      on_press: (index) ->
+        focused_screen = Awful.screen.focused!
+        if not focused_screen then return
+        tag = focused_screen.tags[index]
+        if tag then Awful.tag.viewtoggle tag
+    *
+      modifiers: SUPER + SHIFT
+      keygroup: NUMROW
+      description: "Move focused client to tag."
+      on_press: (index) ->
+        if client.focus
+          tag = client.focus.screen.tags[index]
+          if tag then client.focus::move_to_tag tag
+    *
+      modifiers: SUPER + CTRL + SHIFT
+      keygroup: NUMROW
+      description: "Toggle focused client on tag."
+      on_press: (index) ->
+        if client.focus
+          tag = client.focus.screen.tags[index]
+          if tag then client.focus::toggle_tag tag
+  layout:
+    *
+      modifiers: SUPER
+      keygroup: NUMPAD
+      description: "Select layout directly."
+      on_press: (index) ->
+        selected_tag = Awful.screen.focused!.selected_tag
+        if selected_tag then selected_tag.layout = selected_tag.layouts[index] or selected_tag.layout

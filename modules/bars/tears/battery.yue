@@ -1,0 +1,30 @@
+import "wibox" as Wibox
+
+M = <call>: (...) => @.new ...
+M.new = (options) ->
+  imagebox = Wibox.widget.imagebox!
+  awesome.connect_signal "signal::battery", (percentage) ->
+    if percentage >= 95
+      imagebox.image = options.safe_image
+      imagebox.stylesheet = options.safe_style
+    elseif percentage >= 80
+      imagebox.image = options.eighty_image
+      imagebox.stylesheet = options.eighty_style
+    elseif percentage >= 60
+      imagebox.image = options.sixty_image
+      imagebox.stylesheet = options.sixty_style
+    elseif percentage >= 40
+      imagebox.image = options.fourty_image
+      imagebox.stylesheet = options.fourty_style
+    elseif percentage > 30
+      imagebox.image = options.thirty_image
+      imagebox.stylesheet = options.thirty_style
+    elseif percentage >= 20
+      imagebox.image = options.twenty_image
+      imagebox.stylesheet = options.twenty_style
+    else
+      imagebox.image = options.critical_image
+      imagebox.stylesheet = options.critical_style
+  imagebox
+
+M
