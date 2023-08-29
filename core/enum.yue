@@ -1,0 +1,26 @@
+import "gears" as Gears
+import "posix.stdlib" as PosixStdlib
+
+export modifiers =
+  ALT: { "Mod1" }
+  CTRL: { "Control" }
+  SHIFT: { "Shift" }
+  SUPER: { "Mod4" }
+  EMPTY: {}
+
+for _, key in pairs modifiers
+  key.<> =
+    __add: (self, new_key) ->
+      copy = Gears.table.clone self, true
+      copy[] = new_key[1]
+      copy
+
+export environ = {}
+environ.<> =
+  __index: (self, key) ->
+    value = if_nil(rawget(self, key), os.getenv(key))
+    rawset(self, key, value)
+    value
+  __newindex: (self, key, value) ->
+    rawset(self, key, value)
+    PosixStdlib.setenv(key, value, true)

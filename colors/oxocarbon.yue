@@ -1,4 +1,4 @@
-local T = require "lib.tiny"
+import "lib.tiny" as T
 
 return
   auth: "shaunsingh/IBM"

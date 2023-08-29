@@ -10,12 +10,12 @@ export get = (colors, background) ->
     local config = require("core.config").get()
     background = colors
     colors = config.colors
-  return require("colors." .. colors).background[background]
+  require("colors." .. colors).background[background]
 
 export.<> =
-  __call: (self, ...) -> return self.get ...
+  __call: (self, ...) -> self.get ...
   ---@overload fun(): table
   ---@overload fun(background: string): table
   ---@overload fun(colors: string, background: string): table
   ---@param ... fun(background: string): table
-  __index: (self, ...) -> return self:__call ...
+  __index: (self, ...) -> self:__call ...

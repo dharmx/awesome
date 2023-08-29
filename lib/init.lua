@@ -1,9 +1,8 @@
----Ported and self-made libraries.
----@type Lib
-local module = setmetatable({}, {
-  __index = function(_, key)
-    return require("lib." .. key)
-  end,
+local _module_0 = { }
+local before = ...
+setmetatable(_module_0, {
+	__index = function(_, key)
+		return require(before .. "." .. key)
+	end
 })
-
-return module
+return _module_0
