@@ -1,0 +1,47 @@
+import "path" as Path
+import "menubar.icon_theme" as IconTheme
+import "lgi" as :Gio
+
+export stem = (path) -> split(Path.basename(path), ".", plain: true)[1]
+
+export apply_bindings = (grouped_bindings, mouse, callback) ->
+  import "awful" as Awful
+  import "gears.table" as GT
+
+  spawn_wrap = (cmd) -> () -> Awful.spawn cmd
+  mouse = if_nil mouse, false
+  wrapped_types = { "string", "table" }
+
+  _ = U.table.foreach if_nil(grouped_bindings, {}), (group, bindings) ->
+    _ = U.table.foreachi bindings, (_, binding) ->
+      binding.group = group
+      if GT.hasitem wrapped_types, type binding.on_press
+        binding.on_press = spawn_wrap binding.on_press
+      if GT.hasitem wrapped_types, type binding.on_release
+        binding.on_release = spawn_wrap binding.on_release
+      if mouse
+        callback Awful.button binding
+      else
+        callback Awful.key binding
+
+export icon_factory = (icon_theme, base) ->
+  new_icon_theme = IconTheme.new icon_theme, base
+  return
+    <index>: (icon_label) => new_icon_theme::find_icon_path (icon_label::gsub "_", "-")
+    <call>: (icon_label, icon_size) => new_icon_theme::find_icon_path icon_label, icon_size
+
+export get_current_icon_theme_name = ->
+  Gio.Settings.new("org.gnome.desktop.interface")::get_string "icon-theme"
+
+export resource_factory = ->
+  import "gears.filesystem" as GFS
+  resource_path = GFS.get_configuration_dir() .. "resources"
+  get_file = (filename) ->
+    path = "%s/%s."::format resource_path, filename
+    _, value = any (extension) -> Path.isfile(path .. extension),
+      { "svg", "png", "jpeg", "jpg" }
+    path .. value
+
+  return
+    <call>: (filename) => get_file filename
+    <index>: (filename) => get_file (filename::gsub "_", "-")

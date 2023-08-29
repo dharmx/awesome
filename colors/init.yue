@@ -1,21 +1,16 @@
 ---@overload fun(): table
 ---@overload fun(background: string): table
 ---@overload fun(colors: string, background: string): table
-export get = (colors, background) ->
+export get(colors, background) ->
   if not colors and not background
-    local config = require("core.config").get()
+    config = require("core.config").get()
     background = config.background
     colors = config.colors
   elseif colors and not background
-    local config = require("core.config").get()
+    config = require("core.config").get()
     background = colors
     colors = config.colors
   require("colors." .. colors).background[background]
 
-export.<> =
-  __call: (self, ...) -> self.get ...
-  ---@overload fun(): table
-  ---@overload fun(background: string): table
-  ---@overload fun(colors: string, background: string): table
-  ---@param ... fun(background: string): table
-  __index: (self, ...) -> self:__call ...
+export.<call> = (...) => self.get ...
+export.<index> = (...) => self::__call ...

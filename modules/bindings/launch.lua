@@ -49,7 +49,6 @@ return {
     key = "d",
     description = "Open screenshot popup.",
     on_press = function()
-      require("core.utils.helpers").screenshot()
     end,
   },
 }

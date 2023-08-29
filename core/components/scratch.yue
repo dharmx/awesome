@@ -1,0 +1,22 @@
+import "bling" as Bling
+
+export _instances = {}
+
+export new = (command, instance_name) ->
+  if not _instances[instance_name]
+    local instance = Bling.module.scratchpad
+      command: command
+      rule:
+        instance: instance_name
+      sticky: true
+      autoclose: true
+      floating: true
+      reapply: true
+      dont_focus_before_close: false
+      geometry:
+        x: 360
+        y: 90
+        height: 900
+        width: 1200
+    _instances[instance_name] = instance
+  _instances[instance_name]

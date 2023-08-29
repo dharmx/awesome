@@ -10,17 +10,17 @@ export modifiers =
 
 for _, key in pairs modifiers
   key.<> =
-    __add: (self, new_key) ->
+    __add: (new_key) =>
       copy = Gears.table.clone self, true
       copy[] = new_key[1]
       copy
 
 export environ = {}
 environ.<> =
-  __index: (self, key) ->
+  __index: (key) =>
     value = if_nil(rawget(self, key), os.getenv(key))
     rawset(self, key, value)
     value
-  __newindex: (self, key, value) ->
+  __newindex: (key, value) =>
     rawset(self, key, value)
     PosixStdlib.setenv(key, value, true)

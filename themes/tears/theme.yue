@@ -21,7 +21,7 @@ theme.bg_focus = colors.black::lighten(2)::to_hex true
 theme.bg_normal = colors.bblack::darken(2)::to_hex true
 theme.bg_urgent = colors.red::to_hex true
 theme.bg_minimize = colors.bblack::lighten(2)::to_hex true
-theme.bg_systray = colors.bblack::to_hex true
+theme.bg_systray = "#0F1014"
 
 theme.fg_normal = colors.white::to_hex true
 theme.fg_focus = theme.fg_normal

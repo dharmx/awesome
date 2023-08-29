@@ -1,2 +1,2 @@
 before = ...
-export.<> = __index: (_, key) -> require before .. "." .. key
+<index>: (key) => require before .. "." .. key
