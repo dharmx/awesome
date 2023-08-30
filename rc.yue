@@ -17,4 +17,4 @@ global zip = U.table.zip
 global split = U.string.split
 global trim = U.string.trim
 
-require("modules").setup()
+require("modules").setup!
