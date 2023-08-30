@@ -1,26 +1,23 @@
 import "gears" as Gears
 import "posix.stdlib" as PosixStdlib
+import "lib.std" as table:{:flatten}
+
+class Mod
+  new: (...) => for _, key in ipairs flatten { ... } do @[] = key
+  <add>: (key) => Mod @, key
 
 export modifiers =
-  ALT: { "Mod1" }
-  CTRL: { "Control" }
-  SHIFT: { "Shift" }
-  SUPER: { "Mod4" }
-  EMPTY: {}
+  ALT: Mod "Mod1"
+  CTRL: Mod "Control"
+  SHIFT: Mod "Shift"
+  SUPER: Mod "Mod4"
+  EMPTY: Mod!
 
-for _, key in pairs modifiers
-  key.<> =
-    __add: (new_key) =>
-      copy = Gears.table.clone self, true
-      copy[] = new_key[1]
-      copy
-
-export environ = {}
-environ.<> =
-  __index: (key) =>
-    value = if_nil(rawget(self, key), os.getenv(key))
-    rawset(self, key, value)
+export environ =
+  <index>: (key) =>
+    value = if_nil rawget(@, key), os.getenv key
+    rawset @, key, value
     value
-  __newindex: (key, value) =>
-    rawset(self, key, value)
-    PosixStdlib.setenv(key, value, true)
+  <newindex>: (key, value) =>
+    rawset(@, key, value)
+    PosixStdlib.setenv key, value, true

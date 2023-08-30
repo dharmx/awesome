@@ -6,7 +6,7 @@ import "awful" as Awful
 import "gears.timer" as GearsTime
 
 export smooth_button = (icon_label, callback) ->
-  IconFactory = factory.icon_factory factory.get_current_icon_theme_name()
+  IconFactory = factory.icon_factory factory.get_current_icon_theme_name!
   icon = IconFactory icon_label, 512
   button = Awful.widget.button
     resize: true
@@ -18,7 +18,7 @@ export smooth_button = (icon_label, callback) ->
 export pacman =
   <call>: (radius, pattern) =>
     assert radius, "pacman needs a radius"
-    pattern = if_nil pattern, T "yellow"
+    pattern = if_nil pattern, T"yellow"
     button = Awful.widget.button
       resize: true
       visible: true
@@ -45,13 +45,13 @@ pacman.maximize = (node, radius, pattern) ->
 
 pacman.close = (node, radius, pattern) ->
   button = pacman radius, pattern
-  button::connect_signal "button::press", () -> node::kill()
+  button::connect_signal "button::press", () -> node::kill!
   button
 
 methman =
   <call>: (radius, pattern) =>
     assert radius, "pacman needs a radius"
-    pattern = if_nil pattern, T "yellow"
+    pattern = if_nil pattern, T"yellow"
     button = Awful.widget.button
       resize: true
       visible: true
@@ -85,5 +85,5 @@ methman.maximize = (node, radius, pattern) ->
 
 methman.close = (node, radius, pattern) ->
   button = methman radius, pattern
-  button::connect_signal "button::press", () -> node::kill()
+  button::connect_signal "button::press", () -> node::kill!
   button

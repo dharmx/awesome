@@ -9,11 +9,11 @@ polls.file = (filepath, interval, callback, base_widget) ->
   -- defaults and asserts
   assert filepath, "filepath cannot be empty."
   interval = if_nil interval, 5
-  base_widget = if_nil base_widget, Wibox.widget.textbox()
+  base_widget = if_nil base_widget, Wibox.widget.textbox!
   callback = if_nil callback, (widget, data) -> widget::set_text(data)
 
   file = Gio.File.new_for_path filepath
-  assert file::query_exists(), "filepath must exist."
+  assert file::query_exists!, "filepath must exist."
   -- only text-based files are allowed
   assert file::query_file_type({}) == "REGULAR", "filepath must be text-based."
   timer = Timer timeout: interval
@@ -23,9 +23,9 @@ polls.file = (filepath, interval, callback, base_widget) ->
       -- execute the callback after we have finished reading the file
       if data
         callback(base_widget, data)
-      timer::again()
-    timer::stop()
-  timer::start()
+      timer::again!
+    timer::stop!
+  timer::start!
 
   timer::emit_signal "timeout"
   base_widget, timer
@@ -34,14 +34,14 @@ polls.file = (filepath, interval, callback, base_widget) ->
 polls.callback = (callback, interval, base_widget) ->
   -- defaults and asserts
   interval = if_nil interval, 5
-  base_widget = if_nil base_widget, Wibox.widget.textbox()
+  base_widget = if_nil base_widget, Wibox.widget.textbox!
   callback = assert callback, "please supply a callback"
 
   local timer = Timer timeout: interval
   timer::connect_signal "timeout", () ->
     callback base_widget
-    timer::stop()
-    timer::again()
-  timer::start()
+    timer::stop!
+    timer::again!
+  timer::start!
   timer::emit_signal "timeout"
   base_widget, timer

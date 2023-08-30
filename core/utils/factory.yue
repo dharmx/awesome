@@ -27,7 +27,7 @@ export apply_bindings = (grouped_bindings, mouse, callback) ->
 export icon_factory = (icon_theme, base) ->
   new_icon_theme = IconTheme.new icon_theme, base
   return
-    <index>: (icon_label) => new_icon_theme::find_icon_path (icon_label::gsub "_", "-")
+    <index>: (icon_label) => new_icon_theme::find_icon_path(icon_label::gsub "_", "-")
     <call>: (icon_label, icon_size) => new_icon_theme::find_icon_path icon_label, icon_size
 
 export get_current_icon_theme_name = ->
@@ -35,7 +35,7 @@ export get_current_icon_theme_name = ->
 
 export resource_factory = ->
   import "gears.filesystem" as GFS
-  resource_path = GFS.get_configuration_dir() .. "resources"
+  resource_path = "#{GFS.get_configuration_dir!}resources"
   get_file = (filename) ->
     path = "%s/%s."::format resource_path, filename
     _, value = any (extension) -> Path.isfile(path .. extension),
@@ -44,4 +44,4 @@ export resource_factory = ->
 
   return
     <call>: (filename) => get_file filename
-    <index>: (filename) => get_file (filename::gsub "_", "-")
+    <index>: (filename) => get_file(filename::gsub "_", "-")

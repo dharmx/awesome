@@ -4,10 +4,10 @@ import "beautiful.xresources" as Xresources
 import "gears" as Gears
 
 DPI = Xresources.apply_dpi
-values = config.get()
-colors = require("colors." .. values.colors).background[values.background]
+values = config.get!
+colors = require("colors.#{values.colors}").background[values.background]
 
-theme_path = Gears.filesystem.get_themes_dir() .. "tears"
+theme_path = "#{Gears.filesystem.get_themes_dir!}tears"
 theme = {}
 
 theme.icon_theme = values.icon_theme

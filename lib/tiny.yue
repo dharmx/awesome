@@ -1,5 +1,6 @@
 ---Ported from https://github.com/bgrins/TinyColor.
 
+-- Helpers {{{
 alter = (attr, per) -> math.floor attr * (100 + per) / 100
 
 clamp = (value) -> math.min 1, math.max 0, value
@@ -21,8 +22,10 @@ in_range = (n, max) ->
     return 1
   assert n >= 0 and n <= max, "number should be between 0-255/0-1/0-100"
   n
+-- }}}
 
 class Tiny
+  -- Colors {{{
   named_colors =
     aliceblue: "F0F8FF"
     antiquewhite: "FAEBD7"
@@ -172,7 +175,9 @@ class Tiny
     yellow: "FF0"
     yellowgreen: "9ACD32"
     <call>: (prefix) => if prefix then {k, "##{v}" for k, v in @} else @
+  -- }}}
 
+  -- CTOR {{{
   new: (...) =>
     assert ..., "new param cannot be nil"
     packed = { ... }
@@ -209,7 +214,9 @@ class Tiny
       @r = math.floor(in_range packed[1], 256)
       @g = math.floor(in_range packed[2], 256)
       @b = math.floor(in_range packed[3], 256)
+  -- }}}
 
+  -- Statics {{{
   hex2rgb: (hex) ->
     hex = hex::sub(1, 1) == "#" and hex::sub(2) or hex
     if hex::len! == 3
@@ -239,7 +246,9 @@ class Tiny
         g: Tiny.hue2rgb p, q, h
         b: Tiny.hue2rgb p, q, h - 1 / 3
     r: rgb.r * 255, g: rgb.g * 255, b: rgb.b * 255
+  -- }}}
 
+  -- Converters {{{
   to_rgb: () => r: @r, g: @g, b: @b,
 
   to_perc: (number) =>
@@ -286,7 +295,9 @@ class Tiny
       s: "#{math.ceil(s * 100)}%"
       l: "#{math.ceil(l * 100)}%"
     } or h: h, s: s, l: l
+  -- }}}
 
+  -- Regulators {{{
   inc_red: (a) =>
     c = @to_perc true
     Tiny r: "#{limit(c.r, a, "i")}%", g: "#{c.g}%", b: "#{c.b}%"
@@ -368,7 +379,9 @@ class Tiny
     hsl.s = clamp hsl.s
     rgb = Tiny.hsl2rgb hsl.h, hsl.s, hsl.l
     Tiny r: rgb.r, g: rgb.g, b: rgb.b
+  -- }}}
 
+  -- Filters {{{
   spin: (a) =>
     a = a == 0 and 0 or (a or 10)
     hsl = @to_hsl!
@@ -376,10 +389,6 @@ class Tiny
     hsl.h = h < 0 and 360 + h or h
     rgb = Tiny.hsl2rgb hsl.h, hsl.s, hsl.l
     Tiny r: rgb.r, g: rgb.g, b: rgb.b
-
-  greyscale: () =>
-    @desaturate(100)
-    Tiny r: @r, g: @g, b: @b
 
   mix: (c, a) =>
     a = a == 0 and 0 or (a or 50)
@@ -393,10 +402,20 @@ class Tiny
 
   rand_color: () => Tiny math.random(0, 255), math.random(0, 255), math.random(0, 255)
 
-  is_light: () => not @is_dark!
+  greyscale: () =>
+    @desaturate 100
+    Tiny r: @r, g: @g, b: @b
 
-  is_dark: () => @get_brightness! < 128
+  split_complement: () =>
+    hsl = @to_hsl!
+    h = hsl.h
+    return
+      * @
+      * Tiny h: (h + 72) % 360, s: hsl.s, l: hsl.l
+      * Tiny h: (h + 216) % 360, s: hsl.s, l: hsl.l
+  -- }}}
 
+  -- Getters {{{
   get_complement: () =>
     hsl = @to_hsl!
     Tiny h: (hsl.h + 180) % 360, s: hsl.s, l: hsl.l
@@ -417,14 +436,6 @@ class Tiny
       * Tiny h: (h + 90) % 360, s: hsl.s, l: hsl.l
       * Tiny h: (h + 180) % 360, s: hsl.s, l: hsl.l
       * Tiny h: (h + 270) % 360, s: hsl.s, l: hsl.l
-
-  split_complement: () =>
-    hsl = @to_hsl!
-    h = hsl.h
-    return
-      * @
-      * Tiny h: (h + 72) % 360, s: hsl.s, l: hsl.l
-      * Tiny h: (h + 216) % 360, s: hsl.s, l: hsl.l
 
   get_brightness: () => (@r * 299 + @g * 587 + @b * 114) / 1000
 
@@ -452,6 +463,12 @@ class Tiny
     local sl = @get_luminance!
     local cl = c\get_luminance!
     (math.max(sl, cl) + 0.05) / (math.min(sl, cl) + 0.05)
+  -- }}}
+
+  -- Predicates {{{
+  is_light: () => not @is_dark!
+
+  is_dark: () => @get_brightness! < 128
 
   is_readable: (c, wcag2) =>
     validateWCAG2Parms = (parms) ->
@@ -474,7 +491,9 @@ class Tiny
     elseif level_size == "AAAsmall"
       output = readability >= 7
     output
+  -- }}}
 
+  -- Metatables {{{
   <tostring>: () => @to_hex true
 
   <eq>: (o) => @r == o.r and @g == o.g and @b == o.b
@@ -492,3 +511,4 @@ class Tiny
     @
 
   <lt>: (o) => sum(@to_rgb!) > sum(o\to_rgb!)
+  -- }}}
