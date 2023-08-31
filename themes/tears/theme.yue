@@ -83,7 +83,7 @@ theme.radial_cpu_bg = colors.bblack::lighten(7)::to_hex true
 theme.radial_cpu_arc_bg = colors.bblack::lighten(12)::to_hex true
 theme.radial_cpu_arc_fg = colors.blue::to_hex true
 theme.radial_cpu_arc_body_bg = colors.bblack::lighten(14)::to_hex true
-theme.radial_cpu_icon_stroke = colors.bblue::to_hex()
+theme.radial_cpu_icon_stroke = colors.bblue::to_hex true
 
 theme.radial_ram_bg = colors.bblack::lighten(7)::to_hex true
 theme.radial_ram_arc_bg = colors.bblack::lighten(12)::to_hex true

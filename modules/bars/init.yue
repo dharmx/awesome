@@ -1,0 +1,24 @@
+import "awful" as Awful
+import "lib.battery" as Battery
+import "awful.autofocus"
+
+import "core.config" as :_current
+theme = require "modules.bars.#{_current.modules.bars_theme}"
+
+-- Come.. let us all worship Javacafe.
+battery = Battery "/org/freedesktop/UPower/devices/battery_BAT0"
+if battery.widget.device 
+  battery!::connect_signal "upower::update", (_, device) ->
+      time_to_empty = device.time_to_empty / 60
+      time_to_full = device.time_to_full / 60
+      awesome.emit_signal "signal::battery",
+        tonumber("%.0f"::format(device.percentage)),
+        device.state,
+        tonumber("%.0f"::format(time_to_empty)),
+        tonumber("%.0f"::format(time_to_full)),
+        device.battery_level
+
+screen.connect_signal "request::desktop_decoration", (local_screen) ->
+  Awful.tag { "1", "2", "3", "4", "5" }, local_screen, Awful.layout.layouts[1]
+  Awful.wibar theme.initialize local_screen
+  theme.tray local_screen

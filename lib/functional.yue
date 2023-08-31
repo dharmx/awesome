@@ -1,5 +1,5 @@
 ---Supercharged by Neovim.
-export mute = () ->
+export mute = ->
 
 export if_nil = (a, b) -> if a == nil then b else a
 

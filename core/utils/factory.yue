@@ -8,7 +8,7 @@ export apply_bindings = (grouped_bindings, mouse, callback) ->
   import "awful" as Awful
   import "gears.table" as GT
 
-  spawn_wrap = (cmd) -> () -> Awful.spawn cmd
+  spawn_wrap = (cmd) -> -> Awful.spawn cmd
   mouse = if_nil mouse, false
   wrapped_types = { "string", "table" }
 

@@ -1,0 +1,26 @@
+---A battery widget based on the UPowerGlib daemon.
+---@author Aire-One, dharmx
+---@copyright 2020 Aire-One
+
+import "lgi" as LGI
+import "gears.table" as GT
+import "gears.timer" as GearsTime
+import "wibox.widget.base" as WidgetBase
+UPowerGlib = LGI.require "UPowerGlib"
+
+class Battery
+  new: (@device_path, template, instant_update, use_display_device) =>
+    @template = if_nil template, WidgetBase.empty_widget!
+    @use_display_device = if_nil use_display_device, false
+    @instant_update = if_nil instant_update, true
+
+    widget = WidgetBase.make_widget_from_value @template
+    widget.device = @use_display_device and UPowerGlib.Client!::get_display_device! or @.get_device @device_path
+    widget.device.on_notify = (device) -> widget::emit_signal "upower::update", device
+    if @instant_update then GearsTime.delayed_call widget.emit_signal, widget, "upower::update", widget.device
+    @widget = widget
+
+  to_clock: (seconds) -> if seconds <= 0 then "00:00" else "#{"%02.f"::format math.floor seconds / 3600}:#{"%02.f"::format math.floor seconds / 60 - hours * 60}"
+  get_device: (path) -> for device in *UPowerGlib.Client!::get_devices! do if device::get_object_path! == path then return device
+  list_devices: -> [device::get_object_path! for device in *UPowerGlib.Client!::get_devices!]
+  <call>: => @widget

@@ -17,7 +17,7 @@ polls.file = (filepath, interval, callback, base_widget) ->
   -- only text-based files are allowed
   assert file::query_file_type({}) == "REGULAR", "filepath must be text-based."
   timer = Timer timeout: interval
-  timer::connect_signal "timeout", () ->
+  timer::connect_signal "timeout", ->
     file::load_contents_async nil, (_, results) ->
       data, _ = file::load_contents_finish results
       -- execute the callback after we have finished reading the file
@@ -38,7 +38,7 @@ polls.callback = (callback, interval, base_widget) ->
   callback = assert callback, "please supply a callback"
 
   local timer = Timer timeout: interval
-  timer::connect_signal "timeout", () ->
+  timer::connect_signal "timeout", ->
     callback base_widget
     timer::stop!
     timer::again!

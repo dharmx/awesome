@@ -249,14 +249,14 @@ class Tiny
   -- }}}
 
   -- Converters {{{
-  to_rgb: () => r: @r, g: @g, b: @b,
+  to_rgb: => r: @r, g: @g, b: @b,
 
   to_perc: (number) =>
     c = r: (@r / 255) * 100, g: (@g / 255) * 100, b: (@b / 255) * 100
     if number then return c
     r: "#{c.r}%", g: "#{c.g}%", b: "#{c.b}%"
 
-  to_float: () => {k, tonumber(v::sub(1, #v - 1)) / 100 for k, v in pairs @to_perc!}
+  to_float: => {k, tonumber(v::sub(1, #v - 1)) / 100 for k, v in pairs @to_perc!}
 
   to_hex: (prefix) =>
     prefix_sym = prefix and "#" or ""
@@ -267,7 +267,7 @@ class Tiny
       * "%02X"::format @b
     "#{prefix_sym}#{table.concat(hex_tbl)}"
 
-  to_int: () => "#{@r}#{@g}#{@b}"
+  to_int: => "#{@r}#{@g}#{@b}"
 
   to_hsl: (unit) =>
     c = @to_float!
@@ -398,15 +398,15 @@ class Tiny
       g: ((c.g - @g) * value) + @g
       b: ((c.b - @b) * value) + @b
 
-  invert: () => Tiny("white") - @
+  invert: => Tiny("white") - @
 
-  rand_color: () => Tiny math.random(0, 255), math.random(0, 255), math.random(0, 255)
+  rand_color: => Tiny math.random(0, 255), math.random(0, 255), math.random(0, 255)
 
-  greyscale: () =>
+  greyscale: =>
     @desaturate 100
     Tiny r: @r, g: @g, b: @b
 
-  split_complement: () =>
+  split_complement: =>
     hsl = @to_hsl!
     h = hsl.h
     return
@@ -416,11 +416,11 @@ class Tiny
   -- }}}
 
   -- Getters {{{
-  get_complement: () =>
+  get_complement: =>
     hsl = @to_hsl!
     Tiny h: (hsl.h + 180) % 360, s: hsl.s, l: hsl.l
 
-  get_triad: () =>
+  get_triad: =>
     hsl = @to_hsl!
     h = hsl.h
     return
@@ -428,7 +428,7 @@ class Tiny
       * Tiny h: (h + 120) % 360, s: hsl.s, l: hsl.l
       * Tiny h: (h + 240) % 360, s: hsl.s, l: hsl.l
 
-  get_tetrad: () =>
+  get_tetrad: =>
     hsl = @to_hsl!
     h = hsl.h
     return
@@ -437,9 +437,9 @@ class Tiny
       * Tiny h: (h + 180) % 360, s: hsl.s, l: hsl.l
       * Tiny h: (h + 270) % 360, s: hsl.s, l: hsl.l
 
-  get_brightness: () => (@r * 299 + @g * 587 + @b * 114) / 1000
+  get_brightness: => (@r * 299 + @g * 587 + @b * 114) / 1000
 
-  get_luminance: () =>
+  get_luminance: =>
     local RsRGB, GsRGB, BsRGB, R, G, B
     RsRGB = @r / 255
     GsRGB = @g / 255
@@ -466,9 +466,9 @@ class Tiny
   -- }}}
 
   -- Predicates {{{
-  is_light: () => not @is_dark!
+  is_light: => not @is_dark!
 
-  is_dark: () => @get_brightness! < 128
+  is_dark: => @get_brightness! < 128
 
   is_readable: (c, wcag2) =>
     validateWCAG2Parms = (parms) ->
@@ -494,7 +494,7 @@ class Tiny
   -- }}}
 
   -- Metatables {{{
-  <tostring>: () => @to_hex true
+  <tostring>: => @to_hex true
 
   <eq>: (o) => @r == o.r and @g == o.g and @b == o.b
 
