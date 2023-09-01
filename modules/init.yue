@@ -1,0 +1,31 @@
+import "gears" as Gears
+import "beautiful" as Beautiful
+import "lfs" as Filesystem
+import "bling" as Bling
+
+import "core.config"
+import "core.utils.factory"
+
+export setup = (options) ->
+  import "awful.hotkeys_popup.keys"
+  import "awful.autofocus"
+
+  -- load changes to defaults
+  options = config.merge options
+  import "modules.variables" -- top priority module as other modules depend on it
+  excludes =
+    * "^%.$"
+    * "^%.%.$"
+    * "^init%.lua$"
+    * "^variables%.lua$"
+    * ".*%.yue$"
+    <index>: (file) => #[pattern for pattern in *@ when file::match pattern] > 0
+
+  for file in Filesystem.dir(Gears.filesystem.get_configuration_dir() .. "/modules")
+    -- "balls.lua" -> "balls"
+    if not excludes[file] then require "modules.#{factory.stem file}"
+
+  if options.flash then Bling.module.flash_focus.enable!
+  wallpapers = U.table.deepcopy config.get!.wallpapers
+  wallpapers.wallpaper = if_nil wallpapers.wallpaper, Beautiful.wallpaper
+  Bling.module.wallpaper.setup wallpapers

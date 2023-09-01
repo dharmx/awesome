@@ -1,0 +1,8 @@
+import "beautiful" as Beautiful
+config = require("core.config").get!
+
+Beautiful.init require "themes.#{config.theme}.theme"
+global terminal = config.modules.variables.terminal
+global editor = config.modules.variables.editor
+global editor_cmd = config.modules.variables.editor_cmd
+global modkey = config.modules.variables.modkey
