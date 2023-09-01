@@ -10,12 +10,22 @@ local widgets = require("core.components.widgets")
 local radial = require("modules.bars.tears.media.radial")
 
 function M.cpu()
-  return widgets.polls.file("/proc/stat", 2, function(self, stat)
-    local cpu = split(split(stat, "\n", { plain = true })[1], " ", { plain = true })
-    cpu = slice(cpu, 3)
-    cpu = map(tonumber, cpu)
-    local new_value = 100 - ((cpu[4] * 100) / (cpu[1] + cpu[2] + cpu[3] + cpu[4] + cpu[5] + cpu[6] + cpu[7] + cpu[8] + cpu[9]))
-    self:set_value(new_value)
+  ---@see https://www.baeldung.com/linux/get-cpu-usage
+  return widgets.polls.file("/proc/stat", 10, function(self, stat)
+    -- total: reduce((accumulate, core) -> accumulate + usage(core), cores)
+    -- cores: length(cores)
+    -- total * 100 / (cores * 100) => total / cores
+    local cores = 0
+    local total = 0
+    for _, line in ipairs(split(stat, "\n")) do
+      if line:match("^cpu[1-9]? ") then
+        local cpu = map(tonumber, slice(split(line, " +"), 2))
+        local usage = 100 - (cpu[4] * 100 / sum(cpu))
+        total = total + usage
+        cores = cores + 1
+      end
+    end
+    self:set_value(total / cores)
   end, radial({
     background = Beautiful.radial_cpu_bg,
     radial = {
@@ -34,7 +44,7 @@ function M.cpu()
 end
 
 function M.ram()
-  return widgets.polls.file("/proc/meminfo", 2, function(self, meminfo)
+  return widgets.polls.file("/proc/meminfo", 10, function(self, meminfo)
     local ram = {}
     U.table.foreachi(split(trim(meminfo), "\n"), function(_, line)
       local splits = split(line, ": +", { plain = false })

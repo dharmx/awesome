@@ -85,6 +85,12 @@ table_extend = (behavior, deep_extend, ...) ->
 
 table.deepcopy = (t) -> clone t, true
 
+table.sum = (t) ->
+  assert table.is_list t
+  acc = 0
+  for _, i in ipairs t do acc += i
+  acc
+
 table.any = (f, t) ->
   for i in *t do if f i then return true, i
   return false, nil
