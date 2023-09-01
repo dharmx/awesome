@@ -1,5 +1,7 @@
 ---Better utility functions. Supercharged by Neovim.
 
+import "gears" as table:{:clone}
+
 export table = {}
 export string = {}
 
@@ -81,43 +83,15 @@ table_extend = (behavior, deep_extend, ...) ->
           ret[k] = v
   ret
 
-table.deepcopy = (->
-  _id = (v) -> v
-  deepcopy_funcs =
-    table: (orig, cache) ->
-      if cache[orig] then return cache[orig]
-      copy = {}
-      cache[orig] = copy
-      mt = orig.<>
-      for k, v in pairs orig do copy[table.deepcopy k, cache] = table.deepcopy v, cache
-      copy.<> = mt
-    number: _id
-    string: _id
-    ["nil"]: _id
-    boolean: _id
-    ["function"]: _id
-
-  (orig, cache) ->
-    f = deepcopy_funcs[type orig]
-    if f
-      f orig, cache or {}
-    else
-      if type(orig) == "userdata" then return deepcopy_funcs["nil"]
-      error "Cannot deepcopy object of type #{type orig}"
-)()
-
-table.all = (f, t) ->
-  for i in *t do if f i then return false, i
-  true
+table.deepcopy = (t) -> clone t, true
 
 table.any = (f, t) ->
   for i in *t do if f i then return true, i
   return false, nil
 
 table.map = (f, t) ->
-  c = {}
-  for i, v in ipairs t do _G.table.insert c, f v
-  c
+  validate f: { f, "c" }, t: { t, "t" }
+  {k, f v for k, v in pairs t}
 
 table.foreach = (t, c) -> for k, v in pairs t do c k, v
 
@@ -138,15 +112,11 @@ table.zip = (...) ->
 
 table.keys = (t) ->
   assert type(t) == "table", "Expected table, got #{type t}"
-  c = {}
-  for k, _ in pairs t do _G.table.insert c, k
-  c
+  [k for k, _ in pairs t]
 
 table.values = (t) ->
   assert type(t) == "table", "Expected table, got #{type t}"
-  c = {}
-  for _, v in pairs t do _G.table.insert c, v
-  c
+  [v for _, v in pairs t]
 
 table.is_empty = (t) ->
   assert type(t) == "table", "Expected table, got #{type t}"
@@ -294,7 +264,4 @@ string.gsplit = (s, sep, opts) ->
       return _G.table.remove segs
     seg
 
-string.split = (s, sep, opts) ->
-  t = {}
-  for c in string.gsplit(s, sep, opts) do _G.table.insert t, c
-  t
+string.split = (s, sep, opts) -> [c for c in string.gsplit s, sep, opts]

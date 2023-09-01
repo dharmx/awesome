@@ -32,7 +32,10 @@ export defaults =
     titlebars_theme: "tears"
     bars_theme:  "tears"
 
-defaults.modules.variables.editor_cmd = "#{defaults.modules.variables.terminal} -e #{defaults.modules.variables.editor}"
+defaults
+  .modules
+  .variables
+  .editor_cmd = "#{defaults.modules.variables.terminal} -e #{defaults.modules.variables.editor}"
 
 export current = U.table.deepcopy defaults
 
