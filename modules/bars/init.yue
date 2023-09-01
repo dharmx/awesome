@@ -2,8 +2,8 @@ import "awful" as Awful
 import "lib.battery" as Battery
 import "awful.autofocus"
 
-import "core.config" as :_current
-theme = require "modules.bars.#{_current.modules.bars_theme}"
+import "core.config"
+theme = require "modules.bars.#{config.get!.modules.bars_theme}"
 
 -- Come.. let us all worship Javacafe.
 battery = Battery "/org/freedesktop/UPower/devices/battery_BAT0"

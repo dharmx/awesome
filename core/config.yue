@@ -5,7 +5,7 @@ import "core.utils.factory"
 import "core.enum" as :environ
 
 environ.AWESOME_THEMES_PATH = "#{environ.XDG_CONFIG_HOME}/awesome/themes"
-export _defaults =
+export defaults =
   theme: "tears"
   colors: "radium"
   background: "dark"
@@ -32,17 +32,14 @@ export _defaults =
     titlebars_theme: "tears"
     bars_theme:  "tears"
 
-_defaults
-  .modules
-  .variables
-  .editor_cmd = "#{_defaults.modules.variables.terminal} -e #{_defaults.modules.variables.editor}"
+defaults.modules.variables.editor_cmd = "#{defaults.modules.variables.terminal} -e #{defaults.modules.variables.editor}"
 
-export _current = Gears.table.clone _defaults, true
+export current = U.table.deepcopy defaults
 
 export merge = (options) ->
-  _current = U.table.deep_extend "keep", if_nil(options, {}), _current
-  _current
+  current = U.table.deep_extend "keep", if_nil(options, {}), current
+  current
 
-export extend = (options) -> U.table.deep_extend "keep", if_nil(options, {}), _current
+export extend = (options) -> U.table.deep_extend "keep", if_nil(options, {}), current
 
-export get = -> _current
+export get = -> current

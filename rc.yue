@@ -1,7 +1,7 @@
 pcall require, "luarocks.loader"
 import "inspect" as :inspect
 
--- nice and comfy globals
+-- Nice and comfy globals.
 global I = inspect
 global P = (...) -> print I...
 global U = require "lib.std"
