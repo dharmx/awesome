@@ -1,0 +1,19 @@
+import "awful" as Awful
+import "naughty" as Naughty
+import "ruled" as Ruled
+
+Naughty.connect_signal "request::display_error", (message, startup) ->
+  Naughty.notification
+    urgency: "critical"
+    title: "Oops, an error happened #{startup and " during startup!" or "!"}"
+    message: message
+
+Ruled.notification.connect_signal "request::rules", ->
+  Ruled.notification.append_rule
+    rule: {}
+    properties:
+      screen: Awful.screen.preferred
+      implicit_timeout: 5
+
+Naughty.connect_signal "request::display", (notification) ->
+  Naughty.layout.box notification: notification

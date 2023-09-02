@@ -1,0 +1,48 @@
+import "awful" as Awful
+import "core.enum" as modifiers:{:SUPER, :SHIFT, :ALT, :CTRL}
+
+return
+  *
+    modifiers: SUPER
+    key: "q"
+    description: "Close."
+    on_press: (node) -> node::kill! 
+  *
+    modifiers: SUPER + SHIFT
+    key: "q"
+    description: "Kill."
+    on_press: (node) -> awesome.kill node.pid, 9
+  *
+    modifiers: SUPER
+    key: "f"
+    description: "Toggle fullscreen."
+    on_press: (node) ->
+      node.fullscreen = not node.fullscreen
+      node::raise!
+  *
+    modifiers: SUPER
+    key: "s"
+    description: "Toggle floating."
+    on_press: Awful.client.floating.toggle
+  *
+    modifiers: SUPER + CTRL
+    key: "Return"
+    description: "Move to master."
+    on_press: (node) -> node::swap Awful.client.getmaster!
+  *
+    modifiers: SUPER
+    key: "o"
+    description: "Move to screen."
+    on_press: (node) -> node::move_to_screen! 
+  *
+    modifiers: SUPER + ALT
+    key: "m"
+    description: "Minimize."
+    on_press: (node) -> node.minimized = true 
+  *
+    modifiers: SUPER
+    key: "m"
+    description: "Maximize and unmaxmize."
+    on_press: (node) ->
+      node.maximized = not node.maximized
+      node::raise!

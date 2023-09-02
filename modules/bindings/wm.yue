@@ -1,0 +1,14 @@
+import "core.enum" as modifiers:{:ALT, :SUPER}
+
+return
+  wm:
+    *
+      modifiers: SUPER + ALT
+      key: "r"
+      description: "Reload awesome."
+      on_press: awesome.restart
+    *
+      modifiers: SUPER + ALT
+      key: "q"
+      description: "Quit awesome."
+      on_press: awesome.quit

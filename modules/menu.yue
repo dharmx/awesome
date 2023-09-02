@@ -1,0 +1,34 @@
+import "beautiful" as Beautiful
+import "awful" as Awful
+import "menubar" as Menu
+import "awful.hotkeys_popup" as HotkeysPopup
+
+global myawesomemenu =
+  *
+    * "Hotkeys"
+    * -> HotkeysPopup.show_help!
+  *
+    * "Restart"
+    * -> awesome.restart
+  *
+    * "Quit"
+    * -> awesome.quit 0
+  *
+    * "Terminal"
+    * -> Awful.spawn terminal
+  *
+    * "Menu"
+    * -> Menu.show!
+
+global mymainmenu = Awful.menu
+  items:
+    *
+      * "AwesomeWM"
+      * myawesomemenu
+      * Beautiful.awesome_icon
+
+global mylauncher = Awful.widget.launcher
+  image: Beautiful.awesome_icon
+  menu: mymainmenu
+
+Menu.utils.terminal = terminal

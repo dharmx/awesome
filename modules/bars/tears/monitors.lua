@@ -20,7 +20,7 @@ function M.cpu()
     for _, line in ipairs(split(stat, "\n")) do
       if line:match("^cpu[1-9]? ") then
         local cpu = map(tonumber, slice(split(line, " +"), 2))
-        local usage = 100 - (cpu[4] * 100 / sum(cpu))
+        local usage = 100 - cpu[4] * 100 / sum(cpu)
         total = total + usage
         cores = cores + 1
       end
