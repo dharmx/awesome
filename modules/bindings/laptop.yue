@@ -17,7 +17,7 @@ return
     modifiers: EMPTY
     key: "XF86AudioMicMute"
     description: "Mute and unmute microphone."
-    on_press: "pactl set-source-mute @DEFAULT_SOURCE@"
+    on_press: "pactl set-source-mute alsa_input.pci-0000_00_1f.3.analog-stereo toggle"
   *
     modifiers: EMPTY
     key: "XF86AudioMute"
