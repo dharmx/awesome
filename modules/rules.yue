@@ -27,7 +27,6 @@ rules =
         * "xtightvncviewer"
         * "spotify"
         * "Zathura"
-        * "feh"
         * "Pavucontrol"
         * "Gnome-disks"
         * "blueman-manager"
@@ -65,17 +64,22 @@ rules =
         * "pop-up"
     properties:
       floating: true
+      placement: Awful.placement.centered
+      ontop: true
   *
     id: "titlebars"
     rule_any:
       type:
         * "normal"
         * "dialog"
+    properties:
+      titlebars_enabled: true
+  * id: "notitlebars_centered"
+    rule_any:
       class:
         * "Xephyr"
     properties:
-      titlebars_enabled: true
+      titlebars_enabled: false
+      placement: Awful.placement.centered
 
-Ruled.client.connect_signal "request::rules", ->
-  U.table.foreachi rules, (_, rule) ->
-    Ruled.client.append_rule rule
+Ruled.client.connect_signal "request::rules", -> Ruled.client.append_rules rules

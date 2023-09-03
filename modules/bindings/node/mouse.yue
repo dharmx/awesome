@@ -7,7 +7,9 @@ return
     button: 1
     context: "mouse_click"
     description: "Add mouse click."
-    on_press: (node) -> node::activate context: "mouse_click"
+    on_press: (node) ->
+      node::activate context: "mouse_click"
+      mymainmenu::hide!
   *
     modifiers: SUPER
     button: 1

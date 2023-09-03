@@ -6,7 +6,9 @@ import "awful.hotkeys_popup" as HotkeysPopup
 global myawesomemenu =
   *
     * "Hotkeys"
-    * -> HotkeysPopup.show_help!
+    * ->
+      HotkeysPopup.show_help!
+      mymainmenu::hide!
   *
     * "Restart"
     * -> awesome.restart
@@ -15,10 +17,14 @@ global myawesomemenu =
     * -> awesome.quit 0
   *
     * "Terminal"
-    * -> Awful.spawn terminal
+    * ->
+      Awful.spawn terminal
+      mymainmenu::hide!
   *
     * "Menu"
-    * -> Menu.show!
+    * ->
+      Menu.show!
+      mymainmenu::hide!
 
 global mymainmenu = Awful.menu
   items:
