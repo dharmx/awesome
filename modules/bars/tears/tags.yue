@@ -1,0 +1,82 @@
+import "wibox" as Wibox
+import "beautiful" as Beautiful
+import "awful" as Awful
+
+import "core.utils.factory"
+import "core.components.widgets"
+import "core.enum" as modifiers:{:SUPER, :EMPTY}
+
+DPI = Beautiful.xresources.apply_dpi
+Resource = factory.resource_factory!
+
+bindings = map Awful.button,
+  *
+    modifiers: EMPTY
+    button: 1
+    on_press: (tag) -> tag::view_only!
+  *
+    modifiers: SUPER
+    button: 1
+    on_press: (tag) -> if client.focus then client.focus::move_to_tag tag
+  *
+    modifiers: EMPTY
+    button: 3
+    on_press: Awful.tag.viewtoggle
+  *
+    modifiers: SUPER
+    button: 3
+    on_press: (tag) -> if client.focus then client.focus::toggle_tag tag
+  *
+    modifiers: EMPTY
+    button: 4
+    on_press: (tag) -> Awful.tag.viewprev tag.screen
+  *
+    modifiers: EMPTY
+    button: 5
+    on_press: (tag) -> Awful.tag.viewnext tag.screen
+
+update_state = (imagebox, tag) ->
+  clients = #tag::clients!
+  if tag.urgent
+    imagebox.image = Resource.prohibit_inset_fill
+    imagebox.stylesheet = "*{fill:#{Beautiful.taglist_bg_urgent};}"
+    return
+
+  if Awful.screen.focused!.selected_tag.index == tag.index
+    imagebox.image = Resource.asterisk_fill
+    imagebox.stylesheet = "*{fill:#{Beautiful.taglist_bg_focus};}"
+    return
+
+  if clients > 0
+    imagebox.image = Resource.circle_dashed_fill
+    imagebox.stylesheet = "*{fill:#{Beautiful.taglist_bg_occupied};}"
+  elseif clients == 0
+    imagebox.image = Resource.radio_button_fill
+    imagebox.stylesheet = "*{fill:#{Beautiful.taglist_bg_empty};}"
+  else
+    imagebox.image = Resource.warning_circle_fill
+    imagebox.stylesheet = "*{fill:#{Beautiful.taglist_bg_urgent};}"
+
+M = <call>: (...) => @.new ...
+M.new = (local_screen) ->
+  return
+    screen: local_screen
+    filter: Awful.widget.taglist.filter.all
+    layout: Wibox.layout.fixed.horizontal
+    buttons: bindings
+    widget_template:
+      *
+        *
+          id: "image_role"
+          forced_height: DPI 25
+          forced_width: DPI 25
+          valign: "center"
+          widget: Wibox.widget.imagebox
+        widget: Wibox.container.margin
+      bg: Beautiful.taglist_bg
+      shape: Beautiful.taglist_shape
+      widget: Wibox.container.background
+      create_callback: (tag) => update_state(@::get_children_by_id("image_role")[1], tag)
+      update_callback: (tag) => update_state(@::get_children_by_id("image_role")[1], tag)
+
+M
