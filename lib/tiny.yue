@@ -1,6 +1,6 @@
 ---Ported from https://github.com/bgrins/TinyColor.
 
-import "lib.std" as table:{:map, :sum}
+import "lib.std" as table:{:map, :sum}, string:{:trim}
 
 -- Helpers {{{
 alter = (attr, per) -> math.floor attr * (100 + per) / 100
@@ -188,7 +188,7 @@ class Tiny
       packed = packed[1]
       switch type packed
         when "string"
-          -- packed = trim(packed)
+          packed = trim(packed)
           if packed::sub(1, 1) == "#"
             rgb = Tiny.hex2rgb(packed)
           else

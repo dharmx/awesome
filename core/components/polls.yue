@@ -3,15 +3,13 @@ import "wibox" as Wibox
 import "gears.timer" as Timer
 import "lib.functional" as :if_nil
 
-export polls = {}
-
 ---Continuously read a file in intervals.
-polls.file = (filepath, interval, callback, base_widget) ->
+export.file = (filepath, interval, callback, base_widget) ->
   -- defaults and asserts
   assert filepath, "filepath cannot be empty."
   interval = if_nil interval, 5
   base_widget = if_nil base_widget, Wibox.widget.textbox!
-  callback = if_nil callback, (widget, data) -> widget::set_text(data)
+  callback = if_nil callback, (widget, data) -> widget::set_text data
 
   file = Gio.File.new_for_path filepath
   assert file::query_exists!, "filepath must exist."
@@ -32,7 +30,7 @@ polls.file = (filepath, interval, callback, base_widget) ->
   base_widget, timer
 
 ---Run a callback in intervals.
-polls.callback = (callback, interval, base_widget) ->
+export.on = (callback, interval, base_widget) ->
   -- defaults and asserts
   interval = if_nil interval, 5
   base_widget = if_nil base_widget, Wibox.widget.textbox!

@@ -1,6 +1,6 @@
 import "wibox" as Wibox
 import "beautiful" as Beautiful
-import "core.components.widgets"
+import "core.components.polls"
 import "modules.bars.tears.media.radial"
 import "core.utils.factory"
 import "lib.std" as table:{:map, :slice, :foreachi, :sum}, string:{:split, :trim}
@@ -37,7 +37,7 @@ export cpu = ->
     max_value: 100
     min_value: 0
 
-  widgets.polls.file "/proc/stat", 10, callback, widget
+  polls.file "/proc/stat", 10, callback, widget
 
 export ram = ->
   callback = (meminfo) =>
@@ -61,4 +61,4 @@ export ram = ->
     max_value: 16
     min_value: 0
 
-  widgets.polls.file "/proc/meminfo", 10, callback, widget
+  polls.file "/proc/meminfo", 10, callback, widget

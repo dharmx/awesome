@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-packages="awestore bling inspect ldoc lua-path luafilesystem luaposix markdown penlight rubato"
+packages="awestore bling inspect ldoc lua-path luafilesystem luaposix markdown penlight rubato fzy"
 
 case "$1" in
   --install) 

@@ -3,7 +3,6 @@ import "beautiful" as Beautiful
 import "awful" as Awful
 
 import "core.utils.factory"
-import "core.components.widgets"
 import "core.enum" as modifiers:{:SUPER, :EMPTY}
 import "lib.std" as table:{:map}
 

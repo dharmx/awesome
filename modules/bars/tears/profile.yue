@@ -1,7 +1,7 @@
 import "wibox" as Wibox
 import "beautiful" as Beautiful
 import "gears" as Gears
-import "core.components.widgets"
+import "core.components.polls"
 import "lib.functional" as :if_nil
 
 DPI = Beautiful.xresources.apply_dpi
@@ -33,4 +33,4 @@ export time = (options) ->
   datebox = Wibox.widget.textbox!
   datebox.font = if_nil options.font, "Dosis 15"
   datebox.valign = "center"
-  widgets.polls.callback ((widget) -> widget::set_markup os.date options.format), options.interval, datebox
+  polls.on ((widget) -> widget::set_markup os.date options.format), options.interval, datebox
