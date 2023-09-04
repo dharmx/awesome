@@ -1,6 +1,8 @@
 import "awful" as Awful
 import "gears" as Gears
 import "lfs" as Filesystem
+
+import "lib.std" as table:{:is_list}
 import "core.utils.factory"
 
 -- exclude file patterns
@@ -19,7 +21,7 @@ for file in Filesystem.dir "#{Gears.filesystem.get_configuration_dir!}/modules/b
     stem = factory.stem file -- "/a/b/c/d.lua" -> "d"
     bindings = require "modules.bindings.#{stem}"
     -- assign filename as the default binding group
-    if U.table.is_list bindings then bindings = [stem]: bindings
+    if is_list bindings then bindings = [stem]: bindings
     factory.apply_bindings bindings, false, Awful.keyboard.append_global_keybinding
 
 import "modules.bindings.mouse"

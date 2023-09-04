@@ -1,5 +1,6 @@
 import "gears" as Gears
 import "beautiful" as Beautiful
+import "lib.functional" as :if_nil
 
 DPI = Beautiful.xresources.apply_dpi
 DEG = (degree) -> degree * (math.pi / 180)
@@ -7,14 +8,12 @@ DEG = (degree) -> degree * (math.pi / 180)
 export tears = (radius, pattern, background) ->
   width = DPI 30
   height = DPI 30
-  Gears.surface.load_from_shape(width, height, ((context) ->
-    Gears.shape.partially_rounded_rect context, width, height, true, true, false, true, radius
-  ), pattern, background)
+  shape = (context) -> Gears.shape.partially_rounded_rect context, width, height, true, true, false, true, radius
+  Gears.surface.load_from_shape(width, height, shape, pattern, background)
 
 export pacman = (radius, pattern, mouth, background) ->
   mouth = if_nil mouth, 0
   width = DPI 30
   height = DPI 30
-  Gears.surface.load_from_shape(width, height, ((context) ->
-    Gears.shape.pie context, width, height, DEG(225) + mouth, DEG(130) - mouth, radius
-  ), pattern, background)
+  shape = (context) -> Gears.shape.pie context, width, height, DEG(225) + mouth, DEG(130) - mouth, radius
+  Gears.surface.load_from_shape(width, height, shape, pattern, background)

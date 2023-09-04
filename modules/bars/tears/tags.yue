@@ -5,6 +5,7 @@ import "awful" as Awful
 import "core.utils.factory"
 import "core.components.widgets"
 import "core.enum" as modifiers:{:SUPER, :EMPTY}
+import "lib.std" as table:{:map}
 
 DPI = Beautiful.xresources.apply_dpi
 Resource = factory.resource_factory!

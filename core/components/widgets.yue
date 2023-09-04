@@ -1,6 +1,7 @@
 import "lgi" as :Gio
 import "wibox" as Wibox
 import "gears.timer" as Timer
+import "lib.functional" as :if_nil
 
 export polls = {}
 

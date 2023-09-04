@@ -2,6 +2,8 @@ import "wibox" as Wibox
 import "beautiful" as Beautiful
 import "gears" as Gears
 import "core.components.widgets"
+import "lib.functional" as :if_nil
+
 DPI = Beautiful.xresources.apply_dpi
 
 export logo = (options) ->

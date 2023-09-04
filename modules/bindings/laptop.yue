@@ -1,4 +1,5 @@
 import "awful" as Awful
+import "lib.functional" as :mute
 import "core.enum" as modifiers:{:EMPTY, :SUPER}, environ:{:BROWSER}
 
 video_process = nil
@@ -111,19 +112,19 @@ return
     modifiers: EMPTY
     key: "XF86Mail"
     description: "Open mail client."
-    on_press: F.mute
+    on_press: mute
   *
     modifiers: EMPTY
     key: "Menu"
     description: "Menu."
-    on_press: F.mute
+    on_press: mute
   *
     modifiers: EMPTY
     key: "XF86PowerOff"
     description: "Powermenu."
-    on_press: F.mute
+    on_press: mute
   *
     modifiers: EMPTY
     key: "XF86Search"
     description: "Search."
-    on_press: F.mute
+    on_press: mute

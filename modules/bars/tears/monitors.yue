@@ -3,6 +3,7 @@ import "beautiful" as Beautiful
 import "core.components.widgets"
 import "modules.bars.tears.media.radial"
 import "core.utils.factory"
+import "lib.std" as table:{:map, :slice, :foreachi, :sum}, string:{:split, :trim}
 
 Resource = factory.resource_factory!
 DPI = Beautiful.xresources.apply_dpi
@@ -41,7 +42,7 @@ export cpu = ->
 export ram = ->
   callback = (meminfo) =>
     ram = {}
-    U.table.foreachi split(trim(meminfo), "\n"), (_, line) ->
+    foreachi split(trim(meminfo), "\n"), (_, line) ->
       splits = split line, ": +"
       ram[splits[1]] = tonumber(split(splits[2], " ")[1])
     new_value = (ram.MemTotal - ram.MemFree - ram.Buffers - ram.Cached) / 1024 ^ 2

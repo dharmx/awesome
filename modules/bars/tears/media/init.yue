@@ -1,4 +1,5 @@
 import "wibox" as Wibox
+import "lib.functional" as :if_nil
 
 export slash = (options) ->
   options = if_nil options, {}

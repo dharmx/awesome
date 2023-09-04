@@ -3,6 +3,8 @@ import "wibox" as Wibox
 import "beautiful" as Beautiful
 
 import "core.enum" as modifiers:{:EMPTY}
+import "lib.std" as table:{:map}
+
 DPI = Beautiful.xresources.apply_dpi
 
 bindings = map Awful.button,

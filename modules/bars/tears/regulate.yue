@@ -1,7 +1,9 @@
 import "wibox" as Wibox
 import "beautiful" as Beautiful
-import "lib.tiny" as T
 import "gears" as Gears
+import "lib.tiny" as T
+import "lib.functional" as :if_nil
+
 DPI = Beautiful.xresources.apply_dpi
 
 M =

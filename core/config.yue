@@ -3,6 +3,8 @@ import "gears" as Gears
 
 import "core.utils.factory"
 import "core.enum" as :environ
+import "lib.functional" as :if_nil
+import "lib.std" as table:{:deepcopy, :deep_extend}
 
 environ.AWESOME_THEMES_PATH = "#{environ.XDG_CONFIG_HOME}/awesome/themes"
 export defaults =
@@ -37,12 +39,12 @@ defaults
   .variables
   .editor_cmd = "#{defaults.modules.variables.terminal} -e #{defaults.modules.variables.editor}"
 
-export current = U.table.deepcopy defaults
+export current = deepcopy defaults
 
 export merge = (options) ->
-  current = U.table.deep_extend "keep", if_nil(options, {}), current
+  current = deep_extend "keep", if_nil(options, {}), current
   current
 
-export extend = (options) -> U.table.deep_extend "keep", if_nil(options, {}), current
+export extend = (options) -> deep_extend "keep", if_nil(options, {}), current
 
 export get = -> current

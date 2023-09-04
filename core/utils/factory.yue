@@ -1,5 +1,7 @@
 import "path" as Path
 import "menubar.icon_theme" as IconTheme
+import "lib.functional" as :if_nil
+import "lib.std" as table:{:foreach, :foreachi, :any}, string:{:split}
 import "lgi" as :Gio
 
 export stem = (path) -> split(Path.basename(path), ".", plain: true)[1]
@@ -10,10 +12,12 @@ export apply_bindings = (grouped_bindings, mouse, callback) ->
 
   spawn_wrap = (cmd) -> -> Awful.spawn cmd
   mouse = if_nil mouse, false
-  wrapped_types = { "string", "table" }
+  wrapped_types =
+    * "string"
+    * "table"
 
-  _ = U.table.foreach if_nil(grouped_bindings, {}), (group, bindings) ->
-    _ = U.table.foreachi bindings, (_, binding) ->
+  _ = foreach if_nil(grouped_bindings, {}), (group, bindings) ->
+    _ = foreachi bindings, (_, binding) ->
       binding.group = group
       if GT.hasitem wrapped_types, type binding.on_press
         binding.on_press = spawn_wrap binding.on_press
@@ -39,7 +43,10 @@ export resource_factory = ->
   get_file = (filename) ->
     path = "%s/%s."::format resource_path, filename
     _, value = any (extension) -> Path.isfile(path .. extension),
-      { "svg", "png", "jpeg", "jpg" }
+      * "svg"
+      * "png"
+      * "jpeg"
+      * "jpg"
     path .. value
 
   return

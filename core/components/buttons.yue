@@ -4,6 +4,8 @@ import "core.utils.factory"
 import "rubato" as Rubato
 import "awful" as Awful
 import "gears.timer" as GearsTime
+import "lib.tiny" as T
+import "lib.functional" as :if_nil
 
 export smooth_button = (icon_label, callback) ->
   IconFactory = factory.icon_factory factory.get_current_icon_theme_name!

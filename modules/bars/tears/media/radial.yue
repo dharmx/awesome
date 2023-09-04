@@ -1,5 +1,6 @@
 import "wibox" as Wibox
 import "beautiful" as Beautiful
+import "lib.functional" as :if_nil
 
 DPI = Beautiful.xresources.apply_dpi
 

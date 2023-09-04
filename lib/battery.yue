@@ -6,6 +6,8 @@ import "lgi" as LGI
 import "gears.table" as GT
 import "gears.timer" as GearsTime
 import "wibox.widget.base" as WidgetBase
+import "lib.functional" as :if_nil
+
 UPowerGlib = LGI.require "UPowerGlib"
 
 class Battery

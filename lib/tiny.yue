@@ -1,5 +1,7 @@
 ---Ported from https://github.com/bgrins/TinyColor.
 
+import "lib.std" as table:{:map, :sum}
+
 -- Helpers {{{
 alter = (attr, per) -> math.floor attr * (100 + per) / 100
 

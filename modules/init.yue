@@ -3,6 +3,9 @@ import "beautiful" as Beautiful
 import "lfs" as Filesystem
 import "bling" as Bling
 
+import "lib.std" as table:{:deepcopy}
+import "lib.functional" as :if_nil
+
 import "core.config"
 import "core.utils.factory"
 
@@ -21,11 +24,11 @@ export setup = (options) ->
     * ".*%.yue$"
     <index>: (file) => #[pattern for pattern in *@ when file::match pattern] > 0
 
-  for file in Filesystem.dir(Gears.filesystem.get_configuration_dir() .. "/modules")
+  for file in Filesystem.dir "#{Gears.filesystem.get_configuration_dir!}/modules"
     -- "balls.lua" -> "balls"
     if not excludes[file] then require "modules.#{factory.stem file}"
 
   if options.flash then Bling.module.flash_focus.enable!
-  wallpapers = U.table.deepcopy config.get!.wallpapers
+  wallpapers = deepcopy config.get!.wallpapers
   wallpapers.wallpaper = if_nil wallpapers.wallpaper, Beautiful.wallpaper
   Bling.module.wallpaper.setup wallpapers

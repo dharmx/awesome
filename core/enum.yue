@@ -1,6 +1,7 @@
 import "gears" as Gears
 import "posix.stdlib" as PosixStdlib
 import "lib.std" as table:{:flatten}
+import "lib.functional" as :if_nil
 
 class Mod
   new: (...) => for _, key in ipairs flatten { ... } do @[] = key
