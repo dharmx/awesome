@@ -34,6 +34,7 @@ theme.border_color_normal = colors.green::to_hex true
 theme.border_color_active = colors.magenta::to_hex true
 theme.border_color_marked = colors.red::brighten(5)::to_hex true
 
+theme.wibar_quick_prompt_cursor = colors.blue::to_hex true
 theme.wibar_quick_bg = colors.black::to_hex true
 theme.wibar_quick_selected_bg = colors.black::lighten(1)::brighten(2)::to_hex true
 theme.wibar_quick_prompt_background = colors.black::darken(2)::to_hex true

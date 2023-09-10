@@ -28,6 +28,7 @@ Resource = factory.resource_factory!
       dummy: "Navigate"
       background: Beautiful.wibar_quick_prompt_background
       foreground: Beautiful.wibar_quick_prompt_foreground
+      cursor: Beautiful.wibar_quick_prompt_cursor
     prefix:
       width: DPI 50
       image: Resource.magnifying_glass_duotone

@@ -80,18 +80,37 @@ export class Fuzzy
     options.items.spacing = if_nil options.items.spacing, 0
 
     @widgets =
-      prompt: Wibox.widget
-        text: options.prompt.dummy
-        font: options.prompt.font
-        forced_width: options.prompt.width
-        forced_height: options.prompt.height
-        valign: "center"
-        widget: Wibox.widget.textbox
       items: Wibox.widget
         step: 50
         spacing: options.items.spacing
         scrollbar_enabled: options.thumb.enabled
         layout: overflow.vertical
+
+    prompt = Wibox.widget
+      text: options.prompt.dummy
+      font: options.prompt.font
+      forced_width: options.prompt.width
+      buttons:
+        * Awful.button
+          modifiers: EMPTY,
+          button: 1,
+          on_press: ->
+            Awful.prompt.run
+              font: options.prompt.font
+              bg_cursor: options.prompt.cursor
+              textbox: @widgets.prompt
+              exe_callback: (input) ->
+                if not input or #input == 0 then return
+                for result in *results
+                  if if_nil(result.options[1], result.options.label)::lower!::match(input::lower!)
+                    result.options.on_press!
+                    break
+                @widgets.popup.visible = false
+              done_callback: -> @widgets.prompt::set_text options.prompt.dummy
+      forced_height: options.prompt.height
+      valign: "center"
+      widget: Wibox.widget.textbox
+    @widgets.prompt = prompt
     for item in *results do @widgets.items::add item.widget
 
     popup = Awful.popup

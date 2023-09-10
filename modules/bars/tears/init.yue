@@ -203,7 +203,9 @@ M.initialize = (local_screen) ->
                     signal:
                       on_enter: => @\set_bg Beautiful.wibar_right_dropdown_on_enter_bg
                       on_leave: => @\set_bg Beautiful.wibar_right_dropdown_on_leave_bg
-                      on_press: => quick.widgets.popup.visible = not quick.widgets.popup.visible
+                      on_press: =>
+                        if quick.widgets.popup.visible then quick.widgets.popup
+                        quick.widgets.popup.visible = not quick.widgets.popup.visible
                 * M.components.slash
                     font: "Dosis 15"
                     foreground: Beautiful.wibar_right_separator_fg
