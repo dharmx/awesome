@@ -34,6 +34,12 @@ theme.border_color_normal = colors.green::to_hex true
 theme.border_color_active = colors.magenta::to_hex true
 theme.border_color_marked = colors.red::brighten(5)::to_hex true
 
+theme.wibar_quick_bg = colors.black::to_hex true
+theme.wibar_quick_selected_bg = colors.black::lighten(1)::brighten(2)::to_hex true
+theme.wibar_quick_prompt_background = colors.black::darken(2)::to_hex true
+theme.wibar_quick_prompt_foreground = colors.bblack::brighten(15)::to_hex true
+theme.wibar_quick_prefix_foreground = theme.wibar_quick_prompt_foreground
+theme.wibar_quick_outline_background = colors.bblack::brighten(2)::to_hex true
 theme.wibar_bg = colors.black::to_hex true
 theme.wibar_left_separator_fg = colors.black::brighten(20)::to_hex true
 theme.wibar_left_time_hour_fg = colors.red::to_hex true
@@ -60,10 +66,10 @@ theme.wibar_right_dropdown_collapse_stroke = colors.bblack::lighten(40)::to_hex 
 theme.wibar_right_dropdown_bg = colors.black::lighten(3)::brighten(3)::to_hex true
 theme.wibar_right_dropdown_on_enter_bg = colors.black::lighten(2)::brighten(6)::to_hex true
 theme.wibar_right_dropdown_on_leave_bg = theme.wibar_right_dropdown_bg
-theme.wibar_right_detached_button_icon_bg = colors.black::brighten(10)::to_hex true
-theme.wibar_right_detached_button_icon_stroke = colors.white::darken(10)::to_hex true
-theme.wibar_right_detached_button_signal_on_enter = colors.black::lighten(5)::brighten(10)::to_hex true
-theme.wibar_right_detached_button_signal_on_leave = colors.bblack::lighten(10)::to_hex true
+theme.wibar_right_detached_icon_bg = colors.black::brighten(10)::to_hex true
+theme.wibar_right_detached_icon_stroke = colors.white::darken(10)::to_hex true
+theme.wibar_right_detached_signal_on_enter = colors.black::lighten(5)::brighten(10)::to_hex true
+theme.wibar_right_detached_signal_on_leave = colors.bblack::lighten(10)::to_hex true
 
 theme.taglist_regulate_bg = colors.black::lighten(2)::to_hex true
 theme.taglist_regulate_increase_bg = colors.bred::to_hex true

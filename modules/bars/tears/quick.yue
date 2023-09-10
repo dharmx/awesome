@@ -1,0 +1,37 @@
+import "awful" as Awful
+import "beautiful" as Beautiful
+
+import "core.components.fuzzy" as {:Fuzzy, :SimpleEntry}
+import "modules.bars.tears.components.dropdown"
+import "lib.functional" as :if_nil
+import "core.utils.factory"
+
+DPI = Beautiful.xresources.apply_dpi
+Resource = factory.resource_factory!
+
+<call>: (links) =>
+  Fuzzy [SimpleEntry link for link in *links],
+    sleep: 10
+    width: DPI 250
+    maximum_width: DPI 600
+    maximum_height: DPI 330
+    place: (...) -> Awful.placement.top_right ...,
+      margins:
+        top: DPI 75
+        right: DPI 300
+    background: Beautiful.wibar_quick_bg
+    ontop: true
+    visible: false
+    thumb:
+      enabled: false
+    prompt:
+      dummy: "Navigate"
+      background: Beautiful.wibar_quick_prompt_background
+      foreground: Beautiful.wibar_quick_prompt_foreground
+    prefix:
+      width: DPI 50
+      image: Resource.magnifying_glass_duotone
+      style: "*{fill:#{Beautiful.wibar_quick_prefix_foreground};}"
+    outline:
+      background: Beautiful.wibar_quick_outline_background
+      width: DPI 2

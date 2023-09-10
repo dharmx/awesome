@@ -2,7 +2,7 @@ import "awful" as Awful
 import "wibox" as Wibox
 import "beautiful" as Beautiful
 
-import "core.components.buttons"
+import "core.components.titlebars"
 import "core.enum" as modifiers:{:EMPTY}
 import "lib.std" as table:{:map}
 
@@ -43,21 +43,21 @@ export top = (node) ->
       layout: Wibox.layout.flex.horizontal
     *
       *
-        * buttons.methman.minimize node, 15, Beautiful.titlebar_pacman_minimize
+        * titlebars.methman.minimize node, 15, Beautiful.titlebar_pacman_minimize
         widget: Wibox.container.margin
         top: DPI 14
         bottom: DPI 14
         left: DPI 5
         right: DPI 2
       *
-        * buttons.methman.maximize node, 15, Beautiful.titlebar_pacman_maximize
+        * titlebars.methman.maximize node, 15, Beautiful.titlebar_pacman_maximize
         top: DPI 14
         bottom: DPI 14
         left: DPI 5
         right: DPI 2
         widget: Wibox.container.margin
       *
-        * buttons.methman.close node, 15, Beautiful.titlebar_pacman_close
+        * titlebars.methman.close node, 15, Beautiful.titlebar_pacman_close
         top: DPI 14
         bottom: DPI 14
         left: DPI 5

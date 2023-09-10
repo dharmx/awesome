@@ -7,16 +7,6 @@ import "gears.timer" as GearsTime
 import "lib.tiny" as T
 import "lib.functional" as :if_nil
 
-export smooth_button = (icon_label, callback) ->
-  IconFactory = factory.icon_factory factory.get_current_icon_theme_name!
-  icon = IconFactory icon_label, 512
-  button = Awful.widget.button
-    resize: true
-    visible: true
-    image: icon
-  button::connect_signal "button::press", callback
-  button
-
 export pacman =
   <call>: (radius, pattern) =>
     assert radius, "pacman needs a radius"
@@ -29,7 +19,7 @@ export pacman =
       duration: 0.3
       subscribed: (position) -> button::set_image surfaces.pacman radius, pattern, -position
     button::connect_signal "mouse::enter", -> button.timed.target = 0.5
-    button::connect_signal "mouse::leave", -> button.timed.target = 0
+    button::connect_signal "mouse::leave", -> button.timed.target = 0.0
     button
 
 pacman.minimize = (node, radius, pattern) ->

@@ -1,0 +1,10 @@
+import "gears.shape" as :pie, :partially_rounded_rect
+DEG = (degree) -> degree * (math.pi / 180)
+
+export tears = (radius) ->
+  (context, width, height) ->
+    partially_rounded_rect context, width, height, true, true, false, true, radius
+
+export pacman = (radius, mouth) ->
+  (context, width, height) ->
+    pie context, width, height, DEG(225) + mouth, DEG(130) - mouth, radius

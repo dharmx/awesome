@@ -1,0 +1,150 @@
+import "awful" as Awful
+import "gears.timer" as Timer
+import "naughty" as Naughty
+import "gears" as Gears
+import "wibox" as Wibox
+import "beautiful" as Beautiful
+import "lib.overflow"
+
+import "core.enum" as modifiers:{:EMPTY}
+import "core.utils.factory"
+import "lib.functional" as :if_nil
+
+DPI = Beautiful.xresources.apply_dpi
+Resource = factory.resource_factory!
+
+export class SimpleEntry
+  new: (@options) =>
+    assert @options[1] or @options.label, "No label found."
+    assert @options.selected_background, "supply a options.selected_background"
+    assert @options.entry_background, "supply a options.entry_background"
+    assert @options.icon.image, "supply a options.icon.image"
+    assert @options.on_press, "supply a options.on_press"
+    @widget = Wibox.widget
+      *
+        *
+          *
+            *
+              *
+                image: @options.icon.image
+                stylesheet: @options.icon.style
+                widget: Wibox.widget.imagebox
+              margins: DPI 5
+              widget: Wibox.container.margin
+            bg: @options.icon.background
+            shape: @options.icon.shape
+            widget: Wibox.container.background
+          *
+            text: if_nil @options[1], @options.label
+            font: "Comfortaa 14"
+            widget: Wibox.widget.textbox
+          spacing: DPI 10
+          layout: Wibox.layout.fixed.horizontal
+        margins: DPI 10
+        widget: Wibox.container.margin
+      bg: @options.entry_background
+      forced_height: DPI 50
+      buttons:
+        * Awful.button modifiers: EMPTY, button: 1, on_press: @options.on_press
+      widget: Wibox.container.background
+
+    selected_background = options.selected_background
+    entry_background = options.entry_background
+    @widget::connect_signal "mouse::enter", => @\set_bg selected_background
+    @widget::connect_signal "mouse::leave", => @\set_bg entry_background
+
+export class Fuzzy
+  new: (results, options) =>
+    results = if_nil results, {}
+    options = if_nil options, {}
+    options.sleep = if_nil options.sleep, false
+
+    options.maximum_width = if_nil options.maximum_width, DPI 250
+    options.width = if_nil options.width, DPI 500
+    options.background = if_nil options.background, "#232323"
+
+    options.prompt = if_nil options.prompt, {}
+    options.prompt.background = if_nil options.prompt.background, "#0F0F0F"
+    options.prompt.foreground = if_nil options.prompt.foreground, "#B4B4B4"
+    options.prompt.dummy = if_nil options.prompt.dummy, "Search paths"
+    options.prompt.font = if_nil options.prompt.font, "Comfortaa 16"
+
+    options.prefix = if_nil options.prefix, {}
+    options.prefix.image = if_nil options.prefix.image, Resource.magnifying_glass
+    options.prefix.style = if_nil options.prefix.style, "*{fill:#B4B4B4;}"
+
+    options.outline = if_nil options.outline, {}
+    options.outline.background = if_nil options.outline.background, "#3B3B3B"
+
+    options.items = if_nil options.items, {}
+    options.items.spacing = if_nil options.items.spacing, 0
+
+    @widgets =
+      prompt: Wibox.widget
+        text: options.prompt.dummy
+        font: options.prompt.font
+        forced_width: options.prompt.width
+        forced_height: options.prompt.height
+        valign: "center"
+        widget: Wibox.widget.textbox
+      items: Wibox.widget
+        step: 50
+        spacing: options.items.spacing
+        scrollbar_enabled: options.thumb.enabled
+        layout: overflow.vertical
+    for item in *results do @widgets.items::add item.widget
+
+    popup = Awful.popup
+      hide_on_right_click: options.hide
+      placement: options.place
+      shape: Gears.shape.rounded_rect
+      maximum_width: options.maximum_width
+      maximum_height: options.maximum_height
+      border_color: options.outline.background
+      border_width: options.outline.width
+      ontop: options.ontop
+      visible: options.visible
+      widget:
+        *
+          *
+            *
+              *
+                *
+                  * nil
+                  * @widgets.prompt
+                  *
+                    *
+                      image: options.prefix.image
+                      forced_width: options.prefix.width
+                      forced_height: options.prefix.height
+                      stylesheet: options.prefix.style
+                      valign: "center"
+                      halign: "center"
+                      widget: Wibox.widget.imagebox
+                    bottom: DPI 10
+                    top: DPI 10
+                    layout: Wibox.container.margin
+                  forced_height: DPI 50
+                  layout: Wibox.layout.align.horizontal
+                left: DPI 15
+                right: DPI 5
+                bottom: DPI 5
+                top: DPI 5
+                layout: Wibox.container.margin
+              fg: options.prompt.foreground
+              bg: options.prompt.background
+              shape: Gears.shape.rounded_rect
+              layout: Wibox.container.background
+            margins: DPI 10
+            layout: Wibox.container.margin
+          * @widgets.items
+          layout: Wibox.layout.align.vertical
+        bg: options.background
+        forced_width: options.width
+        layout: Wibox.container.background
+    @widgets.popup = popup
+
+    if options.sleep
+      timer = Timer.start_new options.sleep, => popup.visible = false
+      popup::connect_signal "mouse::enter", => timer::stop!
+      popup::connect_signal "mouse::leave", => timer::start!

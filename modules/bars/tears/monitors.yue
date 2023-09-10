@@ -1,7 +1,7 @@
 import "wibox" as Wibox
 import "beautiful" as Beautiful
 import "core.components.polls"
-import "modules.bars.tears.media.radial"
+import "modules.bars.tears.components.radial"
 import "core.utils.factory"
 import "lib.std" as table:{:map, :slice, :foreachi, :sum}, string:{:split, :trim}
 

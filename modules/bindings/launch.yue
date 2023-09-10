@@ -1,3 +1,4 @@
+import "wibox" as Wibox
 import "menubar" as Menu
 import "core.enum" as modifiers:{:SUPER, :SHIFT, :CTRL}, environ:{:BROWSER}
 import "core.components.scratch"
@@ -33,8 +34,3 @@ return
     key: "Escape"
     description: "Show the BTOP."
     on_press: "#{terminal} -e btop"
-  *
-    modifiers: SUPER + SHIFT
-    key: "d"
-    description: "Open screenshot popup."
-    on_press: ->

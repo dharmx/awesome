@@ -12,8 +12,9 @@ export slash = (options) ->
     fg: assert options.foreground, "please supply a foreground"
     widget: Wibox.container.background
 
+before = ...
 export.<> = {}
 export.<index> = (key) =>
   widget = rawget @, key
-  if not widget then return require "modules.bars.tears.media.#{key}"
+  if not widget then return require "#{before}.#{key}"
   widget

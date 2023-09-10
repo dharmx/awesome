@@ -2,26 +2,129 @@ import "wibox" as Wibox
 import "beautiful" as Beautiful
 import "gears" as Gears
 import "awful" as Awful
+import "core.enum" as environ:{:BROWSER, :TERMINAL, :HOME, :XDG_DOWNLOAD_DIR, :XDG_MUSIC_DIR, :XDG_PICTURES_DIR}
 import "core.utils.factory"
 
 DPI = Beautiful.xresources.apply_dpi
 Resource = factory.resource_factory!
 
-M =
-  <index>: (key) => require "modules.bars.tears.#{key}"
-  tray: (local_screen) ->
-    awesome.register_xproperty "WM_NAME", "string"
-    tray = Wibox
-      visible: true
-      reverse: true
-      screen: local_screen
-      height: DPI 25
-      width: DPI 90
-      x: DPI 1825
-      y: DPI 1030
-      bg: Beautiful.bg_systray
-      widget: Wibox.widget.systray
-    tray::set_xproperty "WM_NAME", "systray"
+before = ...
+M = <index>: (key) => require "#{before}.#{key}"
+
+quick = M.quick
+  *
+    * "Google"
+    on_press: -> Awful.spawn "#{BROWSER} https://google.com"
+    entry_background: Beautiful.wibar_quick_bg
+    selected_background: Beautiful.wibar_quick_selected_bg
+    icon:
+      shape: Gears.shape.rounded_rect
+      background: "#BA362D"
+      image: Resource.google_logo_duotone
+  *
+    * "Discord"
+    on_press: -> Awful.spawn "#{BROWSER} https://discord.com/app"
+    selected_background: Beautiful.wibar_quick_selected_bg
+    entry_background: Beautiful.wibar_quick_bg
+    icon:
+      shape: Gears.shape.rounded_rect
+      background: "#7241D7"
+      image: Resource.discord_logo_duotone
+  *
+    * "Dotfiles"
+    on_press: -> Awful.spawn "xdg-open #{HOME}/Dotfiles"
+    selected_background: Beautiful.wibar_quick_selected_bg
+    entry_background: Beautiful.wibar_quick_bg
+    icon:
+      shape: Gears.shape.circle
+      background: "#9430C7"
+      image: Resource.folder_user_duotone
+  *
+    * "Bundle/X11"
+    on_press: -> Awful.spawn "xdg-open #{HOME}/Dotfiles/X11"
+    selected_background: Beautiful.wibar_quick_selected_bg
+    entry_background: Beautiful.wibar_quick_bg
+    icon:
+      shape: Gears.shape.circle
+      background: "#4E598C"
+      image: Resource.x_duotone
+  *
+    * "Bundle/Neovim"
+    on_press: -> Awful.spawn "xdg-open #{HOME}/Dotfiles/neovim"
+    selected_background: Beautiful.wibar_quick_selected_bg
+    entry_background: Beautiful.wibar_quick_bg
+    icon:
+      shape: Gears.shape.circle
+      background: "#FF8C42"
+      image: Resource.textbox_duotone
+  *
+    * "Scratch"
+    on_press: -> Awful.spawn "xdg-open #{HOME}/Scratch"
+    selected_background: Beautiful.wibar_quick_selected_bg
+    entry_background: Beautiful.wibar_quick_bg
+    icon:
+      shape: Gears.shape.circle
+      background: "#E29578"
+      image: Resource.notepad_duotone
+  *
+    * "Pictures"
+    on_press: -> Awful.spawn "xdg-open #{XDG_PICTURES_DIR}"
+    selected_background: Beautiful.wibar_quick_selected_bg
+    entry_background: Beautiful.wibar_quick_bg
+    icon:
+      shape: Gears.shape.circle
+      background: "#D4B101"
+      image: Resource.folder_simple_star_duotone
+  *
+    * "Wallpapers"
+    on_press: -> Awful.spawn "xdg-open #{XDG_PICTURES_DIR}/walls"
+    selected_background: Beautiful.wibar_quick_selected_bg
+    entry_background: Beautiful.wibar_quick_bg
+    icon:
+      shape: Gears.shape.circle
+      background: "#D6A2AD"
+      image: Resource.image_square_duotone
+  *
+    * "Downloads"
+    on_press: -> Awful.spawn "xdg-open #{XDG_DOWNLOAD_DIR}"
+    selected_background: Beautiful.wibar_quick_selected_bg
+    entry_background: Beautiful.wibar_quick_bg
+    icon:
+      shape: Gears.shape.circle
+      background: "#008F5B"
+      image: Resource.download_duotone
+  *
+    * "Music"
+    on_press: -> Awful.spawn "xdg-open #{XDG_MUSIC_DIR}"
+    selected_background: Beautiful.wibar_quick_selected_bg
+    entry_background: Beautiful.wibar_quick_bg
+    icon:
+      image: Resource.music_note_duotone
+      shape: Gears.shape.circle
+      background: "#52B788"
+  *
+    * "Playlists"
+    on_press: -> Awful.spawn "#{TERMINAL} --command=ncmpcpp"
+    selected_background: Beautiful.wibar_quick_selected_bg
+    entry_background: Beautiful.wibar_quick_bg
+    icon:
+      image: Resource.playlist_duotone
+      shape: Gears.shape.circle
+      background: "#2EC4B6"
+
+M.tray = (local_screen) ->
+  awesome.register_xproperty "WM_NAME", "string"
+  tray = Wibox
+    visible: true
+    reverse: true
+    screen: local_screen
+    height: DPI 25
+    width: DPI 90
+    x: DPI 1825
+    y: DPI 1030
+    bg: Beautiful.bg_systray
+    widget: Wibox.widget.systray
+  tray::set_xproperty "WM_NAME", "systray"
 
 M.initialize = (local_screen) ->
   return
@@ -33,7 +136,7 @@ M.initialize = (local_screen) ->
       *
         *
           *
-            * M.regulate
+            * M.components.regulate
                 background: Beautiful.taglist_regulate_bg
                 increase:
                   image: Resource.plus_circle_fill
@@ -53,7 +156,7 @@ M.initialize = (local_screen) ->
             bottom: DPI 5
             widget: Wibox.container.margin
           *
-            * M.media.slash
+            * M.components.slash
                 font: "Dosis 15"
                 foreground: Beautiful.wibar_right_separator_fg
             left: DPI 10
@@ -77,10 +180,10 @@ M.initialize = (local_screen) ->
                   top: DPI 5
                   bottom: DPI 5
                   layout: Wibox.container.margin
-                * M.media.slash
+                * M.components.slash
                     font: "Dosis 15"
                     foreground: Beautiful.wibar_right_separator_fg
-                * M.media.dropdown
+                * M.components.dropdown
                     background: Beautiful.wibar_right_dropdown_bg
                     icon:
                       resource: Resource.flag_banner_duotone
@@ -90,7 +193,7 @@ M.initialize = (local_screen) ->
                       outline: Beautiful.wibar_right_dropdown_icon_outline
                       forced_width: DPI 20
                     label:
-                      font: "Dosis 12"
+                      font: "Dosis 11"
                       text: "Quick Navigation"
                       foreground: Beautiful.wibar_right_dropdown_label_fg
                     collapse:
@@ -100,26 +203,27 @@ M.initialize = (local_screen) ->
                     signal:
                       on_enter: => @\set_bg Beautiful.wibar_right_dropdown_on_enter_bg
                       on_leave: => @\set_bg Beautiful.wibar_right_dropdown_on_leave_bg
-                * M.media.slash
+                      on_press: => quick.widgets.popup.visible = not quick.widgets.popup.visible
+                * M.components.slash
                     font: "Dosis 15"
                     foreground: Beautiful.wibar_right_separator_fg
-                * M.media.detached_button
+                * M.components.detached
                     label:
                       text: "Essentials"
                       font: "Dosis Bold 12"
                     icon:
                       resource: Resource.list_light
-                      background: Beautiful.wibar_right_detached_button_icon_bg
-                      stylesheet: "*{fill:#{Beautiful.wibar_right_detached_button_icon_stroke};}"
+                      background: Beautiful.wibar_right_detached_icon_bg
+                      stylesheet: "*{fill:#{Beautiful.wibar_right_detached_icon_stroke};}"
                     signal:
-                      on_enter: => @\set_bg Beautiful.wibar_right_detached_button_signal_on_enter
-                      on_leave: => @\set_bg Beautiful.wibar_right_detached_button_signal_on_leave
-                * M.media.slash
+                      on_enter: => @\set_bg Beautiful.wibar_right_detached_signal_on_enter
+                      on_leave: => @\set_bg Beautiful.wibar_right_detached_signal_on_leave
+                * M.components.slash
                     font: "Dosis 15"
                     foreground: Beautiful.wibar_right_separator_fg
                 *
                   *
-                    * M.profile.time
+                    * M.components.profile.time
                         format: "<span font_desc=%q foreground=%q>%%H</span> <span font_desc=%q foreground=%q>%%M</span>"::format "Dosis Bold 15", Beautiful.wibar_left_time_hour_fg, "Dosis Bold 15", Beautiful.wibar_left_time_minute_fg
                     right: DPI 2
                     widget: Wibox.container.margin
@@ -161,7 +265,7 @@ M.initialize = (local_screen) ->
             bg: Beautiful.wibar_right_bg
             widget: Wibox.container.background
           *
-            * M.media.slash
+            * M.components.slash
                 font: "Dosis 15"
                 foreground: Beautiful.wibar_profile_separator_fg
                 symbol: "│"
@@ -169,7 +273,7 @@ M.initialize = (local_screen) ->
             right: DPI 12
             layout: Wibox.container.margin
           *
-            * M.profile.logo
+            * M.components.profile.logo
                 image: Beautiful.logo
                 border_width: DPI 1
                 border_color: Beautiful.logo_border_color
