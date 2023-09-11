@@ -185,7 +185,7 @@ table.is_list = (t) ->
   count = 0
   for k, _ in pairs t do if type(k) == "number" then count += 1 else return false
   if count > 0 then return true 
-  false
+  count == 0
 
 table.count = (t) ->
   validate t: { t, "t" }

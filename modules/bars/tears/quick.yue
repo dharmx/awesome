@@ -12,18 +12,21 @@ Resource = factory.resource_factory!
 <call>: (links) =>
   Fuzzy [SimpleEntry link for link in *links],
     sleep: 10
+    initial: 1
     width: DPI 250
     maximum_width: DPI 600
     maximum_height: DPI 330
-    place: (...) -> Awful.placement.top_right ...,
-      margins:
-        top: DPI 75
-        right: DPI 300
     background: Beautiful.wibar_quick_bg
+    selected_background: Beautiful.wibar_quick_selected_bg
+    selected_foreground: Beautiful.wibar_quick_fg
     ontop: true
     visible: false
     thumb:
       enabled: false
+    place: (...) -> Awful.placement.top_right ...,
+      margins:
+        top: DPI 75
+        right: DPI 300
     prompt:
       dummy: "Navigate"
       background: Beautiful.wibar_quick_prompt_background

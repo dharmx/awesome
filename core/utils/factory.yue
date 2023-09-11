@@ -3,14 +3,14 @@ import "menubar.icon_theme" as IconTheme
 import "lib.functional" as :if_nil
 import "lib.std" as table:{:foreach, :foreachi, :any}, string:{:split}
 import "lgi" as :Gio
+import "awful" as Awful
+import "gears.table" as GT
 
 export stem = (path) -> split(Path.basename(path), ".", plain: true)[1]
 
-export apply_bindings = (grouped_bindings, mouse, callback) ->
-  import "awful" as Awful
-  import "gears.table" as GT
+export spawn_wrap = (cmd) -> -> Awful.spawn cmd
 
-  spawn_wrap = (cmd) -> -> Awful.spawn cmd
+export apply_bindings = (grouped_bindings, mouse, callback) ->
   mouse = if_nil mouse, false
   wrapped_types =
     * "string"
@@ -36,6 +36,12 @@ export icon_factory = (icon_theme, base) ->
 
 export get_current_icon_theme_name = ->
   Gio.Settings.new("org.gnome.desktop.interface")::get_string "icon-theme"
+
+export launch_file = (path) ->
+  file = Gio.File.new_for_path path
+  if file.query_exists! then Gio.AppInfo.launch_default_for_uri file.get_uri!
+
+export open_path = (path) -> Awful.spawn "xdg-open #{path}"
 
 export resource_factory = ->
   import "gears.filesystem" as GFS

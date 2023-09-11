@@ -6,8 +6,10 @@ import "wibox" as Wibox
 import "beautiful" as Beautiful
 import "lib.overflow"
 
+import "fzy"
 import "core.enum" as modifiers:{:EMPTY}
 import "core.utils.factory"
+import "lib.std" as table:{:is_list, :keys}
 import "lib.functional" as :if_nil
 
 DPI = Beautiful.xresources.apply_dpi
@@ -16,10 +18,12 @@ Resource = factory.resource_factory!
 export class SimpleEntry
   new: (@options) =>
     assert @options[1] or @options.label, "No label found."
-    assert @options.selected_background, "supply a options.selected_background"
-    assert @options.entry_background, "supply a options.entry_background"
+    assert @options.background, "supply a options.background"
+    assert @options.foreground, "supply a options.foreground"
     assert @options.icon.image, "supply a options.icon.image"
     assert @options.on_press, "supply a options.on_press"
+    if type(@options.on_press) == "string" then @options.on_press = factory.spawn_wrap @options.on_press
+    assert type(@options.on_press) == "function", "on_press is not a function"
     @widget = Wibox.widget
       *
         *
@@ -42,20 +46,16 @@ export class SimpleEntry
           layout: Wibox.layout.fixed.horizontal
         margins: DPI 10
         widget: Wibox.container.margin
-      bg: @options.entry_background
+      bg: @options.background
+      fg: @options.foreground
       forced_height: DPI 50
       buttons:
         * Awful.button modifiers: EMPTY, button: 1, on_press: @options.on_press
       widget: Wibox.container.background
 
-    selected_background = options.selected_background
-    entry_background = options.entry_background
-    @widget::connect_signal "mouse::enter", => @\set_bg selected_background
-    @widget::connect_signal "mouse::leave", => @\set_bg entry_background
-
 export class Fuzzy
-  new: (results, options) =>
-    results = if_nil results, {}
+  new: (entries, options) =>
+    entries = if_nil entries, {}
     options = if_nil options, {}
     options.sleep = if_nil options.sleep, false
 
@@ -79,12 +79,21 @@ export class Fuzzy
     options.items = if_nil options.items, {}
     options.items.spacing = if_nil options.items.spacing, 0
 
-    @widgets =
-      items: Wibox.widget
-        step: 50
-        spacing: options.items.spacing
-        scrollbar_enabled: options.thumb.enabled
-        layout: overflow.vertical
+    @options = options
+    @stack = {}
+    @widgets = {}
+
+    items = Wibox.widget
+      step: 50
+      spacing: options.items.spacing
+      scrollbar_enabled: options.thumb.enabled
+      layout: overflow.vertical
+    for index, entry in ipairs entries
+      entry.widget::connect_signal "mouse::enter", -> @\select index,
+        background: options.selected_background
+        foreground: options.selected_foreground
+      entry.widget::connect_signal "mouse::leave", -> @\deselect index
+      items::add entry.widget
 
     prompt = Wibox.widget
       text: options.prompt.dummy
@@ -92,26 +101,12 @@ export class Fuzzy
       forced_width: options.prompt.width
       buttons:
         * Awful.button
-          modifiers: EMPTY,
-          button: 1,
-          on_press: ->
-            Awful.prompt.run
-              font: options.prompt.font
-              bg_cursor: options.prompt.cursor
-              textbox: @widgets.prompt
-              exe_callback: (input) ->
-                if not input or #input == 0 then return
-                for result in *results
-                  if if_nil(result.options[1], result.options.label)::lower!::match(input::lower!)
-                    result.options.on_press!
-                    break
-                @widgets.popup.visible = false
-              done_callback: -> @widgets.prompt::set_text options.prompt.dummy
+            modifiers: EMPTY,
+            button: 1,
+            on_press: -> @\activate_textbox!
       forced_height: options.prompt.height
       valign: "center"
       widget: Wibox.widget.textbox
-    @widgets.prompt = prompt
-    for item in *results do @widgets.items::add item.widget
 
     popup = Awful.popup
       hide_on_right_click: options.hide
@@ -130,7 +125,7 @@ export class Fuzzy
               *
                 *
                   * nil
-                  * @widgets.prompt
+                  * prompt
                   *
                     *
                       image: options.prefix.image
@@ -139,6 +134,21 @@ export class Fuzzy
                       stylesheet: options.prefix.style
                       valign: "center"
                       halign: "center"
+                      buttons:
+                        -- mapping for the prefix button
+                        * Awful.button
+                            modifiers: EMPTY
+                            button: 1
+                            on_press: ->
+                              for entry in *entries
+                                if prompt.text::lower!::match if_nil(entry.options[1], entry.options.label)::lower!
+                                  entry.options.on_press!
+                                  root.fake_input "key_release", "Escape" -- Escape needs to be released first
+                                  root.fake_input "key_press", "Escape"
+                                  root.fake_input "key_release", "Escape"
+                                  @\hide!
+                                  @\reset!
+                                  break
                       widget: Wibox.widget.imagebox
                     bottom: DPI 10
                     top: DPI 10
@@ -156,14 +166,103 @@ export class Fuzzy
               layout: Wibox.container.background
             margins: DPI 10
             layout: Wibox.container.margin
-          * @widgets.items
+          * items
           layout: Wibox.layout.align.vertical
         bg: options.background
         forced_width: options.width
         layout: Wibox.container.background
-    @widgets.popup = popup
 
+    @widgets =
+      popup: popup
+      prompt: prompt
+      entries: entries
+      items: items
+    if options.initial
+      @\select options.initial,
+        background: options.selected_background
+        foreground: options.selected_foreground
     if options.sleep
-      timer = Timer.start_new options.sleep, => popup.visible = false
+      timer = Timer.start_new options.sleep, -> @\hide!
       popup::connect_signal "mouse::enter", => timer::stop!
       popup::connect_signal "mouse::leave", => timer::start!
+      @timer = timer
+
+  activate_textbox: =>
+    Awful.prompt.run
+      font: @options.prompt.font
+      bg_cursor: @options.prompt.cursor
+      textbox: @widgets.prompt
+      hooks:
+        *
+          * EMPTY
+          * "Escape"
+          * ->
+            if @widgets.popup.visible
+              root.fake_input "key_press", "Escape"
+              root.fake_input "key_release", "Escape"
+            @\reset!
+      -- ISSUE: Red zone. Prone to errors.
+      exe_callback: (input) ->
+        if not input or #input == 0 then return
+        for _, item in pairs @stack do @widgets.entries[item.index].options.on_press!
+        root.fake_input "key_press", "Escape"
+        root.fake_input "key_release", "Escape"
+        @\hide!
+      -- ISSUE: Red zone. Prone to errors.
+      changed_callback: (needle) ->
+        haystacks = [if_nil entry.options[1], entry.options.label for entry in *@widgets.entries]
+        results = fzy.filter needle, haystacks
+        @\deselect_all!
+        if #results < 1 then return
+        -- TODO: Add match highlights.
+        @widgets.items.children = [@widgets.entries[result[1]] for result in *results]
+        @\select results[1][1],
+          background: @options.selected_background
+          foreground: @options.selected_foreground
+        -- TODO: Pause the timer when keypresses are detected and resume when keypresses have stopped
+      done_callback: -> @widgets.prompt::set_text @options.prompt.dummy
+
+  reset: => @widgets.items.children = [entry.widget for entry in *@widgets.entries]
+  toggle: => @widgets.popup.visible = not @widgets.popup.visible
+  hide: => @widgets.popup.visible = false
+  show: => @widgets.popup.visible = true
+
+  select: (index, options) =>
+    assert options, "options should not be empty"
+    assert options.background, "options.background should not be empty"
+    assert options.foreground, "options.foreground should not be empty"
+
+    -- ISSUE: Red zone. Prone to errors.
+    check = index >= 1 and index <= #@widgets.entries
+    if not check then return
+
+    child = @widgets.entries[index].widget
+    @stack[index] =
+      index: index
+      widget: child
+    child::set_bg options.background
+    child::set_fg options.foreground
+
+  deselect: (index) =>
+    entry = @stack[index]
+    if not entry then return
+    @\select index,
+      background: @widgets.entries[index].options.background
+      foreground: @widgets.entries[index].options.foreground
+    @stack[index] = nil
+
+  ---Select multiple items in the overflow by passing an array of @\select(...) params.
+  select_many: (indices) =>
+    assert is_list(indices), "expected: {index:number,options:table}[]"
+    for key, options in pairs indices
+      index = options.index or options[1] or key
+      @\select index, options
+
+  deselect_many: (indices) =>
+    assert is_list(indices), "expected: number[]"
+    for index in *indices do @\deselect index
+
+  deselect_all: =>
+    indices = {}
+    for _, item in pairs @stack do table.insert indices, item.index
+    @\deselect_many indices
