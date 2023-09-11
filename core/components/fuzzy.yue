@@ -140,15 +140,11 @@ export class Fuzzy
                             modifiers: EMPTY
                             button: 1
                             on_press: ->
-                              for entry in *entries
-                                if prompt.text::lower!::match if_nil(entry.options[1], entry.options.label)::lower!
-                                  entry.options.on_press!
-                                  root.fake_input "key_release", "Escape" -- Escape needs to be released first
-                                  root.fake_input "key_press", "Escape"
-                                  root.fake_input "key_release", "Escape"
-                                  @\hide!
-                                  @\reset!
-                                  break
+                              @\execute_stack!
+                              root.fake_input "key_release", "Escape" -- Escape needs to be released first
+                              @\escape!
+                              @\hide!
+                              @\reset!
                       widget: Wibox.widget.imagebox
                     bottom: DPI 10
                     top: DPI 10
@@ -197,16 +193,12 @@ export class Fuzzy
           * EMPTY
           * "Escape"
           * ->
-            if @widgets.popup.visible
-              root.fake_input "key_press", "Escape"
-              root.fake_input "key_release", "Escape"
+            if @widgets.popup.visible then @\escape!
             @\reset!
       -- ISSUE: Red zone. Prone to errors.
       exe_callback: (input) ->
         if not input or #input == 0 then return
-        for _, item in pairs @stack do @widgets.entries[item.index].options.on_press!
-        root.fake_input "key_press", "Escape"
-        root.fake_input "key_release", "Escape"
+        @\execute_stack true
         @\hide!
       -- ISSUE: Red zone. Prone to errors.
       changed_callback: (needle) ->
@@ -219,7 +211,7 @@ export class Fuzzy
         @\select results[1][1],
           background: @options.selected_background
           foreground: @options.selected_foreground
-        -- TODO: Pause the timer when keypresses are detected and resume when keypresses have stopped
+        -- TODO: Pause the timer when typing and resume when typing has stopped
       done_callback: -> @widgets.prompt::set_text @options.prompt.dummy
 
   reset: => @widgets.items.children = [entry.widget for entry in *@widgets.entries]
@@ -250,6 +242,14 @@ export class Fuzzy
       background: @widgets.entries[index].options.background
       foreground: @widgets.entries[index].options.foreground
     @stack[index] = nil
+
+  escape: =>
+    root.fake_input "key_press", "Escape"
+    root.fake_input "key_release", "Escape"
+
+  execute_stack: (escape) =>
+    for _, item in pairs @stack do @widgets.entries[item.index].options.on_press!
+    @\escape!
 
   ---Select multiple items in the overflow by passing an array of @\select(...) params.
   select_many: (indices) =>
