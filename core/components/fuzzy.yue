@@ -8,6 +8,7 @@ import "lib.overflow"
 
 import "fzy"
 import "core.enum" as modifiers:{:EMPTY}
+import "core.utils.helpers" as :bind_click_away
 import "core.utils.factory"
 import "lib.std" as table:{:is_list, :keys}, string:{:split}
 import "lib.functional" as :if_nil
@@ -23,12 +24,15 @@ export class SimpleEntry
     assert @options.foreground, "supply a options.foreground"
     assert @options.icon.image, "supply a options.icon.image"
     assert @options.on_press, "supply a options.on_press"
+
     if type(@options.on_press) == "string" then @options.on_press = factory.spawn_wrap @options.on_press
     assert type(@options.on_press) == "function", "on_press is not a function"
+
     @label = Wibox.widget
       markup: @options.label
       font: "Comfortaa 14"
       widget: Wibox.widget.textbox
+
     @widget = Wibox.widget
       *
         *
@@ -52,7 +56,10 @@ export class SimpleEntry
       fg: @options.foreground
       forced_height: DPI 50
       buttons:
-        * Awful.button modifiers: EMPTY, button: 1, on_press: @options.on_press
+        * Awful.button
+            modifiers: EMPTY
+            button: Awful.button.names.LEFT
+            on_press: @options.on_press
       widget: Wibox.container.background
 
 export class Fuzzy
@@ -105,8 +112,8 @@ export class Fuzzy
       forced_width: options.prompt.width
       buttons:
         * Awful.button
-            modifiers: EMPTY,
-            button: 1,
+            modifiers: EMPTY
+            button: Awful.button.names.LEFT
             on_press: -> @\activate_textbox!
       forced_height: options.prompt.height
       valign: "center"
@@ -142,7 +149,7 @@ export class Fuzzy
                         -- mapping for the prefix button
                         * Awful.button
                             modifiers: EMPTY
-                            button: 1
+                            button: Awful.button.names.LEFT
                             on_press: ->
                               -- execute all selected element's 
                               @\execute_stack!
@@ -194,6 +201,7 @@ export class Fuzzy
       -- if timer::again! is called before somewhere else albeit could wrap timer::start!
       -- inside of pcall but that would be more sanitary than using just timer::again!
       popup::connect_signal "mouse::leave", => timer::again!
+      -- TODO: needs some work
       @timer = timer
 
   activate_textbox: =>
@@ -231,7 +239,10 @@ export class Fuzzy
         @\select results[1][1], background: @options.selected.background, foreground: @options.selected.foreground
         -- pause the timer when typing and resume when typing has stopped
         @timer::again!
+        collectgarbage "collect"
       done_callback: -> @widgets.prompt::set_text @options.prompt.dummy
+
+  click_away: (callback) => bind_click_away @widgets.popup, callback
 
   illustrate_entry: (entry, match, ...) =>
     entry.label::set_markup @\illustrate_matches entry.options.label, match, ...
@@ -253,11 +264,15 @@ export class Fuzzy
       entry.label::set_markup entry.options.label
     @widgets.items.children = [entry.widget for entry in *@widgets.entries]
 
-  toggle: => @widgets.popup.visible = not @widgets.popup.visible
+  toggle: => if @widgets.popup.visible then return @\hide! else return @\show!
 
-  hide: => @widgets.popup.visible = false
+  show: =>
+    @widgets.popup.visible = true
+    @timer\again!
 
-  show: => @widgets.popup.visible = true
+  hide: =>
+    @widgets.popup.visible = false
+    @timer\stop!
 
   select: (index, options) =>
     assert options, "options should not be empty"
@@ -304,16 +319,3 @@ export class Fuzzy
     indices = {}
     for _, item in pairs @stack do table.insert indices, item.index
     @\deselect_many indices
-
-  ---@todo up and down and bind them to j and k keys
-  up: =>
-    stack_keys = keys(@stack)
-    if #stack_keys ~= 1 then return
-    -- @\deselect stack_keys[1]
-    -- @\select stack_keys[1] + 1, background: @options.selected.background, foreground: @options.selected.foreground
-
-  down: =>
-    stack_keys = keys(@stack)
-    if #stack_keys ~= 1 then return
-    -- @\deselect stack_keys[1]
-    -- @\select stack_keys[1] - 1, background: @options.selected.background, foreground: @options.selected.foreground

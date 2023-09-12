@@ -38,7 +38,7 @@ return
     modifiers: EMPTY
     key: "XF86AudioPlay"
     description: "Play and pause audio."
-    on_press: "playerctl toggle"
+    on_press: "playerctl play-pause"
   *
     modifiers: EMPTY
     key: "XF86AudioStop"
