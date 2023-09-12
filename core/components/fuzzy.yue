@@ -1,29 +1,34 @@
 import "awful" as Awful
-import "gears.timer" as Timer
-import "naughty" as Naughty
-import "gears" as Gears
 import "wibox" as Wibox
+import "gears" as Gears
+import "naughty" as Naughty
+import "gears.timer" as Timer
 import "beautiful" as Beautiful
 import "lib.overflow"
 
 import "fzy"
 import "core.enum" as modifiers:{:EMPTY}
 import "core.utils.factory"
-import "lib.std" as table:{:is_list, :keys}
+import "lib.std" as table:{:is_list, :keys}, string:{:split}
 import "lib.functional" as :if_nil
 
 DPI = Beautiful.xresources.apply_dpi
 Resource = factory.resource_factory!
 
+-- TODO: Add more entry classes.
 export class SimpleEntry
   new: (@options) =>
-    assert @options[1] or @options.label, "No label found."
+    @options.label = assert @options[1] or @options.label, "No label found."
     assert @options.background, "supply a options.background"
     assert @options.foreground, "supply a options.foreground"
     assert @options.icon.image, "supply a options.icon.image"
     assert @options.on_press, "supply a options.on_press"
     if type(@options.on_press) == "string" then @options.on_press = factory.spawn_wrap @options.on_press
     assert type(@options.on_press) == "function", "on_press is not a function"
+    @label = Wibox.widget
+      markup: @options.label
+      font: "Comfortaa 14"
+      widget: Wibox.widget.textbox
     @widget = Wibox.widget
       *
         *
@@ -38,10 +43,7 @@ export class SimpleEntry
             bg: @options.icon.background
             shape: @options.icon.shape
             widget: Wibox.container.background
-          *
-            text: if_nil @options[1], @options.label
-            font: "Comfortaa 14"
-            widget: Wibox.widget.textbox
+          * @label
           spacing: DPI 10
           layout: Wibox.layout.fixed.horizontal
         margins: DPI 10
@@ -55,6 +57,7 @@ export class SimpleEntry
 
 export class Fuzzy
   new: (entries, options) =>
+    -- TODO: Add more checks and validations.
     entries = if_nil entries, {}
     options = if_nil options, {}
     options.sleep = if_nil options.sleep, false
@@ -81,6 +84,7 @@ export class Fuzzy
 
     @options = options
     @stack = {}
+    -- WARN: Do not move/remove/copy this.
     @widgets = {}
 
     items = Wibox.widget
@@ -90,8 +94,8 @@ export class Fuzzy
       layout: overflow.vertical
     for index, entry in ipairs entries
       entry.widget::connect_signal "mouse::enter", -> @\select index,
-        background: options.selected_background
-        foreground: options.selected_foreground
+        background: options.selected.background
+        foreground: options.selected.foreground
       entry.widget::connect_signal "mouse::leave", -> @\deselect index
       items::add entry.widget
 
@@ -140,6 +144,7 @@ export class Fuzzy
                             modifiers: EMPTY
                             button: 1
                             on_press: ->
+                              -- execute all selected element's 
                               @\execute_stack!
                               root.fake_input "key_release", "Escape" -- Escape needs to be released first
                               @\escape!
@@ -173,14 +178,22 @@ export class Fuzzy
       prompt: prompt
       entries: entries
       items: items
+
     if options.initial
       @\select options.initial,
-        background: options.selected_background
-        foreground: options.selected_foreground
+        background: options.selected.background
+        foreground: options.selected.foreground
+
     if options.sleep
-      timer = Timer.start_new options.sleep, -> @\hide!
+      timer = Timer.start_new options.sleep, ->
+        @\escape!
+        @\hide!
       popup::connect_signal "mouse::enter", => timer::stop!
-      popup::connect_signal "mouse::leave", => timer::start!
+      -- INFO: the activate_textbox method's changed_callback function's last part
+      -- i.e. we use timer::again! instead of timer::start! because timer::start! error out
+      -- if timer::again! is called before somewhere else albeit could wrap timer::start!
+      -- inside of pcall but that would be more sanitary than using just timer::again!
+      popup::connect_signal "mouse::leave", => timer::again!
       @timer = timer
 
   activate_textbox: =>
@@ -195,28 +208,55 @@ export class Fuzzy
           * ->
             if @widgets.popup.visible then @\escape!
             @\reset!
-      -- ISSUE: Red zone. Prone to errors.
+      -- ISSUE: Red zone. Prone to errors. Add more checks.
       exe_callback: (input) ->
         if not input or #input == 0 then return
         @\execute_stack true
         @\hide!
-      -- ISSUE: Red zone. Prone to errors.
+      -- ISSUE: Red zone. Prone to errors. Add more checks.
       changed_callback: (needle) ->
-        haystacks = [if_nil entry.options[1], entry.options.label for entry in *@widgets.entries]
+        haystacks = [entry.options.label for entry in *@widgets.entries]
         results = fzy.filter needle, haystacks
         @\deselect_all!
         if #results < 1 then return
-        -- TODO: Add match highlights.
-        @widgets.items.children = [@widgets.entries[result[1]] for result in *results]
-        @\select results[1][1],
-          background: @options.selected_background
-          foreground: @options.selected_foreground
-        -- TODO: Pause the timer when typing and resume when typing has stopped
+        @widgets.items.children = {}
+        for _, result in ipairs results
+          -- [1] is an index on the @widgets.entries array
+          entry = @widgets.entries[result[1]]
+          -- [2] is an array of indices on the @widgets.entries[N].label.markup string
+          @\illustrate_entry entry, result[2],
+            background: @options.match.background
+            foreground: @options.match.foreground
+          @widgets.items::add entry.widget
+        @\select results[1][1], background: @options.selected.background, foreground: @options.selected.foreground
+        -- pause the timer when typing and resume when typing has stopped
+        @timer::again!
       done_callback: -> @widgets.prompt::set_text @options.prompt.dummy
 
-  reset: => @widgets.items.children = [entry.widget for entry in *@widgets.entries]
+  illustrate_entry: (entry, match, ...) =>
+    entry.label::set_markup @\illustrate_matches entry.options.label, match, ...
+
+  ---Wrap string characters with a pango span element containing foreground and background colors.
+  illustrate_matches: (text, marks, options) =>
+    -- transform a string value to an array of that string's characters
+    chars = split text, ""
+    for _, mark in ipairs marks
+      -- I do not recommend using background, this is because when the element 
+      background = options.background and "background='#{options.background}'" or ""
+      foreground = options.foreground and "foreground='#{options.foreground}'" or ""
+      chars[mark] = "<span #{background} #{foreground}>#{chars[mark]}</span>"
+    table.concat chars
+
+  reset: =>
+    -- if there are previous match illustrations (pango markup) then reset that as well
+    for _, entry in ipairs @widgets.entries
+      entry.label::set_markup entry.options.label
+    @widgets.items.children = [entry.widget for entry in *@widgets.entries]
+
   toggle: => @widgets.popup.visible = not @widgets.popup.visible
+
   hide: => @widgets.popup.visible = false
+
   show: => @widgets.popup.visible = true
 
   select: (index, options) =>
@@ -229,9 +269,7 @@ export class Fuzzy
     if not check then return
 
     child = @widgets.entries[index].widget
-    @stack[index] =
-      index: index
-      widget: child
+    @stack[index] = index: index, widget: child
     child::set_bg options.background
     child::set_fg options.foreground
 
@@ -266,3 +304,16 @@ export class Fuzzy
     indices = {}
     for _, item in pairs @stack do table.insert indices, item.index
     @\deselect_many indices
+
+  ---@todo up and down and bind them to j and k keys
+  up: =>
+    stack_keys = keys(@stack)
+    if #stack_keys ~= 1 then return
+    -- @\deselect stack_keys[1]
+    -- @\select stack_keys[1] + 1, background: @options.selected.background, foreground: @options.selected.foreground
+
+  down: =>
+    stack_keys = keys(@stack)
+    if #stack_keys ~= 1 then return
+    -- @\deselect stack_keys[1]
+    -- @\select stack_keys[1] - 1, background: @options.selected.background, foreground: @options.selected.foreground
