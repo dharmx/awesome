@@ -1,0 +1,22 @@
+import "awful" as Awful
+import "wibox" as Wibox
+
+export bind_click_away = (widget, callback) ->
+  callback = callback or (object) ->
+    if object == widget then return
+    widget.visible = false
+
+  click_bind = Awful.button EMPTY, 1, callback
+  manage_signals = (local_widget) ->
+    if not local_widget.visible
+      Wibox.disconnect_signal "button::press", callback
+      client.disconnect_signal "button::press", callback
+      Awful.mouse.remove_global_mousebinding click_bind
+    else
+      Awful.mouse.append_global_mousebinding click_bind
+      client.connect_signal "button::press", callback
+      Wibox.connect_signal "button::press", callback
+
+  -- when the widget is visible, we hide it on button press
+  widget::connect_signal "property::visible", manage_signals
+  widget.disconnect_click_to_hide = -> widget::disconnect_signal "property::visible", manage_signals

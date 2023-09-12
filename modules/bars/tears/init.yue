@@ -4,113 +4,13 @@ import "gears" as Gears
 import "awful" as Awful
 import "core.enum" as environ:{:BROWSER, :TERMINAL, :HOME, :XDG_DOWNLOAD_DIR, :XDG_MUSIC_DIR, :XDG_PICTURES_DIR}
 import "core.utils.factory"
+import "core.utils.helpers" as :bind_click_away
 
 DPI = Beautiful.xresources.apply_dpi
 Resource = factory.resource_factory!
 
 before = ...
 M = <index>: (key) => require "#{before}.#{key}"
-
-quick = M.quick
-  *
-    * "Google"
-    on_press: -> factory.open_path "https://google.com"
-    background: Beautiful.wibar_quick_bg
-    foreground: Beautiful.wibar_quick_fg
-    icon:
-      shape: Gears.shape.rounded_rect
-      background: "#BA362D"
-      image: Resource.google_logo_duotone
-  *
-    * "Discord"
-    on_press: -> factory.open_path "https://discord.com/app"
-    background: Beautiful.wibar_quick_bg
-    foreground: Beautiful.wibar_quick_fg
-    icon:
-      shape: Gears.shape.rounded_rect
-      background: "#7241D7"
-      image: Resource.discord_logo_duotone
-  *
-    * "Dotfiles"
-    on_press: -> factory.open_path "#{HOME}/Dotfiles"
-    background: Beautiful.wibar_quick_bg
-    foreground: Beautiful.wibar_quick_fg
-    icon:
-      shape: Gears.shape.circle
-      background: "#9430C7"
-      image: Resource.folder_user_duotone
-  *
-    * "Bundle/X11"
-    on_press: -> factory.open_path "#{HOME}/Dotfiles/X11"
-    background: Beautiful.wibar_quick_bg
-    foreground: Beautiful.wibar_quick_fg
-    icon:
-      shape: Gears.shape.circle
-      background: "#4E598C"
-      image: Resource.x_duotone
-  *
-    * "Bundle/Neovim"
-    on_press: -> factory.open_path "#{HOME}/Dotfiles/neovim"
-    background: Beautiful.wibar_quick_bg
-    foreground: Beautiful.wibar_quick_fg
-    icon:
-      shape: Gears.shape.circle
-      background: "#FF8C42"
-      image: Resource.textbox_duotone
-  *
-    * "Scratch"
-    on_press: -> factory.open_path "#{HOME}/Scratch"
-    background: Beautiful.wibar_quick_bg
-    foreground: Beautiful.wibar_quick_fg
-    icon:
-      shape: Gears.shape.circle
-      background: "#E29578"
-      image: Resource.notepad_duotone
-  *
-    * "Pictures"
-    on_press: -> factory.open_path "#{XDG_PICTURES_DIR}"
-    background: Beautiful.wibar_quick_bg
-    foreground: Beautiful.wibar_quick_fg
-    icon:
-      shape: Gears.shape.circle
-      background: "#D4B101"
-      image: Resource.folder_simple_star_duotone
-  *
-    * "Wallpapers"
-    on_press: -> factory.open_path "#{XDG_PICTURES_DIR}/walls"
-    background: Beautiful.wibar_quick_bg
-    foreground: Beautiful.wibar_quick_fg
-    icon:
-      shape: Gears.shape.circle
-      background: "#D6A2AD"
-      image: Resource.image_square_duotone
-  *
-    * "Downloads"
-    on_press: -> factory.open_path "#{XDG_DOWNLOAD_DIR}"
-    background: Beautiful.wibar_quick_bg
-    foreground: Beautiful.wibar_quick_fg
-    icon:
-      shape: Gears.shape.circle
-      background: "#008F5B"
-      image: Resource.download_duotone
-  *
-    * "Music"
-    on_press: -> factory.open_path "#{XDG_MUSIC_DIR}"
-    background: Beautiful.wibar_quick_bg
-    foreground: Beautiful.wibar_quick_fg
-    icon:
-      image: Resource.music_note_duotone
-      shape: Gears.shape.circle
-      background: "#52B788"
-  *
-    * "Playlists"
-    on_press: "#{TERMINAL} --command=ncmpcpp"
-    background: Beautiful.wibar_quick_bg
-    foreground: Beautiful.wibar_quick_fg
-    icon:
-      image: Resource.playlist_duotone
-      shape: Gears.shape.circle
-      background: "#2EC4B6"
 
 M.tray = (local_screen) ->
   awesome.register_xproperty "WM_NAME", "string"
@@ -127,6 +27,141 @@ M.tray = (local_screen) ->
   tray::set_xproperty "WM_NAME", "systray"
 
 M.initialize = (local_screen) ->
+  quick = M.quick
+    *
+      * "Google"
+      on_press: -> factory.open_path "https://google.com"
+      background: Beautiful.wibar_quick_bg
+      foreground: Beautiful.wibar_quick_fg
+      icon:
+        shape: Gears.shape.rounded_rect
+        background: "#BA362D"
+        image: Resource.google_logo_duotone
+    *
+      * "Discord"
+      on_press: -> factory.open_path "https://discord.com/app"
+      background: Beautiful.wibar_quick_bg
+      foreground: Beautiful.wibar_quick_fg
+      icon:
+        shape: Gears.shape.rounded_rect
+        background: "#7241D7"
+        image: Resource.discord_logo_duotone
+    *
+      * "Dotfiles"
+      on_press: -> factory.open_path "#{HOME}/Dotfiles"
+      background: Beautiful.wibar_quick_bg
+      foreground: Beautiful.wibar_quick_fg
+      icon:
+        shape: Gears.shape.circle
+        background: "#9430C7"
+        image: Resource.folder_user_duotone
+    *
+      * "Bundle/X11"
+      on_press: -> factory.open_path "#{HOME}/Dotfiles/X11"
+      background: Beautiful.wibar_quick_bg
+      foreground: Beautiful.wibar_quick_fg
+      icon:
+        shape: Gears.shape.circle
+        background: "#4E598C"
+        image: Resource.x_duotone
+    *
+      * "Bundle/Neovim"
+      on_press: -> factory.open_path "#{HOME}/Dotfiles/neovim"
+      background: Beautiful.wibar_quick_bg
+      foreground: Beautiful.wibar_quick_fg
+      icon:
+        shape: Gears.shape.circle
+        background: "#FF8C42"
+        image: Resource.textbox_duotone
+    *
+      * "Scratch"
+      on_press: -> factory.open_path "#{HOME}/Scratch"
+      background: Beautiful.wibar_quick_bg
+      foreground: Beautiful.wibar_quick_fg
+      icon:
+        shape: Gears.shape.circle
+        background: "#E29578"
+        image: Resource.notepad_duotone
+    *
+      * "Pictures"
+      on_press: -> factory.open_path "#{XDG_PICTURES_DIR}"
+      background: Beautiful.wibar_quick_bg
+      foreground: Beautiful.wibar_quick_fg
+      icon:
+        shape: Gears.shape.circle
+        background: "#D4B101"
+        image: Resource.folder_simple_star_duotone
+    *
+      * "Wallpapers"
+      on_press: -> factory.open_path "#{XDG_PICTURES_DIR}/walls"
+      background: Beautiful.wibar_quick_bg
+      foreground: Beautiful.wibar_quick_fg
+      icon:
+        shape: Gears.shape.circle
+        background: "#D6A2AD"
+        image: Resource.image_square_duotone
+    *
+      * "Downloads"
+      on_press: -> factory.open_path "#{XDG_DOWNLOAD_DIR}"
+      background: Beautiful.wibar_quick_bg
+      foreground: Beautiful.wibar_quick_fg
+      icon:
+        shape: Gears.shape.circle
+        background: "#008F5B"
+        image: Resource.download_duotone
+    *
+      * "Music"
+      on_press: -> factory.open_path "#{XDG_MUSIC_DIR}"
+      background: Beautiful.wibar_quick_bg
+      foreground: Beautiful.wibar_quick_fg
+      icon:
+        image: Resource.music_note_duotone
+        shape: Gears.shape.circle
+        background: "#52B788"
+    *
+      * "Playlists"
+      on_press: "#{TERMINAL} --command=ncmpcpp"
+      background: Beautiful.wibar_quick_bg
+      foreground: Beautiful.wibar_quick_fg
+      icon:
+        image: Resource.playlist_duotone
+        shape: Gears.shape.circle
+        background: "#2EC4B6"
+
+  dropdown = M.components.dropdown
+    background: Beautiful.wibar_right_dropdown_bg
+    icon:
+      resource: Resource.flag_banner_duotone
+      stylesheet: "*{fill:#{Beautiful.wibar_right_dropdown_icon_stroke};}"
+      background: Beautiful.wibar_right_dropdown_icon_bg
+      foreground: Beautiful.wibar_right_dropdown_icon_fg
+      outline: Beautiful.wibar_right_dropdown_icon_outline
+      forced_width: DPI 20
+    label:
+      font: "Dosis 11"
+      text: "Quick Navigation"
+      foreground: Beautiful.wibar_right_dropdown_label_fg
+    collapse:
+      resource: Resource.caret_double_down_duotone
+      stylesheet: "*{fill:#{Beautiful.wibar_right_dropdown_collapse_stroke};}"
+      forced_width: DPI 20
+    signal:
+      on_enter: => @\set_bg Beautiful.wibar_right_dropdown_on_enter_bg
+      on_leave: => @\set_bg Beautiful.wibar_right_dropdown_on_leave_bg
+      on_press: =>
+        if quick.widgets.popup.visible then quick\escape!
+        quick\reset!
+        quick\toggle!
+
+  -- BUG: Does not close when clicked on the dropdown button
+  -- FIX: Need to get the correct class ID from @ to match with the dropdown object id. But how?
+  --      Tried @ == dropdown and @\to_widget! == dropdown but it does not work as the IDs are different
+  -- BUG: Only closes once when root window is clicked and after that the signal seems to have unregistered
+  --      As its callback seems to not being called anymore.
+  -- bind_click_away quick.widgets.popup, =>
+  --   if @ == quick.widgets.popup then return
+  --   quick\hide!
+
   return
     position: "top"
     screen: local_screen
@@ -183,32 +218,7 @@ M.initialize = (local_screen) ->
                 * M.components.slash
                     font: "Dosis 15"
                     foreground: Beautiful.wibar_right_separator_fg
-                * M.components.dropdown
-                    background: Beautiful.wibar_right_dropdown_bg
-                    icon:
-                      resource: Resource.flag_banner_duotone
-                      stylesheet: "*{fill:#{Beautiful.wibar_right_dropdown_icon_stroke};}"
-                      background: Beautiful.wibar_right_dropdown_icon_bg
-                      foreground: Beautiful.wibar_right_dropdown_icon_fg
-                      outline: Beautiful.wibar_right_dropdown_icon_outline
-                      forced_width: DPI 20
-                    label:
-                      font: "Dosis 11"
-                      text: "Quick Navigation"
-                      foreground: Beautiful.wibar_right_dropdown_label_fg
-                    collapse:
-                      resource: Resource.caret_double_down_duotone
-                      stylesheet: "*{fill:#{Beautiful.wibar_right_dropdown_collapse_stroke};}"
-                      forced_width: DPI 20
-                    signal:
-                      on_enter: => @\set_bg Beautiful.wibar_right_dropdown_on_enter_bg
-                      on_leave: => @\set_bg Beautiful.wibar_right_dropdown_on_leave_bg
-                      on_press: =>
-                        if quick.widgets.popup.visible
-                          root.fake_input "key_press", "Escape"
-                          root.fake_input "key_release", "Escape"
-                        quick\reset!
-                        quick\toggle!
+                * dropdown
                 * M.components.slash
                     font: "Dosis 15"
                     foreground: Beautiful.wibar_right_separator_fg
