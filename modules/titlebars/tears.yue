@@ -10,13 +10,13 @@ DPI = Beautiful.xresources.apply_dpi
 bindings = map Awful.button,
   *
     modifiers: EMPTY
-    button: 1
+    button: Awful.button.names.LEFT
     on_press: (node) ->
       if not node.activate then return
       node::activate context: "titlebar", action: "mouse_move"
   *
     modifiers: EMPTY
-    button: 3
+    button: Awful.button.names.RIGHT
     on_press: (node) ->
       if not node.activate then return
       node::activate context: "titlebar", action: "mouse_resize"

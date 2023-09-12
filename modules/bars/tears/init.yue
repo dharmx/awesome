@@ -2,9 +2,11 @@ import "wibox" as Wibox
 import "beautiful" as Beautiful
 import "gears" as Gears
 import "awful" as Awful
-import "core.enum" as environ:{:BROWSER, :TERMINAL, :HOME, :XDG_DOWNLOAD_DIR, :XDG_MUSIC_DIR, :XDG_PICTURES_DIR}
+
+import "lib.std" as table:{:keys}
 import "core.utils.factory"
 import "core.utils.helpers" as :bind_click_away
+import "core.enum" as environ:{:BROWSER, :TERMINAL, :HOME, :XDG_DOWNLOAD_DIR, :XDG_MUSIC_DIR, :XDG_PICTURES_DIR}
 
 DPI = Beautiful.xresources.apply_dpi
 Resource = factory.resource_factory!
@@ -153,21 +155,12 @@ M.initialize = (local_screen) ->
         quick\reset!
         quick\toggle!
 
-  -- BUG: Does not close when clicked on the dropdown button
-  -- FIX: Need to get the correct class ID from @ to match with the dropdown object id. But how?
-  --      Tried @ == dropdown and @\to_widget! == dropdown but it does not work as the IDs are different
-  -- BUG: Only closes once when root window is clicked and after that the signal seems to have unregistered
-  --      As its callback seems to not being called anymore.
-  -- bind_click_away quick.widgets.popup, =>
-  --   if @ == quick.widgets.popup then return
-  --   quick\hide!
-
-  return
+  bar =
     position: "top"
     screen: local_screen
     height: DPI 70
     bg: Beautiful.wibar_bg
-    widget:
+    widget: Wibox.widget
       *
         *
           *
@@ -302,5 +295,23 @@ M.initialize = (local_screen) ->
       top: DPI 10
       bottom: DPI 10
       layout: Wibox.container.margin
+
+  bind_click_away quick.widgets.popup, =>
+    -- when @ is nil then the mouse has been pressed in the root window
+    if not @
+      quick\hide!
+      return
+    -- when @get_widget does not exist then it is a <client>
+    if not @get_widget
+      quick\hide!
+      return
+    -- see if the mouse has been clicked in the popup widget
+    -- if not then check if the mouse has been clicked on the bar widget
+    -- if so then do nothing as we will not hide the popup when the mouse
+    -- has been clicked on it and we will do the same for the bar
+    if @ == quick.widgets.popup or @\get_widget! == bar.widget then return
+    quick\hide!
+
+  bar
 
 M

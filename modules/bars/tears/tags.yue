@@ -12,27 +12,27 @@ Resource = factory.resource_factory!
 bindings = map Awful.button,
   *
     modifiers: EMPTY
-    button: 1
+    button: Awful.button.names.LEFT
     on_press: (tag) -> tag::view_only!
   *
     modifiers: SUPER
-    button: 1
+    button: Awful.button.names.LEFT
     on_press: (tag) -> if client.focus then client.focus::move_to_tag tag
   *
     modifiers: EMPTY
-    button: 3
+    button: Awful.button.names.RIGHT
     on_press: Awful.tag.viewtoggle
   *
     modifiers: SUPER
-    button: 3
+    button: Awful.button.names.RIGHT
     on_press: (tag) -> if client.focus then client.focus::toggle_tag tag
   *
     modifiers: EMPTY
-    button: 4
+    button: Awful.button.names.SCROLL_UP
     on_press: (tag) -> Awful.tag.viewprev tag.screen
   *
     modifiers: EMPTY
-    button: 5
+    button: Awful.button.names.SCROLL_DOWN
     on_press: (tag) -> Awful.tag.viewnext tag.screen
 
 update_state = (imagebox, tag) ->
