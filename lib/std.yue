@@ -99,10 +99,6 @@ table.map = (f, t) ->
   validate f: { f, "c" }, t: { t, "t" }
   {k, f v for k, v in pairs t}
 
-table.foreach = (t, c) -> for k, v in pairs t do c k, v
-
-table.foreachi = (t, c) -> for i, v in ipairs t do c i, v 
-
 table.zip = (...) ->
   arrays, ans = { ... }, {}
   index = 0

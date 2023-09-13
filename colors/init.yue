@@ -10,7 +10,7 @@ export get(colors, background) ->
     config = require("core.config").get!
     background = colors
     colors = config.colors
-  require("colors." .. colors).background[background]
+  require("colors.#{colors}").background[background]
 
-export.<call> = (...) => @get ...
-export.<index> = (...) => @::__call ...
+export.<call> = (...) => @get(...)
+export.<index> = (...) => @::<call>(...)

@@ -1,34 +1,33 @@
-import "awful" as Awful
-import "wibox" as Wibox
+import "awful"
+import "wibox"
 import "lib.functional" as :if_nil
 import "core.enum" as modifiers:{:EMPTY}
 
 export bind_click_away = (widget, callback) ->
-  callback = if_nil callback, (object) ->
-    if object == widget then return
-    widget.visible = false
-
+  callback = if_nil(callback, (object) -> if object ~= widget then widget.visible = false)
+  -- define binding
   bind =
     modifiers: EMPTY
-    button: Awful.button.names.LEFT
+    button: awful.button.names.LEFT
     on_press: callback
-  phantom_bind = Awful.button bind
+  phantom_bind = awful.button(bind)
 
   manage_signals = (local_widget) ->
     if local_widget.visible
       -- start listening to all LEFT mouse button presses
-      Awful.mouse.append_global_mousebinding phantom_bind
-      -- start listening to all LEFT mouse button presses on the widget
-      Wibox.connect_signal "button::press", callback
-      -- start listening to all LEFT mouse button presses on a window
-      client.connect_signal "button::press", callback
+      awful.mouse.append_global_mousebinding(phantom_bind)
+      -- start listening to all LEFT mouse button presses on all widgets
+      wibox.connect_signal("button::press", callback)
+      -- start listening to all LEFT mouse button presses on all clients
+      client.connect_signal("button::press", callback)
     else
       -- stop listening
-      Awful.mouse.remove_global_mousebinding phantom_bind
-      phantom_bind = Awful.button bind
-      Wibox.disconnect_signal "button::press", callback
-      client.disconnect_signal "button::press", callback
+      awful.mouse.remove_global_mousebinding(phantom_bind)
+      -- need to reset this as remove_global_mousebinding frees the awful.button <usedata>
+      phantom_bind = awful.button(bind)
+      wibox.disconnect_signal("button::press", callback)
+      client.disconnect_signal("button::press", callback)
 
   -- when the widget is visible, we hide it on button press
-  widget::connect_signal "property::visible", manage_signals
-  widget.unbind_click_away = -> widget::disconnect_signal "property::visible", manage_signals
+  widget::connect_signal("property::visible", manage_signals)
+  widget.unbind_click_away = -> widget::disconnect_signal("property::visible", manage_signals)

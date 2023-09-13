@@ -1,16 +1,16 @@
-import "beautiful" as Beautiful
+import "beautiful"
 import "gears.surface" as :load_from_shape
-import "lib.functional" as :if_nil
 import "core.components.shapes"
-DPI = Beautiful.xresources.apply_dpi
+
+DPI = beautiful.xresources.apply_dpi
 
 export tears = (radius, pattern, width, height) ->
-  width = if_nil DPI(30), width
-  height = if_nil DPI(30), height
-  load_from_shape width, height, shapes.tears(radius), pattern
+  width ??= DPI(30)
+  height ??= DPI(30)
+  load_from_shape(width, height, shapes.tears(radius), pattern)
 
 export pacman = (radius, pattern, mouth, width, height) ->
-  mouth = if_nil mouth, 0
-  width = if_nil DPI(30), width
-  height = if_nil DPI(30), height
-  load_from_shape width, height, shapes.pacman(radius, mouth), pattern
+  mouth ??= 0
+  width ??= DPI(30)
+  height ??= DPI(30)
+  load_from_shape(width, height, shapes.pacman(radius, mouth), pattern)

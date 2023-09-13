@@ -1,316 +1,288 @@
-import "wibox" as Wibox
-import "beautiful" as Beautiful
-import "gears" as Gears
-import "awful" as Awful
+-- Imports {{{
+import "wibox"
+import "beautiful"
+import "awful"
+import "gears"
 
 import "lib.std" as table:{:keys}
 import "core.utils.factory"
+import "core.components.shapes"
 import "core.enum" as environ:{:BROWSER, :TERMINAL, :HOME, :XDG_DOWNLOAD_DIR, :XDG_MUSIC_DIR, :XDG_PICTURES_DIR}
+-- }}}
 
-DPI = Beautiful.xresources.apply_dpi
-Resource = factory.resource_factory!
+-- Helpers {{{
+DPI = beautiful.xresources.apply_dpi
+resource = factory.resource_factory!
 
+-- dynamically import wrappers over custom widgets
 before = ...
-M = <index>: (key) => require "#{before}.#{key}"
+tears = <index>: (key) => require("#{before}.#{key}")
 
-M.tray = (local_screen) ->
-  awesome.register_xproperty "WM_NAME", "string"
-  tray = Wibox
+-- default symbol: /
+slash = (symbol) ->
+  tears.components.slash
+    font: "Dosis 15"
+    foreground: beautiful.wibar_right_separator_fg
+    symbol: symbol
+
+entry_wrap =
+  <call>: (label, action, icon_color, image, shape) =>
+    -- return a table with extended default configurations
+    return
+      label: label
+      on_press: action
+      background: beautiful.wibar_quick_bg
+      foreground: beautiful.wibar_quick_fg
+      icon:
+        shape: gears.shape[shape]
+        background: icon_color
+        image: resource[image]
+-- }}}
+
+entries = {
+  -- LABEL     URI/COMMAND          ICON COLOR  ICON_RESOURCE         SHAPE
+  -- websites
+  { "Google", "https://google.com", "#BA362D", "google_logo_duotone", "rounded_rect" }
+  { "Discord", "https://discord.com/app", "#7241D7", "discord_logo_duotone", "rounded_rect" }
+
+  -- directories
+  { "Dotfiles", "file://#{HOME}/Dotfiles", "#9430C7", "folder_user_duotone", "circle" }
+  { "Bundle/X11", "file://#{HOME}/Dotfiles/X11", "#4E598C", "x_duotone", "circle" }
+  { "Bundle/Neovim", "file://#{HOME}/Dotfiles/neovim", "#FF8C42", "textbox_duotone", "circle" }
+  { "Scratch", "file://#{HOME}/Scratch", "#E29578", "notepad_duotone", "circle" }
+  { "Pictures", "file://#{XDG_PICTURES_DIR}", "#D4B101", "folder_simple_star_duotone", "circle" }
+  { "Wallpapers", "file://#{XDG_PICTURES_DIR}/walls", "#D6A2AD", "image_square_duotone", "circle" }
+  { "Downloads", "file://#{XDG_DOWNLOAD_DIR}", "#008F5B", "download_duotone", "circle" }
+  { "Music", "file://#{XDG_MUSIC_DIR}", "#52B788", "music_note_duotone", "circle" }
+
+  -- applications
+  { "Playlists", "#{TERMINAL} --command=ncmpcpp", "#2EC4B6", "playlist_duotone", "circle" }
+}
+
+export.tray = (local_screen) ->
+  -- for exclusion in picom
+  awesome.register_xproperty("WM_NAME", "string")
+  tray = wibox
     visible: true
     reverse: true
     screen: local_screen
-    height: DPI 25
-    width: DPI 90
-    x: DPI 1825
-    y: DPI 1030
-    bg: Beautiful.bg_systray
-    widget: Wibox.widget.systray
-  tray::set_xproperty "WM_NAME", "systray"
+    height: DPI(25)
+    width: DPI(90)
+    x: DPI(1825)
+    y: DPI(1030)
+    bg: beautiful.bg_systray
+    widget: wibox.widget.systray
+  tray::set_xproperty("WM_NAME", "systray")
 
-M.initialize = (local_screen) ->
-  quick = M.quick
-    *
-      * "Google"
-      on_press: -> factory.open_path "https://google.com"
-      background: Beautiful.wibar_quick_bg
-      foreground: Beautiful.wibar_quick_fg
-      icon:
-        shape: Gears.shape.rounded_rect
-        background: "#BA362D"
-        image: Resource.google_logo_duotone
-    *
-      * "Discord"
-      on_press: -> factory.open_path "https://discord.com/app"
-      background: Beautiful.wibar_quick_bg
-      foreground: Beautiful.wibar_quick_fg
-      icon:
-        shape: Gears.shape.rounded_rect
-        background: "#7241D7"
-        image: Resource.discord_logo_duotone
-    *
-      * "Dotfiles"
-      on_press: -> factory.open_path "#{HOME}/Dotfiles"
-      background: Beautiful.wibar_quick_bg
-      foreground: Beautiful.wibar_quick_fg
-      icon:
-        shape: Gears.shape.circle
-        background: "#9430C7"
-        image: Resource.folder_user_duotone
-    *
-      * "Bundle/X11"
-      on_press: -> factory.open_path "#{HOME}/Dotfiles/X11"
-      background: Beautiful.wibar_quick_bg
-      foreground: Beautiful.wibar_quick_fg
-      icon:
-        shape: Gears.shape.circle
-        background: "#4E598C"
-        image: Resource.x_duotone
-    *
-      * "Bundle/Neovim"
-      on_press: -> factory.open_path "#{HOME}/Dotfiles/neovim"
-      background: Beautiful.wibar_quick_bg
-      foreground: Beautiful.wibar_quick_fg
-      icon:
-        shape: Gears.shape.circle
-        background: "#FF8C42"
-        image: Resource.textbox_duotone
-    *
-      * "Scratch"
-      on_press: -> factory.open_path "#{HOME}/Scratch"
-      background: Beautiful.wibar_quick_bg
-      foreground: Beautiful.wibar_quick_fg
-      icon:
-        shape: Gears.shape.circle
-        background: "#E29578"
-        image: Resource.notepad_duotone
-    *
-      * "Pictures"
-      on_press: -> factory.open_path "#{XDG_PICTURES_DIR}"
-      background: Beautiful.wibar_quick_bg
-      foreground: Beautiful.wibar_quick_fg
-      icon:
-        shape: Gears.shape.circle
-        background: "#D4B101"
-        image: Resource.folder_simple_star_duotone
-    *
-      * "Wallpapers"
-      on_press: -> factory.open_path "#{XDG_PICTURES_DIR}/walls"
-      background: Beautiful.wibar_quick_bg
-      foreground: Beautiful.wibar_quick_fg
-      icon:
-        shape: Gears.shape.circle
-        background: "#D6A2AD"
-        image: Resource.image_square_duotone
-    *
-      * "Downloads"
-      on_press: -> factory.open_path "#{XDG_DOWNLOAD_DIR}"
-      background: Beautiful.wibar_quick_bg
-      foreground: Beautiful.wibar_quick_fg
-      icon:
-        shape: Gears.shape.circle
-        background: "#008F5B"
-        image: Resource.download_duotone
-    *
-      * "Music"
-      on_press: -> factory.open_path "#{XDG_MUSIC_DIR}"
-      background: Beautiful.wibar_quick_bg
-      foreground: Beautiful.wibar_quick_fg
-      icon:
-        image: Resource.music_note_duotone
-        shape: Gears.shape.circle
-        background: "#52B788"
-    *
-      * "Playlists"
-      on_press: "#{TERMINAL} --command=ncmpcpp"
-      background: Beautiful.wibar_quick_bg
-      foreground: Beautiful.wibar_quick_fg
-      icon:
-        image: Resource.playlist_duotone
-        shape: Gears.shape.circle
-        background: "#2EC4B6"
-
-  dropdown = M.components.dropdown
-    background: Beautiful.wibar_right_dropdown_bg
+export.initialize = (local_screen) ->
+  -- initialize some custom widgets {{{
+  quick = tears.quick([entry_wrap(table.unpack(entry)) for entry in *entries])
+  dropdown = tears.components.dropdown
+    background: beautiful.wibar_right_dropdown_bg
     icon:
-      resource: Resource.flag_banner_duotone
-      stylesheet: "*{fill:#{Beautiful.wibar_right_dropdown_icon_stroke};}"
-      background: Beautiful.wibar_right_dropdown_icon_bg
-      foreground: Beautiful.wibar_right_dropdown_icon_fg
-      outline: Beautiful.wibar_right_dropdown_icon_outline
-      forced_width: DPI 20
+      resource: resource.flag_banner_duotone
+      stylesheet: "*{fill:#{beautiful.wibar_right_dropdown_icon_stroke};}"
+      background: beautiful.wibar_right_dropdown_icon_bg
+      foreground: beautiful.wibar_right_dropdown_icon_fg
+      outline: beautiful.wibar_right_dropdown_icon_outline
+      forced_width: DPI(20)
     label:
       font: "Dosis 11"
       text: "Quick Navigation"
-      foreground: Beautiful.wibar_right_dropdown_label_fg
+      foreground: beautiful.wibar_right_dropdown_label_fg
     collapse:
-      resource: Resource.caret_double_down_duotone
-      stylesheet: "*{fill:#{Beautiful.wibar_right_dropdown_collapse_stroke};}"
-      forced_width: DPI 20
+      resource: resource.caret_double_down_duotone
+      stylesheet: "*{fill:#{beautiful.wibar_right_dropdown_collapse_stroke};}"
+      forced_width: DPI(20)
     signal:
-      on_enter: => @\set_bg Beautiful.wibar_right_dropdown_on_enter_bg
-      on_leave: => @\set_bg Beautiful.wibar_right_dropdown_on_leave_bg
+      on_enter: => @\set_bg(beautiful.wibar_right_dropdown_on_enter_bg)
+      on_leave: => @\set_bg(beautiful.wibar_right_dropdown_on_leave_bg)
       on_press: =>
         if quick.widgets.popup.visible then quick\escape!
         quick\reset!
         quick\toggle!
 
-  bar =
-    position: "top"
-    screen: local_screen
-    height: DPI 70
-    bg: Beautiful.wibar_bg
-    widget: Wibox.widget
-      *
-        *
-          *
-            * M.components.regulate
-                background: Beautiful.taglist_regulate_bg
-                increase:
-                  image: Resource.plus_circle_fill
-                  stylesheet: "*{fill:#{Beautiful.taglist_regulate_increase_bg};}"
-                  callback: ->
-                    new_index = #root.tags! + 1
-                    if new_index > 9 then return
-                    Awful.tag.add "#{new_index}", screen: local_screen
-                decrease:
-                  image: Resource.minus_circle_fill
-                  stylesheet: "*{fill:#{Beautiful.taglist_regulate_decrease_bg};}"
-                  callback: ->
-                    tags = root.tags!
-                    if #tags == 1 then return
-                    tags[#tags]::delete!
-            top: DPI 5
-            bottom: DPI 5
-            widget: Wibox.container.margin
-          *
-            * M.components.slash
-                font: "Dosis 15"
-                foreground: Beautiful.wibar_right_separator_fg
-            left: DPI 10
-            right: DPI 10
-            layout: Wibox.container.margin
-          * Awful.widget.taglist M.tags local_screen
-          layout: Wibox.layout.fixed.horizontal
-        * nil
-        *
-          *
-            *
-              *
-                *
-                  *
-                    *
-                      * M.monitors.cpu!
-                      right: DPI 5
-                      widget: Wibox.container.margin
-                    * M.monitors.ram!
-                    layout: Wibox.layout.fixed.horizontal
-                  top: DPI 5
-                  bottom: DPI 5
-                  layout: Wibox.container.margin
-                * M.components.slash
-                    font: "Dosis 15"
-                    foreground: Beautiful.wibar_right_separator_fg
-                * dropdown
-                * M.components.slash
-                    font: "Dosis 15"
-                    foreground: Beautiful.wibar_right_separator_fg
-                * M.components.detached
-                    label:
-                      text: "Essentials"
-                      font: "Dosis Bold 12"
-                    icon:
-                      resource: Resource.list_light
-                      background: Beautiful.wibar_right_detached_icon_bg
-                      stylesheet: "*{fill:#{Beautiful.wibar_right_detached_icon_stroke};}"
-                    signal:
-                      on_enter: => @\set_bg Beautiful.wibar_right_detached_signal_on_enter
-                      on_leave: => @\set_bg Beautiful.wibar_right_detached_signal_on_leave
-                * M.components.slash
-                    font: "Dosis 15"
-                    foreground: Beautiful.wibar_right_separator_fg
-                *
-                  *
-                    * M.components.profile.time
-                        format: "<span font_desc=%q foreground=%q>%%H</span> <span font_desc=%q foreground=%q>%%M</span>"::format "Dosis Bold 15", Beautiful.wibar_left_time_hour_fg, "Dosis Bold 15", Beautiful.wibar_left_time_minute_fg
-                    right: DPI 2
-                    widget: Wibox.container.margin
-                  *
-                    *
-                      *
-                        * M.battery
-                            safe_image: Resource.battery_charging_vertical_fill
-                            safe_style: "*{fill:#{Beautiful.wibar_battery_safe};}"
-                            eighty_image: Resource.battery_vertical_full_fill
-                            eighty_style: "*{fill:#{Beautiful.wibar_battery_eighty};}"
-                            sixty_image: Resource.battery_vertical_high_fill
-                            sixty_style: "*{fill:#{Beautiful.wibar_battery_sixty};}"
-                            fourty_image: Resource.battery_vertical_medium_fill
-                            fourty_style: "*{fill:#{Beautiful.wibar_battery_fourty};}"
-                            thirty_image: Resource.battery_vertical_low_fill
-                            thirty_style: "*{fill:#{Beautiful.wibar_battery_thirty};}"
-                            twenty_image: Resource.battery_vertical_empty_fill
-                            twenty_style: "*{fill:#{Beautiful.wibar_battery_twenty};}"
-                            critical_image: Resource.battery_warning_vertical_fill
-                            critical_style: "*{fill:#{Beautiful.wibar_battery_critical};}"
-                        direction: "north"
-                        widget: Wibox.container.rotate
-                      valign: "center"
-                      widget: Wibox.container.place
-                    top: DPI 10
-                    bottom: DPI 10
-                    widget: Wibox.container.margin
-                  layout: Wibox.layout.fixed.horizontal
-                homogeneous: false
-                spacing: DPI 10
-                layout: Wibox.layout.grid.horizontal
-              left: DPI 10
-              right: DPI 12
-              top: DPI 5
-              bottom: DPI 5
-              layout: Wibox.container.margin
-            shape: (context, width, height) -> Gears.shape.rounded_rect context, width, height, DPI 25
-            bg: Beautiful.wibar_right_bg
-            widget: Wibox.container.background
-          *
-            * M.components.slash
-                font: "Dosis 15"
-                foreground: Beautiful.wibar_profile_separator_fg
-                symbol: "│"
-            left: DPI 15
-            right: DPI 12
-            layout: Wibox.container.margin
-          *
-            * M.components.profile.logo
-                image: Beautiful.logo
-                border_width: DPI 1
-                border_color: Beautiful.logo_border_color
-            top: DPI 3
-            bottom: DPI 3
-            widget: Wibox.container.margin
-          layout: Wibox.layout.fixed.horizontal
-        layout: Wibox.layout.align.horizontal
-      left: DPI 30
-      right: DPI 30
-      top: DPI 10
-      bottom: DPI 10
-      layout: Wibox.container.margin
+  workspace_regulate = tears.components.regulate
+    background: beautiful.taglist_regulate_bg
+    increase:
+      image: resource.plus_circle_fill
+      stylesheet: "*{fill:#{beautiful.taglist_regulate_increase_bg};}"
+      callback: ->
+        new_index = #root.tags! + 1
+        if new_index > 9 then return
+        awful.tag.add("#{new_index}", screen: local_screen)
+    decrease:
+      image: resource.minus_circle_fill
+      stylesheet: "*{fill:#{beautiful.taglist_regulate_decrease_bg};}"
+      callback: ->
+        tags = root.tags!
+        if #tags == 1 then return
+        tags[#tags]::delete!
 
-  quick\click_away =>
+  essentials = tears.components.detached
+    label:
+      text: "Essentials"
+      font: "Dosis Bold 12"
+    icon:
+      resource: resource.list_light
+      background: beautiful.wibar_right_detached_icon_bg
+      stylesheet: "*{fill:#{beautiful.wibar_right_detached_icon_stroke};}"
+    signal:
+      on_enter: => @\set_bg(beautiful.wibar_right_detached_signal_on_enter)
+      on_leave: => @\set_bg(beautiful.wibar_right_detached_signal_on_leave)
+
+  -- this means: tears.battery({ safe_image: ..., ... })
+  battery = tears.battery
+    safe_image: resource.battery_charging_vertical_fill
+    safe_style: "*{fill:#{beautiful.wibar_battery_safe};}"
+    eighty_image: resource.battery_vertical_full_fill
+    eighty_style: "*{fill:#{beautiful.wibar_battery_eighty};}"
+    sixty_image: resource.battery_vertical_high_fill
+    sixty_style: "*{fill:#{beautiful.wibar_battery_sixty};}"
+    fourty_image: resource.battery_vertical_medium_fill
+    fourty_style: "*{fill:#{beautiful.wibar_battery_fourty};}"
+    thirty_image: resource.battery_vertical_low_fill
+    thirty_style: "*{fill:#{beautiful.wibar_battery_thirty};}"
+    twenty_image: resource.battery_vertical_empty_fill
+    twenty_style: "*{fill:#{beautiful.wibar_battery_twenty};}"
+    critical_image: resource.battery_warning_vertical_fill
+    critical_style: "*{fill:#{beautiful.wibar_battery_critical};}"
+
+  time = tears.components.profile.time
+    format: table.concat
+      -- implicit array
+      * "<span font_desc='Dosis Bold 15' foreground='#{beautiful.wibar_left_time_hour_fg}'>"
+      * "%H"
+      * "</span> "
+      * "<span font_desc='Dosis Bold 15' foreground='#{beautiful.wibar_left_time_minute_fg}'>"
+      * "%M"
+      * "</span>"
+  -- }}}
+
+  main = wibox.widget {
+    {
+      { -- left
+        {
+          workspace_regulate
+          top: DPI(5)
+          bottom: DPI(5)
+          widget: wibox.container.margin
+        }
+        {
+          slash!
+          left: DPI(10)
+          right: DPI(10)
+          layout: wibox.container.margin
+        }
+        awful.widget.taglist tears.tags local_screen
+        layout: wibox.layout.fixed.horizontal
+      }
+      nil -- no middle component(s)
+      { -- right
+        {
+          {
+            {
+              {
+                {
+                  {
+                    tears.monitors.cpu!
+                    right: DPI(5)
+                    widget: wibox.container.margin
+                  }
+                  tears.monitors.ram!
+                  layout: wibox.layout.fixed.horizontal
+                }
+                top: DPI(5)
+                bottom: DPI(5)
+                layout: wibox.container.margin
+              }
+              slash!
+              dropdown
+              slash!
+              essentials
+              slash!
+              {
+                {
+                  time
+                  right: DPI(2)
+                  widget: wibox.container.margin
+                }
+                {
+                  {
+                    {
+                      battery
+                      direction: "north"
+                      widget: wibox.container.rotate
+                    }
+                    valign: "center"
+                    widget: wibox.container.place
+                  }
+                  top: DPI(10)
+                  bottom: DPI(10)
+                  widget: wibox.container.margin
+                }
+                layout: wibox.layout.fixed.horizontal
+              }
+              homogeneous: false
+              spacing: DPI(10)
+              layout: wibox.layout.grid.horizontal
+            }
+            left: DPI(10)
+            right: DPI(12)
+            top: DPI(5)
+            bottom: DPI(5)
+            layout: wibox.container.margin
+          }
+          shape: shapes.round_rectangle(DPI(25))
+          bg: beautiful.wibar_right_bg
+          widget: wibox.container.background
+        }
+        {
+          slash("│")
+          left: DPI(15)
+          right: DPI(12)
+          layout: wibox.container.margin
+        }
+        {
+          tears.components.profile.logo({
+            image: beautiful.logo
+            border_width: DPI(1)
+            border_color: beautiful.logo_border_color
+          })
+          top: DPI(3)
+          bottom: DPI(3)
+          widget: wibox.container.margin
+        }
+        layout: wibox.layout.fixed.horizontal
+      }
+      layout: wibox.layout.align.horizontal
+    }
+    left: DPI(30)
+    right: DPI(30)
+    top: DPI(10)
+    bottom: DPI(10)
+    layout: wibox.container.margin
+  }
+
+  do
+    -- backcalls i.e. quick\click_away(=> do_thing)
+    -- =>/<= impiles "self" param.
+    -- @ is an alias to "self"
+    <= quick\click_away
     -- when @ is nil then the mouse has been pressed in the root window
-    if not @
-      quick\hide!
-      return
+    if not @ then return quick\hide!
     -- when @get_widget does not exist then it is a <client>
-    if not @get_widget
-      quick\hide!
-      return
+    if not @get_widget then return quick\hide!
     -- see if the mouse has been clicked in the popup widget
     -- if not then check if the mouse has been clicked on the bar widget
     -- if so then do nothing as we will not hide the popup when the mouse
     -- has been clicked on it and we will do the same for the bar
-    if @ == quick.widgets.popup or @\get_widget! == bar.widget then return
+    if @ == quick.widgets.popup or @\get_widget! == main then return
     quick\hide!
 
-  bar
-
-M
+  return
+    position: "top"
+    screen: local_screen
+    height: DPI(70)
+    bg: beautiful.wibar_bg
+    widget: main

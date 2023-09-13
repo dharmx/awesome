@@ -1,10 +1,9 @@
-import "bling" as Bling
+import "bling"
 
-export _instances = {}
-
-export new = (command, instance_name) ->
-  if not _instances[instance_name]
-    local instance = Bling.module.scratchpad
+return
+  <call>: (...) => @.new(...)
+  new: (command, instance_name) ->
+    bling.module.scratchpad
       command: command
       rule:
         instance: instance_name
@@ -18,5 +17,3 @@ export new = (command, instance_name) ->
         y: 90
         height: 900
         width: 1200
-    _instances[instance_name] = instance
-  _instances[instance_name]

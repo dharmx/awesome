@@ -6,41 +6,42 @@ import "lib.functional" as :if_nil
 ---Continuously read a file in intervals.
 export.file = (filepath, interval, callback, base_widget) ->
   -- defaults and asserts
-  assert filepath, "filepath cannot be empty."
-  interval = if_nil interval, 5
-  base_widget = if_nil base_widget, Wibox.widget.textbox!
-  callback = if_nil callback, (widget, data) -> widget::set_text data
+  assert(filepath, "filepath cannot be empty.")
+  interval ??= 5
+  base_widget ??= Wibox.widget.textbox!
+  callback ??= (widget, data) -> widget::set_text(data)
 
-  file = Gio.File.new_for_path filepath
-  assert file::query_exists!, "filepath must exist."
+  file = Gio.File.new_for_path(filepath)
+  assert(file::query_exists!, "filepath must exist.")
   -- only text-based files are allowed
-  assert file::query_file_type({}) == "REGULAR", "filepath must be text-based."
-  timer = Timer timeout: interval
-  timer::connect_signal "timeout", ->
+  assert(file::query_file_type({}) == "REGULAR", "filepath must be text-based.")
+  timer = Timer({ timeout: interval })
+  do
+    <- timer::connect_signal("timeout")
     file::load_contents_async nil, (_, results) ->
-      data, _ = file::load_contents_finish results
+      data, _ = file::load_contents_finish(results)
       -- execute the callback after we have finished reading the file
-      if data
-        callback(base_widget, data)
+      if data then callback(base_widget, data)
       timer::again!
     timer::stop!
-  timer::start!
 
-  timer::emit_signal "timeout"
+  timer::start!
+  timer::emit_signal("timeout")
   base_widget, timer
 
 ---Run a callback in intervals.
 export.on = (callback, interval, base_widget) ->
-  -- defaults and asserts
-  interval = if_nil interval, 5
-  base_widget = if_nil base_widget, Wibox.widget.textbox!
-  callback = assert callback, "please supply a callback"
+  interval ??= 5
+  base_widget ??= Wibox.widget.textbox!
+  callback = assert(callback, "please supply a callback")
 
-  local timer = Timer timeout: interval
-  timer::connect_signal "timeout", ->
-    callback base_widget
+  local timer = Timer({ timeout: interval })
+  do
+    <- timer::connect_signal("timeout")
+    callback(base_widget)
     timer::stop!
     timer::again!
+
   timer::start!
-  timer::emit_signal "timeout"
+  timer::emit_signal("timeout")
   base_widget, timer

@@ -1,15 +1,17 @@
-import "wibox" as Wibox
-import "beautiful" as Beautiful
-import "gears" as Gears
+import "wibox"
+import "beautiful"
+import "gears"
+
 import "core.components.polls"
 import "lib.functional" as :if_nil
 
-DPI = Beautiful.xresources.apply_dpi
+DPI = beautiful.xresources.apply_dpi
 
 export logo = (options) ->
-  options = if_nil options, {}
-  options.clip_shape = if_nil options.clip_shape, Gears.shape.circle
-  assert options.image, "please supply a 1x1 image"
+  options ??= {}
+  options.clip_shape ??= gears.shape.circle
+  assert(options.image, "please supply a 1x1 image")
+
   return
     *
       *
@@ -17,20 +19,22 @@ export logo = (options) ->
         forced_height: options.forced_height
         forced_width: options.forced_width
         clip_shape: options.clip_shape
-        widget: Wibox.widget.imagebox
-      margins: DPI 2
-      widget: Wibox.container.margin
+        widget: wibox.widget.imagebox
+      margins: DPI(2)
+      widget: wibox.container.margin
     border_width: options.border_width
     border_color: options.border_color
     shape: options.clip_shape
-    widget: Wibox.container.background
+    widget: wibox.container.background
 
 export time = (options) ->
-  options = if_nil options, {}
-  options.interval = if_nil options.interval, 1
-  options.format = if_nil options.format, "%X"
+  options ??= options
+  options.interval ??= 1
+  options.format ??= "%X"
 
-  datebox = Wibox.widget.textbox!
+  datebox = wibox.widget.textbox!
   datebox.font = if_nil options.font, "Dosis 15"
   datebox.valign = "center"
-  polls.on ((widget) -> widget::set_markup os.date options.format), options.interval, datebox
+
+  (widget) <- polls.on(_, options.interval, datebox)
+  widget::set_markup(os.date(options.format))

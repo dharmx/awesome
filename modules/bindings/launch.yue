@@ -1,5 +1,4 @@
-import "wibox" as Wibox
-import "menubar" as Menu
+import "menubar"
 import "core.enum" as modifiers:{:SUPER, :SHIFT, :CTRL}, environ:{:BROWSER}
 import "core.components.scratch"
 
@@ -13,12 +12,12 @@ return
     modifiers: SUPER + CTRL
     key: "Return"
     description: "Open a playground tmux session."
-    on_press: -> scratch.new("#{terminal} --class=scratch-tmux -e tmux new-session -A -s playground", "scratch-tmux")::toggle!
+    on_press: -> scratch("#{terminal} --class=scratch-tmux -e tmux new-session -A -s playground", "scratch-tmux")::toggle!
   *
     modifiers: SUPER
     key: "d"
     description: "Show the menu."
-    on_press: -> Menu.show!
+    on_press: -> menubar.show!
   *
     modifiers: SUPER + SHIFT
     key: "f"

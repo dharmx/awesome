@@ -1,54 +1,60 @@
-import "wibox" as Wibox
-import "beautiful" as Beautiful
-import "gears" as Gears
+import "wibox"
+import "beautiful"
+import "gears"
 import "lib.functional" as :if_nil
 
-DPI = Beautiful.xresources.apply_dpi
+DPI = beautiful.xresources.apply_dpi
 
-M = <call>: (...) => @.new ...
-M.new = (options) ->
-  options = if_nil options, {}
-  options.label = if_nil options.label, {}
-  options.icon = if_nil options.icon, {}
-  options.signal = if_nil options.signal, {}
+return
+  <call>: (...) => @.new(...)
+  new: (options) ->
+    options ??= {}
+    options.label ??= {}
+    options.icon ??= {}
+    options.signal ??= {}
 
-  iconbox = Wibox.container.background!
-  if options.signal.on_press then iconbox::connect_signal "button::press", options.signal.on_press
-  iconbox::connect_signal "mouse::enter", options.signal.on_enter
-  iconbox::connect_signal "mouse::leave", options.signal.on_leave
+    iconbox = wibox.container.background!
+    if options.signal.on_press then iconbox::connect_signal("button::press", options.signal.on_press)
+    iconbox::connect_signal("mouse::enter", options.signal.on_enter)
+    iconbox::connect_signal("mouse::leave", options.signal.on_leave)
 
-  return
-    *
-      *
-        *
-          *
-            image: assert options.icon.resource, "please supply a icon.resource"
-            valign: "center"
-            halign: "center"
-            forced_width: DPI 20
-            stylesheet: assert options.icon.stylesheet, "please supply a icon.stylesheet"
-            widget: Wibox.widget.imagebox
-          right: DPI 7
-          left: DPI 7
-          top: DPI 3
-          bottom: DPI 3
-          widget: Wibox.container.margin
-        valign: "center"
-        halign: "center"
-        shape: Gears.shape.rounded_rect
-        bg: assert options.icon.background, "please supply a icon.background"
-        widget: iconbox
-      right: DPI 5
-      top: DPI 3
-      bottom: DPI 3
-      widget: Wibox.container.margin
-    *
-      *
-        text: assert options.label.text, "please supply a label.text"
-        font: assert options.label.font, "please supply a label.font"
-        widget: Wibox.widget.textbox
-      bottom: DPI 2
-      widget: Wibox.container.margin
-    layout: Wibox.layout.fixed.horizontal
-
-M
+    wibox.widget {
+      {
+        {
+          {
+            {
+              image: assert(options.icon.resource, "please supply a icon.resource")
+              valign: "center"
+              halign: "center"
+              forced_width: DPI(20)
+              stylesheet: assert(options.icon.stylesheet, "please supply a icon.stylesheet")
+              widget: wibox.widget.imagebox
+            }
+            right: DPI(7)
+            left: DPI(7)
+            top: DPI(3)
+            bottom: DPI(3)
+            widget: wibox.container.margin
+          }
+          valign: "center"
+          halign: "center"
+          shape: gears.shape.rounded_rect
+          bg: assert options.icon.background, "please supply a icon.background"
+          widget: iconbox
+        }
+        right: DPI(5)
+        top: DPI(3)
+        bottom: DPI(3)
+        widget: wibox.container.margin
+      }
+      {
+        {
+          text: assert(options.label.text, "please supply a label.text")
+          font: assert(options.label.font, "please supply a label.font")
+          widget: wibox.widget.textbox
+        }
+        bottom: DPI(2)
+        widget: wibox.container.margin
+      }
+      layout: wibox.layout.fixed.horizontal
+    }

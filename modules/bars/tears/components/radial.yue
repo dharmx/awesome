@@ -1,35 +1,35 @@
-import "wibox" as Wibox
-import "beautiful" as Beautiful
+import "wibox"
+import "beautiful"
 import "lib.functional" as :if_nil
 
-DPI = Beautiful.xresources.apply_dpi
+DPI = beautiful.xresources.apply_dpi
 
-M = <call>: (...) => @.new ...
-M.new = (options) ->
-  options = if_nil options, {}
-  options.value = if_nil options.value, 0
-  options.max_value = if_nil options.max_value, 1
-  options.min_value = if_nil options.min_value, 0
-  options.icon = if_nil options.icon, {}
-  options.radial = if_nil options.radial, {}
-  options.radial.thickness = if_nil options.thickness , DPI 5
-  options.radial.rounded_edge = if_nil options.radial.rounded_edge, true
+return
+  <call>: (...) => @.new(...)
+  new: (options) ->
+    options ??= {}
+    options.value ??= 0
+    options.max_value ??= 1
+    options.min_value ??= 0
+    options.icon ??= {}
+    options.radial ??= {}
+    options.radial.thickness ??= DPI(5)
+    options.radial.rounded_edge ??= true
 
-  arcchart = Wibox.container.arcchart
-    bg: assert options.radial.body_background, "please supply a radial.body_background"
-    widget: Wibox.container.background
-
-  arcchart.max_value = options.max_value
-  arcchart.min_value = options.max_value
-  arcchart.bg = assert options.background, "please supply a background"
-  arcchart.forced_width = options.radial.forced_width
-  arcchart.forced_height = options.radial.forced_height
-  arcchart.value = options.value
-  arcchart.colors = { assert options.radial.foreground, "please supply radial.foreground" }
-  arcchart.rounded_edge = true
-  arcchart.border_color = assert options.radial.background, "please supply a radial.background"
-  arcchart.thickness = options.radial.thickness
-  arcchart.paddings = options.paddings
-  arcchart
-
-M
+    wibox.widget
+      * -- implicit array
+        bg: assert(options.radial.body_background, "please supply a radial.body_background")
+        layout: wibox.container.background
+      colors:
+        * assert(options.radial.foreground, "please supply radial.foreground")
+      max_value: options.max_value
+      min_value: options.max_value
+      bg: assert(options.background, "please supply a background")
+      forced_width: options.radial.forced_width
+      forced_height: options.radial.forced_height
+      value: options.value
+      rounded_edge: true
+      border_color: assert(options.radial.background, "please supply a radial.background")
+      thickness: options.radial.thickness
+      paddings: options.paddings
+      widget: wibox.container.arcchart

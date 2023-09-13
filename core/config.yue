@@ -1,5 +1,5 @@
-import "beautiful" as Beautiful
-import "gears" as Gears
+import "beautiful"
+import "gears"
 
 import "core.utils.factory"
 import "core.enum" as :environ
@@ -12,6 +12,7 @@ export defaults =
   colors: "radium"
   background: "dark"
   flash: false
+  workspaces: 5
   wallpapers:
     position: "maximized"
     image_formats: 
@@ -22,14 +23,14 @@ export defaults =
       * "webp"
       * "jiff"
     recursive: true
-    wallpaper: "#{Gears.filesystem.get_themes_dir!}tears/background.png"
-    background: Beautiful.bg_normal
+    wallpaper: "#{gears.filesystem.get_themes_dir!}tears/background.png"
+    background: beautiful.bg_normal
     ignore_aspect: false
   modules:
     variables:
       icon_theme: factory.get_current_icon_theme_name!
-      terminal: if_nil environ.TERMINAL, "xterm"
-      editor: if_nil environ.EDITOR, "nano"
+      terminal: if_nil(environ.TERMINAL, "xterm")
+      editor: if_nil(environ.EDITOR, "nano")
       modkey: "Mod4"
     titlebars_theme: "tears"
     bars_theme:  "tears"
@@ -39,12 +40,12 @@ defaults
   .variables
   .editor_cmd = "#{defaults.modules.variables.terminal} -e #{defaults.modules.variables.editor}"
 
-export current = deepcopy defaults
+export current = deepcopy(defaults)
 
 export merge = (options) ->
-  current = deep_extend "keep", if_nil(options, {}), current
+  current = deep_extend("keep", if_nil(options, {}), current)
   current
 
-export extend = (options) -> deep_extend "keep", if_nil(options, {}), current
+export extend = (options) -> deep_extend("keep", if_nil(options, {}), current)
 
 export get = -> current

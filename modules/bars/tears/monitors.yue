@@ -1,14 +1,15 @@
-import "wibox" as Wibox
-import "beautiful" as Beautiful
+import "wibox"
+import "beautiful"
+
 import "core.components.polls"
 import "modules.bars.tears.components.radial"
 import "core.utils.factory"
-import "lib.std" as table:{:map, :slice, :foreachi, :sum}, string:{:split, :trim}
+import "lib.std" as table:{:map, :slice, :sum}, string:{:split, :trim}
 
-Resource = factory.resource_factory!
-DPI = Beautiful.xresources.apply_dpi
+resource = factory.resource_factory!
+DPI = beautiful.xresources.apply_dpi
 
-export cpu = ->
+export.cpu = ->
   ---@see https://www.baeldung.com/linux/get-cpu-usage
   callback = (stat) =>
     -- total: reduce((accumulate, core) -> accumulate + usage(core), cores)
@@ -16,49 +17,45 @@ export cpu = ->
     -- total * 100 / (cores * 100) => total / cores
     cores = 0
     total = 0
-    for line in *split stat, "\n"
-      if line::match "^cpu[1-9]? "
+    for line in *split(stat, "\n")
+      if line::match("^cpu[1-9]? ")
         cpu = map(tonumber, slice(split(line, " +"), 2))
-        usage = 100 - cpu[4] * 100 / sum cpu
-        total = total + usage
-        cores = cores + 1
-    @\set_value total / cores
+        usage = 100 - cpu[4] * 100 / sum(cpu)
+        total += usage
+        cores += 1
+    @\set_value(total / cores)
 
-  widget = radial
-    background: Beautiful.radial_cpu_bg
+  polls.file("/proc/stat", 10, callback, radial({
+    background: beautiful.radial_cpu_bg
     radial:
-      background: Beautiful.radial_cpu_arc_bg
-      foreground: Beautiful.radial_cpu_arc_fg
-      body_background: Beautiful.radial_cpu_arc_body_bg
-      forced_width: DPI 33
+      background: beautiful.radial_cpu_arc_bg
+      foreground: beautiful.radial_cpu_arc_fg
+      body_background: beautiful.radial_cpu_arc_body_bg
+      forced_width: DPI(33)
     icon:
-      resource: Resource.cpu_duotone
-      stylesheet: "*{fill:#{Beautiful.radial_cpu_icon_stroke};}"
+      resource: resource.cpu_duotone
+      stylesheet: "*{fill:#{beautiful.radial_cpu_icon_stroke};}"
     max_value: 100
     min_value: 0
+  }))
 
-  polls.file "/proc/stat", 10, callback, widget
-
-export ram = ->
+export.ram = ->
   callback = (meminfo) =>
-    ram = {}
-    foreachi split(trim(meminfo), "\n"), (_, line) ->
-      splits = split line, ": +"
-      ram[splits[1]] = tonumber(split(splits[2], " ")[1])
+    -- split meminfo by lines > split line by spaces > assign first item of the split as the key and rest as value
+    ram = {splits[1], tonumber(split(trim(splits[2]), " ")[1]) for splits in *[split(trim(line), ": +") for line in *split(trim(meminfo), "\n")]}
     new_value = (ram.MemTotal - ram.MemFree - ram.Buffers - ram.Cached) / 1024 ^ 2
     @\set_value(new_value)
 
-  widget = radial
-    background: Beautiful.radial_ram_bg
+  polls.file("/proc/meminfo", 10, callback, radial({
+    background: beautiful.radial_ram_bg
     radial:
-      background: Beautiful.radial_ram_arc_bg
-      foreground: Beautiful.radial_ram_arc_fg
-      body_background: Beautiful.radial_ram_arc_body_bg
-      forced_width: DPI 33
+      background: beautiful.radial_ram_arc_bg
+      foreground: beautiful.radial_ram_arc_fg
+      body_background: beautiful.radial_ram_arc_body_bg
+      forced_width: DPI(33)
     icon:
-      resource: Resource.disc_duotone
-      stylesheet: "*{fill:#{Beautiful.radial_ram_icon_stroke};}"
+      resource: resource.disc_duotone
+      stylesheet: "*{fill:#{beautiful.radial_ram_icon_stroke};}"
     max_value: 16
     min_value: 0
-
-  polls.file "/proc/meminfo", 10, callback, widget
+  }))

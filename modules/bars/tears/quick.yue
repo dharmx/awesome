@@ -1,45 +1,42 @@
-import "awful" as Awful
-import "beautiful" as Beautiful
+import "awful"
+import "beautiful"
 
-import "core.components.fuzzy" as {:Fuzzy, :SimpleEntry}
-import "modules.bars.tears.components.dropdown"
+import "core.components.fuzzy" as {:Fuzzy, :CommandEntry}
 import "lib.functional" as :if_nil
 import "core.utils.factory"
 
-DPI = Beautiful.xresources.apply_dpi
-Resource = factory.resource_factory!
+DPI = beautiful.xresources.apply_dpi
+resource = factory.resource_factory!
 
-<call>: (links) =>
-  Fuzzy [SimpleEntry link for link in *links],
-    sleep: 2
-    initial: 1
-    width: DPI 250
-    maximum_width: DPI 600
-    maximum_height: DPI 330
-    background: Beautiful.wibar_quick_bg
-    selected:
-      background: Beautiful.wibar_quick_selected_bg
-      foreground: Beautiful.wibar_quick_fg
-    match:
-      background: nil
-      foreground: Beautiful.wibar_quick_match_fg
-    ontop: true
-    visible: false
-    thumb:
-      enabled: false
-    place: (...) -> Awful.placement.top_right ...,
-      margins:
-        top: DPI 75
-        right: DPI 300
-    prompt:
-      dummy: "Navigate"
-      background: Beautiful.wibar_quick_prompt_background
-      foreground: Beautiful.wibar_quick_prompt_foreground
-      cursor: Beautiful.wibar_quick_prompt_cursor
-    prefix:
-      width: DPI 50
-      image: Resource.magnifying_glass_duotone
-      style: "*{fill:#{Beautiful.wibar_quick_prefix_foreground};}"
-    outline:
-      background: Beautiful.wibar_quick_outline_background
-      width: DPI 2
+config =
+  sleep: 2
+  initial: 1
+  width: DPI(250)
+  maximum_width: DPI(600)
+  maximum_height: DPI(330)
+  background: beautiful.wibar_quick_bg
+  selected:
+    background: beautiful.wibar_quick_selected_bg
+    foreground: beautiful.wibar_quick_fg
+  match:
+    background: nil
+    foreground: beautiful.wibar_quick_match_fg
+  ontop: true
+  visible: false
+  thumb:
+    enabled: false
+  place: (...) -> awful.placement.top_right(..., { margins: { top: DPI(75), right: DPI(300) } })
+  prompt:
+    dummy: "Navigate"
+    background: beautiful.wibar_quick_prompt_background
+    foreground: beautiful.wibar_quick_prompt_foreground
+    cursor: beautiful.wibar_quick_prompt_cursor
+  prefix:
+    width: DPI(50)
+    image: resource.magnifying_glass_duotone
+    style: "*{fill:#{beautiful.wibar_quick_prefix_foreground};}"
+  outline:
+    background: beautiful.wibar_quick_outline_background
+    width: DPI(2)
+
+<call>: (links) => Fuzzy([CommandEntry(link) for link in *links], config)

@@ -1,77 +1,90 @@
-import "wibox" as Wibox
-import "beautiful" as Beautiful
-import "gears" as Gears
+import "wibox"
+import "beautiful"
+import "gears"
+
+import "core.components.shapes" as :round_rectangle
 import "lib.functional" as :if_nil
 
-DPI = Beautiful.xresources.apply_dpi
+DPI = beautiful.xresources.apply_dpi
 
 return
-  <call>: (...) => @.new ...
+  <call>: (...) => @.new(...)
   new: (options) ->
-    options = if_nil options, {}
-    options.icon = if_nil options.icon, {}
-    options.label = if_nil options.label, {}
-    options.collapse = if_nil options.collapse, {}
-    options.signal = if_nil options.signal, {}
+    options ??= {}
+    options.icon ??= {}
+    options.label ??= {}
+    options.collapse ??= {}
+    options.signal ??= {}
 
-    dropdown = Wibox.container.background nil, nil, (context, width, height) ->
-      Gears.shape.rounded_rect context, width, height, DPI 20
+    dropdown = wibox.container.background(nil, nil, round_rectangle(DPI(20)))
+    dropdown::set_bg(options.background)
 
-    dropdown::set_bg options.background
-    if options.signal.on_press then dropdown::connect_signal "button::press", options.signal.on_press
-    dropdown::connect_signal "mouse::enter", options.signal.on_enter
-    dropdown::connect_signal "mouse::leave", options.signal.on_leave
+    if options.signal.on_press then dropdown::connect_signal("button::press", options.signal.on_press)
+    dropdown::connect_signal("mouse::enter", options.signal.on_enter)
+    dropdown::connect_signal("mouse::leave", options.signal.on_leave)
 
-    Wibox.widget
-      *
-        *
-          *
-            *
-              *
-                *
-                  image: assert options.icon.resource, "please supply a icon.resource"
+    wibox.widget {
+      {
+        {
+          {
+            {
+              {
+                {
+                  image: assert(options.icon.resource, "please supply a icon.resource")
                   halign: "center"
                   valign: "center"
                   forced_width: options.icon.forced_width
                   forced_height: options.icon.forced_height
-                  widget: Wibox.widget.imagebox
-                margins: DPI 8
-                widget: Wibox.container.margin
-              shape: Gears.shape.circle
-              bg: assert options.icon.background, "please supply a icon.background"
-              fg: assert options.icon.foreground, "please supply a icon.foreground"
-              border_width: DPI 2
-              border_color: assert options.icon.outline, "please supply a icon.outline"
-              widget: Wibox.container.background
-            left: DPI 3
-            widget: Wibox.container.margin
-          *
-            *
-              *
-                text: assert options.label.text, "please supply a label.text"
+                  widget: wibox.widget.imagebox
+                }
+                margins: DPI(8)
+                widget: wibox.container.margin
+              }
+              shape: gears.shape.circle
+              bg: assert(options.icon.background, "please supply a icon.background")
+              fg: assert(options.icon.foreground, "please supply a icon.foreground")
+              border_width: DPI(2)
+              border_color: assert(options.icon.outline, "please supply a icon.outline")
+              widget: wibox.container.background
+            }
+            left: DPI(3)
+            widget: wibox.container.margin
+          }
+          {
+            {
+              {
+                text: assert(options.label.text, "please supply a label.text")
                 halign: "center"
                 valign: "center"
-                font: assert options.label.font, "please supply a label.font"
-                widget: Wibox.widget.textbox
-              fg: assert options.label.foreground, "please supply a label.foreground"
-              widget: Wibox.container.background
-            right: DPI 5
-            left: DPI 5
-            bottom: DPI 2
-            widget: Wibox.container.margin
-          *
-            *
-              image: assert options.collapse.resource, "please supply a collapse.resource"
-              stylesheet: assert options.collapse.stylesheet, "please supply a collapse.stylesheet"
+                font: assert(options.label.font, "please supply a label.font")
+                widget: wibox.widget.textbox
+              }
+              fg: assert(options.label.foreground, "please supply a label.foreground")
+              widget: wibox.container.background
+            }
+            right: DPI(5)
+            left: DPI(5)
+            bottom: DPI(2)
+            widget: wibox.container.margin
+          }
+          {
+            {
+              image: assert(options.collapse.resource, "please supply a collapse.resource")
+              stylesheet: assert(options.collapse.stylesheet, "please supply a collapse.stylesheet")
               forced_width: options.collapse.forced_width
               forced_height: options.collapse.forced_height
               valign: "center"
-              widget: Wibox.widget.imagebox
-            right: DPI 10
-            top: DPI 3
-            widget: Wibox.container.margin
-          layout: Wibox.layout.align.horizontal
-        top: DPI 3
-        bottom: DPI 3
-        widget: Wibox.container.margin
+              widget: wibox.widget.imagebox
+            }
+            right: DPI(10)
+            top: DPI(3)
+            widget: wibox.container.margin
+          }
+          layout: wibox.layout.align.horizontal
+        }
+        top: DPI(3)
+        bottom: DPI(3)
+        widget: wibox.container.margin
+      }
       widget: dropdown
+    }

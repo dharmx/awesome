@@ -1,20 +1,22 @@
-import "wibox" as Wibox
+import "wibox"
 import "lib.functional" as :if_nil
 
 export slash = (options) ->
-  options = if_nil options, {}
+  options ??= {}
+  options.font ??= "Dosis 15"
+  options.symbol ??= "/"
   return
     *
-      font: if_nil options.font, "Dosis 15"
-      text: if_nil options.symbol, "/"
+      font: options.font
+      text: options.symbol
       valign: "center"
-      widget: Wibox.widget.textbox
-    fg: assert options.foreground, "please supply a foreground"
-    widget: Wibox.container.background
+      widget: wibox.widget.textbox
+    fg: assert(options.foreground, "please supply a foreground")
+    widget: wibox.container.background
 
 before = ...
 export.<> = {}
 export.<index> = (key) =>
-  widget = rawget @, key
-  if not widget then return require "#{before}.#{key}"
+  widget = rawget(@, key)
+  if not widget then return require("#{before}.#{key}")
   widget

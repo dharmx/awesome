@@ -1,2 +1,2 @@
 before = ...
-<index>: (key) => require "#{before}.#{key}"
+<index>: (key) => require("#{before}.#{key}")

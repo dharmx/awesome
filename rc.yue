@@ -1,5 +1,5 @@
-pcall require, "luarocks.loader"
+pcall(require, "luarocks.loader")
 import "inspect" as :inspect
-global I = (...) -> inspect...
-global P = (...) -> print I...
+global I = (...) -> inspect(...)
+global P = (...) -> print(inspect(...))
 require("modules").setup!

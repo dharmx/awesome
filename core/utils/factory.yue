@@ -1,61 +1,67 @@
-import "awful" as Awful
-import "gears.table" as GT
+import "awful"
+import "gears" as table:{:hasitem}, filesystem:{:get_configuration_dir}
 
 import "lib.functional" as :if_nil
-import "lib.std" as table:{:foreach, :foreachi, :any}, string:{:split}
+import "lib.std" as table:{:any}, string:{:split, :trim}
 
-import "path" as Path
+import "path" as :basename, :isfile
 import "menubar.icon_theme" as IconTheme
 import "lgi" as :Gio
 
-export stem = (path) -> split(Path.basename(path), ".", plain: true)[1]
+export stem = (path) -> split(basename(path), ".", plain: true)[1]
 
-export spawn_wrap = (cmd) -> -> Awful.spawn cmd
+export spawn_wrap = (cmd) -> -> awful.spawn(cmd)
 
+-- WARN: Handle this function with extreme care.
 export apply_bindings = (grouped_bindings, mouse, callback) ->
-  mouse = if_nil mouse, false
+  mouse = if_nil(mouse, false)
   wrapped_types =
     * "string"
     * "table"
 
-  _ = foreach if_nil(grouped_bindings, {}), (group, bindings) ->
-    _ = foreachi bindings, (_, binding) ->
+  for group, bindings in pairs grouped_bindings
+    for binding in *bindings
       binding.group = group
-      if GT.hasitem wrapped_types, type binding.on_press
-        binding.on_press = spawn_wrap binding.on_press
-      if GT.hasitem wrapped_types, type binding.on_release
-        binding.on_release = spawn_wrap binding.on_release
-      if mouse
-        callback Awful.button binding
-      else
-        callback Awful.key binding
+      if hasitem(wrapped_types, type(binding.on_press))
+        binding.on_press = spawn_wrap(binding.on_press)
+      if hasitem(wrapped_types, type(binding.on_release))
+        binding.on_release = spawn_wrap(binding.on_release)
+      if mouse then callback(awful.button(binding)) else callback(awful.key(binding))
 
 export icon_factory = (icon_theme, base) ->
-  new_icon_theme = IconTheme.new icon_theme, base
+  new_icon_theme = IconTheme.new(icon_theme, base)
   return
-    <index>: (icon_label) => new_icon_theme::find_icon_path(icon_label::gsub "_", "-")
-    <call>: (icon_label, icon_size) => new_icon_theme::find_icon_path icon_label, icon_size
+    <index>: (icon_label) => new_icon_theme::find_icon_path(icon_label::gsub("_", "-"))
+    <call>: (icon_label, icon_size) => new_icon_theme::find_icon_path(icon_label, icon_size)
 
 export launch_file = (path) ->
   file = Gio.File.new_for_path path
-  if file.query_exists! then Gio.AppInfo.launch_default_for_uri file.get_uri!
+  if file.query_exists! then Gio.AppInfo.launch_default_for_uri(file.get_uri!)
 
 export get_current_icon_theme_name = ->
-  Gio.Settings.new("org.gnome.desktop.interface")::get_string "icon-theme"
+  Gio.Settings.new("org.gnome.desktop.interface")::get_string("icon-theme")
 
-export open_path = (path) -> Awful.spawn "xdg-open #{path}"
+export open = (uri_or_cmd) ->
+  uri_or_cmd = trim(uri_or_cmd)
+  if uri_or_cmd::match("^(%w+)://") then uri_or_cmd = "xdg-open #{uri_or_cmd}"
+  awful.spawn(uri_or_cmd)
+
+export open_wrap = (uri_or_cmd) -> -> open(uri_or_cmd)
 
 export resource_factory = ->
-  import "gears.filesystem" as GFS
-  resource_path = "#{GFS.get_configuration_dir!}resources"
+  resource_path = "#{get_configuration_dir!}resources"
+  resource_types =
+    * "svg"
+    * "png"
+    * "jpeg"
+    * "jpg"
   get_file = (filename) ->
-    path = "%s/%s."::format resource_path, filename
-    _, value = any (extension) -> Path.isfile(path .. extension),
-      * "svg"
-      * "png"
-      * "jpeg"
-      * "jpg"
+    path = "#{resource_path}/#{filename}."
+    _, value = do -- https://yuescript.org/doc/#backcalls
+      (extension) <- any(_, resource_types)
+      isfile(path .. extension)
     path .. value
+
   return
-    <call>: (filename) => get_file filename
-    <index>: (filename) => get_file(filename::gsub "_", "-")
+    <call>: (filename) => get_file(filename)
+    <index>: (filename) => get_file(filename::gsub("_", "-"))
