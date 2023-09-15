@@ -1,3 +1,4 @@
 *.lua
 **/*.lua
 !lib/overflow.lua
+!lib/path.lua

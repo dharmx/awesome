@@ -1,14 +1,15 @@
-import "awful" as Awful
-import "ruled" as Ruled
+import "awful"
+import "ruled"
+import no_overlap, no_offscreen, centered from awful.placement
 
 rules =
   *
     id: "global"
     properties:
-      focus: Awful.client.focus.filter
+      focus: awful.client.focus.filter
       raise: true
-      screen: Awful.screen.preferred
-      placement: Awful.placement.no_overlap + Awful.placement.no_offscreen
+      screen: awful.screen.preferred
+      placement: no_overlap + no_offscreen
   *
     id: "floating"
     rule_any:
@@ -62,7 +63,7 @@ rules =
         * "pop-up"
     properties:
       floating: true
-      placement: Awful.placement.centered
+      placement: centered
       ontop: true
   *
     id: "titlebars"
@@ -78,6 +79,6 @@ rules =
         * "Xephyr"
     properties:
       titlebars_enabled: false
-      placement: Awful.placement.centered
+      placement: centered
 
-Ruled.client.connect_signal "request::rules", -> Ruled.client.append_rules rules
+ruled.client.connect_signal("request::rules", -> ruled.client.append_rules(rules))

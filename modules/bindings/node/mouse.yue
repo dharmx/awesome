@@ -1,22 +1,22 @@
-import "awful" as Awful
+import "awful"
 import "core.enum" as modifiers:{:SUPER, :EMPTY}
 
 return
   *
     modifiers: EMPTY
-    button: Awful.button.names.LEFT
+    button: awful.button.names.LEFT
     context: "mouse_click"
     description: "Add mouse click."
     on_press: (node) ->
-      node::activate context: "mouse_click"
+      node::activate(context: "mouse_click")
       mymainmenu::hide!
   *
     modifiers: SUPER
-    button: Awful.button.names.LEFT
+    button: awful.button.names.LEFT
     description: "Add mouse drag."
-    on_press: (node) -> node::activate context: "mouse_click", action: "mouse_move"
+    on_press: (node) -> node::activate(context: "mouse_click", action: "mouse_move")
   *
     modifiers: SUPER
-    button: Awful.button.names.RIGHT
+    button: awful.button.names.RIGHT
     description: "Add mouse resizing."
-    on_press: (node) -> node::activate context: "mouse_click", action: "mouse_resize"
+    on_press: (node) -> node::activate(context: "mouse_click", action: "mouse_resize")

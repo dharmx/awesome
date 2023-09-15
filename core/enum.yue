@@ -1,6 +1,6 @@
-import "posix.stdlib"
 import "lib.std" as table:{:flatten}
 import "lib.functional" as :if_nil
+import "lgi" as :GLib
 
 class Mod
   new: (...) => for _, key in ipairs(flatten({ ... })) do @[] = key
@@ -20,4 +20,4 @@ export environ =
     value
   <newindex>: (key, value) =>
     rawset(@, key, value)
-    stdlib.setenv(key, value, true)
+    GLib.setenv(key, value, true)

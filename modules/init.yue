@@ -1,34 +1,35 @@
-import "gears" as Gears
-import "beautiful" as Beautiful
-import "lfs" as Filesystem
-import "bling" as Bling
+import "gears"
+import "beautiful"
+import "bling"
 
 import "lib.std" as table:{:deepcopy}
 import "lib.functional" as :if_nil
 
 import "core.config"
 import "core.utils.factory"
+import "core.utils.helpers"
 
 export setup = (options) ->
   import "awful.hotkeys_popup.keys"
   import "awful.autofocus"
 
   -- load changes to defaults
-  options = config.merge options
-  import "modules.variables" -- top priority module as other modules depend on it
+  options = config.merge(options)
+  -- top priority modules as auto-load fucks up my install
+  import "modules.variables"
+  import "modules.layouts"
   excludes =
-    * "^%.$"
-    * "^%.%.$"
-    * "^init%.lua$"
-    * "^variables%.lua$"
     * ".*%.yue$"
-    <index>: (file) => #[pattern for pattern in *@ when file::match pattern] > 0
+    * "^init%.lua$"
+    * "^layouts%.lua$"
+    * "^variables%.lua$"
+    <index>: (file) => #[pattern for pattern in *@ when file::match(pattern)] > 0
 
-  for file in Filesystem.dir "#{Gears.filesystem.get_configuration_dir!}/modules"
+  for file, _ in helpers.walk("#{gears.filesystem.get_configuration_dir!}modules")
     -- "balls.lua" -> "balls"
-    if not excludes[file] then require "modules.#{factory.stem file}"
+    if not excludes[file] then require("modules.#{helpers.stem(file)}")
 
-  if options.flash then Bling.module.flash_focus.enable!
-  wallpapers = deepcopy config.get!.wallpapers
-  wallpapers.wallpaper = if_nil wallpapers.wallpaper, Beautiful.wallpaper
-  Bling.module.wallpaper.setup wallpapers
+  if options.flash then bling.module.flash_focus.enable!
+  wallpapers = deepcopy(config.get!.wallpapers)
+  wallpapers.wallpaper ??= beautiful.wallpaper
+  bling.module.wallpaper.setup(wallpapers)

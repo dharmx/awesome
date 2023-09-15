@@ -1,4 +1,4 @@
-import "awful" as Awful
+import "awful"
 import "core.enum" as modifiers:{:SUPER, :CTRL}
 
 return
@@ -6,23 +6,23 @@ return
     modifiers: SUPER
     key: "j"
     description: "Focus next by index."
-    on_press: -> Awful.client.focus.byidx 1
+    on_press: -> awful.client.focus.byidx(1)
   *
     modifiers: SUPER
     key: "k"
     description: "Focus previous by index."
-    on_press: -> Awful.client.focus.byidx -1
+    on_press: -> awful.client.focus.byidx(-1)
   *
     modifiers: SUPER
     key: "`"
     description: "Go back."
     on_press: ->
-      Awful.client.focus.history.previous!
+      awful.client.focus.history.previous!
       if client.focus then client.focus::raise!
   *
     modifiers: SUPER + CTRL
     key: "n"
     description: "Restore minimized."
     on_press: ->
-      client = Awful.client.restore!
-      if client then client::activate raise: true, context: "key.unminimize"
+      client = awful.client.restore!
+      if client then client::activate(raise: true, context: "key.unminimize")

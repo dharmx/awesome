@@ -1,17 +1,20 @@
 #!/usr/bin/env sh
 
-packages="awestore bling inspect ldoc lua-path luafilesystem luaposix markdown penlight rubato fzy"
+# TODO: Integrate this into the config itself.
+packages="bling inspect rubato fzy"
 
 case "$1" in
-  --install) 
+  --install|-i) 
     for package in $packages; do
+      set -x
       luarocks --local --server=https://luarocks.org/dev install "$package"
     done
     ;;
-  --help)
+  --help|-h)
     echo './.dependencies.sh --[_|install]'
     ;;
   *)
+    echo './.dependencies.sh --[_|install]'
     for package in $packages; do
       echo "$package"
     done

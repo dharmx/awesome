@@ -1,24 +1,24 @@
-import "awful" as Awful
+import "awful"
 import "core.enum" as modifiers:{:EMPTY}, environ:{:BROWSER}
 
 return
   *
     modifiers: EMPTY
-    button: Awful.button.names.RIGHT
+    button: awful.button.names.RIGHT
     description: "Toggle main menu."
     on_press: -> mymainmenu::toggle!
   *
     modifiers: EMPTY
-    button: Awful.button.names.LEFT
+    button: awful.button.names.LEFT
     description: "Close main menu."
     on_press: -> mymainmenu::hide!
   *
     modifiers: EMPTY
-    button: Awful.button.names.SCROLL_UP
+    button: awful.button.names.SCROLL_UP
     description: "View previous tag."
-    on_press: Awful.tag.viewprev
+    on_press: awful.tag.viewprev
   *
     modifiers: EMPTY
-    button: Awful.button.names.SCROLL_DOWN
+    button: awful.button.names.SCROLL_DOWN
     description: "View next tag."
-    on_press: Awful.tag.viewnext
+    on_press: awful.tag.viewnext

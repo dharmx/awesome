@@ -1,4 +1,4 @@
-import "awful" as Awful
+import "awful"
 import "lib.functional" as :mute
 import "core.enum" as modifiers:{:EMPTY, :SUPER}, environ:{:BROWSER}
 
@@ -90,9 +90,9 @@ return
     description: "Video capture."
     on_press: ->
       if video_process
-        if awesome.kill video_process, 9 then video_process = nil
+        if awesome.kill(video_process, 9) then video_process = nil
         return
-      video_process = Awful.spawn.with_shell "qvidcap"
+      video_process = awful.spawn.with_shell("qvidcap")
   *
     modifiers: EMPTY
     key: "XF86RFKill"

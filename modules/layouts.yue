@@ -1,9 +1,9 @@
 import "awful" as :layout
 
-tag.connect_signal "request::default_layouts", ->
-  layout.append_default_layouts
-    * layout.suit.tile
-    * layout.suit.fair
-    * layout.suit.max
-    * layout.suit.max.fullscreen
-    * layout.suit.floating
+<- tag.connect_signal("request::default_layouts")
+layout.append_default_layouts
+  * layout.suit.tile
+  * layout.suit.fair
+  * layout.suit.max
+  * layout.suit.max.fullscreen
+  * layout.suit.floating

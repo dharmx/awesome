@@ -258,7 +258,7 @@ class Tiny
     if number then return c
     r: "#{c.r}%", g: "#{c.g}%", b: "#{c.b}%"
 
-  to_float: => {k, tonumber(v::sub(1, #v - 1)) / 100 for k, v in pairs @to_perc!}
+  to_float: => {k, tonumber(v::sub(1, #v - 1)) / 100 for k, v in pairs(@to_perc!)}
 
   to_hex: (prefix) =>
     prefix_sym = prefix and "#" or ""

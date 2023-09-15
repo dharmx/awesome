@@ -1,34 +1,35 @@
-import "awful" as Awful
+import "awful"
 import "core.enum" as modifiers:{:SHIFT, :ALT, :CTRL, :SUPER}, environ:{:BROWSER}
 
+-- TODO: https://awesomewm.org/apidoc/libraries/awful.layout.html#awful.layout.getname
 return
   *
     modifiers: SUPER + SHIFT
     key: "l"
-    on_press: -> Awful.tag.incmwfact 0.01
+    on_press: -> awful.tag.incmwfact(0.01)
     description: "Increase master width factor."
   *
     modifiers: SUPER + SHIFT
     key: "h"
-    on_press: -> Awful.tag.incmwfact -0.01
+    on_press: -> awful.tag.incmwfact(-0.01)
     description: "Decrease master width factor."
   *
     modifiers: SUPER + SHIFT
     key: "j"
-    on_press: -> Awful.client.incwfact 0.05
+    on_press: -> awful.client.incwfact(0.05)
     description: "Increase client height factor."
   *
     modifiers: SUPER + SHIFT
     key: "k"
-    on_press: -> Awful.client.incwfact -0.05
+    on_press: -> awful.client.incwfact(-0.05)
     description: "Decrease client height factor."
   *
     modifiers: SUPER
     key: ";"
-    on_press: -> Awful.layout.inc -1
+    on_press: -> awful.layout.inc(-1)
     description: "Select previous."
   *
     modifiers: SUPER
     key: "'"
-    on_press: -> Awful.layout.inc 1
+    on_press: -> awful.layout.inc(1)
     description: "Select previous."

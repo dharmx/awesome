@@ -23,7 +23,7 @@ return
     decrease.stylesheet = options.decrease.stylesheet
     if options.decrease.callback then decrease::connect_signal("button::press", options.decrease.callback)
 
-    wibox.widget {
+    wibox.widget({
       {
         {
           decrease
@@ -36,4 +36,4 @@ return
       bg: options.background
       shape: round_rectangle(DPI(25))
       widget: wibox.container.background
-    }
+    })

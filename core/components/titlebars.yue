@@ -25,32 +25,32 @@ export pacman =
     button
 
 pacman.minimize = (node, radius, pattern) ->
-  button = pacman radius, pattern
-  button::connect_signal "button::press", ->
+  button = pacman(radius, pattern)
+  do
+    <- button::connect_signal("button::press")
     ---@see https://github.com/awesomeWM/awesome/issues/3716
-    timer.delayed_call -> node.minimized = true,
-      0.05
+    timer.delayed_call((-> node.minimized = true), 0.05)
   button
 
 pacman.maximize = (node, radius, pattern) ->
-  button = pacman radius, pattern
-  button::connect_signal "button::press", -> node.maximized = not node.maximized
+  button = pacman(radius, pattern)
+  button::connect_signal("button::press", -> node.maximized = not node.maximized)
   button
 
 pacman.close = (node, radius, pattern) ->
-  button = pacman radius, pattern
-  button::connect_signal "button::press", -> node::kill!
+  button = pacman(radius, pattern)
+  button::connect_signal("button::press", -> node::kill!)
   button
 
 methman =
   <call>: (radius, pattern) =>
-    assert radius, "pacman needs a radius"
-    pattern = if_nil pattern, T("yellow")
+    assert(radius, "pacman needs a radius")
+    pattern ??= T("yellow")
 
     button = awful.widget.button
       resize: true
       visible: true
-      image: surfaces.pacman radius, pattern
+      image: surfaces.pacman(radius, pattern)
 
     timed = rubato.timed
       awestore_compat: true
@@ -72,19 +72,19 @@ methman =
     button
 
 methman.minimize = (node, radius, pattern) ->
-  button = methman radius, pattern
-  button::connect_signal "button::press", ->
+  button = methman(radius, pattern)
+  do
+    <- button::connect_signal("button::press")
     ---@see https://github.com/awesomeWM/awesome/issues/3716
-    timer.delayed_call -> node.minimized = true,
-      0.05
+    timer.delayed_call((-> node.minimized = true), 0.05)
   button
 
 methman.maximize = (node, radius, pattern) ->
-  button = methman radius, pattern
-  button::connect_signal "button::press", -> node.maximized = not node.maximized
+  button = methman(radius, pattern)
+  button::connect_signal("button::press", -> node.maximized = not node.maximized)
   button
 
 methman.close = (node, radius, pattern) ->
-  button = methman radius, pattern
-  button::connect_signal "button::press", -> node::kill!
+  button = methman(radius, pattern)
+  button::connect_signal("button::press", -> node::kill!)
   button

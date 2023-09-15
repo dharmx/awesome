@@ -18,7 +18,7 @@ return
     iconbox::connect_signal("mouse::enter", options.signal.on_enter)
     iconbox::connect_signal("mouse::leave", options.signal.on_leave)
 
-    wibox.widget {
+    wibox.widget({
       {
         {
           {
@@ -57,4 +57,4 @@ return
         widget: wibox.container.margin
       }
       layout: wibox.layout.fixed.horizontal
-    }
+    })

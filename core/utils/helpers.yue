@@ -1,6 +1,9 @@
 import "awful"
 import "wibox"
+import "lgi" as :Gio
+
 import "lib.functional" as :if_nil
+import "lib.std" as string:{:trim, :split}
 import "core.enum" as modifiers:{:EMPTY}
 
 export bind_click_away = (widget, callback) ->
@@ -31,3 +34,21 @@ export bind_click_away = (widget, callback) ->
   -- when the widget is visible, we hide it on button press
   widget::connect_signal("property::visible", manage_signals)
   widget.unbind_click_away = -> widget::disconnect_signal("property::visible", manage_signals)
+
+export walk = (path = ".", join = false, full = false) ->
+  path = trim(path)
+  if join and path::sub(#path, #path) ~= "/" then path = "#{path}/"
+  directory = Gio.File.new_for_path(path)
+  assert(directory::query_exists!, "#{path} does not exist")
+  assert(directory::query_file_type({}) == "DIRECTORY", "#{path} needs to be a directory")
+  stream = directory::enumerate_children("standard::*", Gio.FileQueryInfoFlags.NONE, nil)
+  ->
+    info = stream::next_file!
+    if not info then return
+    if full then return info, info::get_name!
+    if join then return "#{path}#{info::get_name!}", info::get_file_type!
+    info::get_name!, info::get_file_type!
+
+export stem = (path) ->
+  basename = Gio.File.new_for_path(path)::get_basename!
+  split(basename, ".", plain: true)[1]

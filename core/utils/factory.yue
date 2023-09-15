@@ -4,11 +4,8 @@ import "gears" as table:{:hasitem}, filesystem:{:get_configuration_dir}
 import "lib.functional" as :if_nil
 import "lib.std" as table:{:any}, string:{:split, :trim}
 
-import "path" as :basename, :isfile
 import "menubar.icon_theme" as IconTheme
 import "lgi" as :Gio
-
-export stem = (path) -> split(basename(path), ".", plain: true)[1]
 
 export spawn_wrap = (cmd) -> -> awful.spawn(cmd)
 
@@ -19,7 +16,7 @@ export apply_bindings = (grouped_bindings, mouse, callback) ->
     * "string"
     * "table"
 
-  for group, bindings in pairs grouped_bindings
+  for group, bindings in pairs(grouped_bindings)
     for binding in *bindings
       binding.group = group
       if hasitem(wrapped_types, type(binding.on_press))
@@ -59,7 +56,8 @@ export resource_factory = ->
     path = "#{resource_path}/#{filename}."
     _, value = do -- https://yuescript.org/doc/#backcalls
       (extension) <- any(_, resource_types)
-      isfile(path .. extension)
+      file = Gio.File.new_for_path(path .. extension)
+      file::query_exists!
     path .. value
 
   return

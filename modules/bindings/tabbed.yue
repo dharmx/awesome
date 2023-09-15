@@ -1,4 +1,4 @@
-import "bling" as Bling
+import "bling"
 import "core.enum" as modifiers:{:ALT, :SUPER}
 
 return
@@ -6,14 +6,14 @@ return
     modifiers: SUPER + ALT
     key: "p"
     description: "Picks a client with your cursor to add to the tabbing group."
-    on_press: -> Bling.module.tabbed.pick!
+    on_press: -> bling.module.tabbed.pick!
   *
     modifiers: SUPER + ALT
     key: "o"
     description: "Removes the focused client from the tabbing group."
-    on_press: -> Bling.module.tabbed.pop!
+    on_press: -> bling.module.tabbed.pop!
   *
     modifiers: SUPER + ALT
     key: "i"
     description: "Iterates through the currently focused tabbing group."
-    on_press: -> Bling.module.tabbed.iter!
+    on_press: -> bling.module.tabbed.iter!

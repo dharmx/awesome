@@ -159,7 +159,7 @@ export.initialize = (local_screen) ->
       * "</span>"
   -- }}}
 
-  main = wibox.widget {
+  main = wibox.widget({
     {
       { -- left
         {
@@ -262,7 +262,7 @@ export.initialize = (local_screen) ->
     top: DPI(10)
     bottom: DPI(10)
     layout: wibox.container.margin
-  }
+  })
 
   do
     -- backcalls i.e. quick\click_away(=> do_thing)

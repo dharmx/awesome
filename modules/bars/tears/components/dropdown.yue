@@ -23,7 +23,7 @@ return
     dropdown::connect_signal("mouse::enter", options.signal.on_enter)
     dropdown::connect_signal("mouse::leave", options.signal.on_leave)
 
-    wibox.widget {
+    wibox.widget({
       {
         {
           {
@@ -87,4 +87,4 @@ return
         widget: wibox.container.margin
       }
       widget: dropdown
-    }
+    })

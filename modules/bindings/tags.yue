@@ -1,4 +1,4 @@
-import "awful" as Awful
+import "awful"
 import "core.enum" as modifiers:{:SUPER}
 
 return
@@ -6,9 +6,9 @@ return
     modifiers: SUPER
     key: "["
     description: "View previous."
-    on_press: Awful.tag.viewprev
+    on_press: awful.tag.viewprev
   *
     modifiers: SUPER
     key: "]"
     description: "View next."
-    on_press: Awful.tag.viewnext
+    on_press: awful.tag.viewnext
