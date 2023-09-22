@@ -1,10 +1,31 @@
-import "core.config" as :current
 import "beautiful"
 import "awful"
 import "awful.autofocus"
+import "gears.timer"
+import "core.config" as :current
 
 theme = require("modules.titlebars.#{current.modules.titlebars_theme}")
-title = (node, position) -> awful.titlebar(node, position: position, size: beautiful.titlebar_height)
+title = (node, position) ->
+  count = 0
+  new_title = awful.titlebar(node, position: position, size: beautiful.titlebar_height)
+  -- implement the maximize-on-double-click feature from windows
+  do
+    clicks = 0
+    double_click = timer(timeout: 0.2, autostart: false)
+    do -- reset timer and clicks when the timer expires
+      <- double_click::connect_signal("timeout")
+      clicks = 0
+      double_click::stop!
+    do -- start timer on first click and toggle maximize when a second click is registered in time
+      <- new_title::connect_signal("button::press")
+      clicks += 1
+      if clicks == 1
+        double_click::again!
+      if clicks == 2 -- toggle maximize when a second click is registered
+        node.maximized = not node.maximized
+        clicks = 0
+        double_click::stop!
+  new_title
 
 do
   (node) <- client.connect_signal("request::titlebars")

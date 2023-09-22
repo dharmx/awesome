@@ -22,7 +22,7 @@ in_range = (n, max) ->
     n = (tonumber(n::sub(1, #n - 1)) * max) / 100
   if math.abs(n - max) < 0.000001
     return 1
-  assert n >= 0 and n <= max, "number should be between 0-255/0-1/0-100"
+  assert(n >= 0 and n <= max, "number should be between 0-255/0-1/0-100")
   n
 -- }}}
 
@@ -181,23 +181,23 @@ class Tiny
 
   -- CTOR {{{
   new: (...) =>
-    assert ..., "new param cannot be nil"
+    assert(..., "new param cannot be nil")
     packed = { ... }
     rgb = {}
     if #packed == 1
       packed = packed[1]
-      switch type packed
+      switch type(packed)
         when "string"
           packed = trim(packed)
           if packed::sub(1, 1) == "#"
             rgb = Tiny.hex2rgb(packed)
           else
             message = "no color named #{packed} and hexes accepted with # prefix"
-            rgb = Tiny.hex2rgb(assert @named_colors[packed], message)
+            rgb = Tiny.hex2rgb(assert(@named_colors[packed], message))
             @name = packed
         when "table"
           if packed.h and packed.s and packed.l
-            rgb = Tiny.hsl2rgb(packed.h, packed.s, packed.l)         
+            rgb = Tiny.hsl2rgb(packed.h, packed.s, packed.l)
           elseif packed.r and packed.g and packed.b
             rgb =
               r: math.floor(in_range packed.r, 256)
@@ -208,7 +208,7 @@ class Tiny
         when "number"
           rgb = Tiny.hex2rgb("#%06X"::format packed)
         else
-          error "invalid field type, only numbers, string, table are accepted"
+          error("invalid field type, only numbers, string, table are accepted")
       @r = rgb.r
       @g = rgb.g
       @b = rgb.b

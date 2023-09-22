@@ -45,6 +45,6 @@ return
     description: "Maximize and unmaxmize."
     on_press: (node) ->
       if node.class == "Alacritty"
-        if node.maximized then awful.titlebar.show node else awful.titlebar.hide node
+        if node.maximized then awful.titlebar.show(node) else awful.titlebar.hide(node)
       node.maximized = not node.maximized
       node::raise!

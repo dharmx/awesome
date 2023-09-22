@@ -5,9 +5,9 @@ export if_nil = (a, b) -> if a == nil then b else a
 
 export ok_or_nil = (status, ...) -> if not status then return else ...
 
-export npcall = (fn, ...) -> ok_or_nil pcall fn, ...
+export npcall = (fn, ...) -> ok_or_nil(pcall(fn, ...))
 
-export nil_wrap = (fn) -> (...) -> npcall fn, ...
+export nil_wrap = (fn) -> (...) -> npcall(fn, ...)
 
 export pack_len = (...) -> { n: select("#", ...), ... }
 
