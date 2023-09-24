@@ -1,7 +1,9 @@
 import "awful"
 import "beautiful"
 
-import "core.components.fuzzy" as {:Fuzzy, :CommandEntry}
+import "core.fuzzy" as Fuzzy
+import "core.fuzzy.entries.command" as Command
+
 import "lib.functional" as :if_nil
 import "core.utils.factory"
 
@@ -39,4 +41,4 @@ config =
     background: beautiful.wibar_quick_outline_background
     width: DPI(2)
 
-<call>: (links) => Fuzzy([CommandEntry(link) for link in *links], config)
+<call>: (links) => Fuzzy([Command(link) for link in *links], config)

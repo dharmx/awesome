@@ -5,6 +5,7 @@ import "awful"
 import "gears"
 
 import "lib.std" as table:{:keys}
+import "core.fuzzy.finders.simple"
 import "core.utils.factory"
 import "core.components.shapes"
 import "core.enum" as environ:{:BROWSER, :TERMINAL, :HOME, :XDG_DOWNLOAD_DIR, :XDG_MUSIC_DIR, :XDG_PICTURES_DIR}
@@ -76,7 +77,7 @@ export.tray = (local_screen) ->
 
 export.initialize = (local_screen) ->
   -- initialize some custom widgets {{{
-  quick = tears.quick([entry_wrap(table.unpack(entry)) for entry in *entries])
+  quick = simple([entry_wrap(table.unpack(entry)) for entry in *entries])
   dropdown = tears.components.dropdown
     background: beautiful.wibar_right_dropdown_bg
     icon:

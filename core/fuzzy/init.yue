@@ -2,73 +2,19 @@ import "fzy"
 import "awful"
 import "wibox"
 import "gears"
-import "naughty"
 import "beautiful"
 
+import "core.utils.factory"
 import "core.enum" as modifiers:{:EMPTY}
 import "core.utils.helpers" as :bind_click_away
-import "core.utils.factory"
 
 import "lib.overflow"
 import "lib.std" as table:{:is_list, :keys, :map}, string:{:split}
-import "lib.functional" as :if_nil
 
 DPI = beautiful.xresources.apply_dpi
 Resource = factory.resource_factory!
 
--- TODO: Add more entry classes.
-export class CommandEntry
-  new: (@options) =>
-    @options.label = assert(if_nil(@options[1] or @options.label), "No label found.")
-    assert(@options.background, "supply a options.background")
-    assert(@options.foreground, "supply a options.foreground")
-    assert(@options.icon.image, "supply a options.icon.image")
-    assert(@options.on_press, "supply a options.on_press")
-
-    if type(@options.on_press) == "string" then @options.on_press = factory.open_wrap(@options.on_press)
-    assert(type(@options.on_press) == "function", "on_press is not a function")
-
-    @label = wibox.widget
-      markup: @options.label
-      font: "Comfortaa 14"
-      widget: wibox.widget.textbox
-
-    @widget = wibox.widget({
-      {
-        {
-          {
-            {
-              {
-                image: @options.icon.image
-                stylesheet: @options.icon.style
-                widget: wibox.widget.imagebox
-              }
-              margins: DPI(5)
-              widget: wibox.container.margin
-            }
-            bg: @options.icon.background
-            shape: @options.icon.shape
-            widget: wibox.container.background
-          }
-          @label
-          spacing: DPI(10)
-          layout: wibox.layout.fixed.horizontal
-        }
-        margins: DPI(10)
-        widget: wibox.container.margin
-      }
-      bg: @options.background
-      fg: @options.foreground
-      forced_height: DPI(50)
-      buttons:
-        * awful.button
-            modifiers: EMPTY
-            button: awful.button.names.LEFT
-            on_press: @options.on_press
-      widget: wibox.container.background
-    })
-
-export class Fuzzy
+return class
   -- Map<NUMBER, TABLE> this is NOT an array
   stack: {}
   widgets: {}
